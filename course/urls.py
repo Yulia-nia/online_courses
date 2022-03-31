@@ -7,6 +7,7 @@ from .views import pageNotFound
 
 urlpatterns = [
     path('', views.index, name='index'),
+    path('create_course/', views.create_course),
 ]
 
 # debug with media

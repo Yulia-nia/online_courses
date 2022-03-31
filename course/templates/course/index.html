@@ -5,6 +5,17 @@
     <title>Course</title>
 </head>
 <body>
+    <p>МОИ КУРСЫ</p>
+        <p>It works!</p>
 
+     <form method="POST" action="create_course/">
+        {% csrf_token %}
+        <table>
+            {{ form }}
+        </table>
+        <input type="submit" value="Send" >
+     </form>
 </body>
 </html>
+
+

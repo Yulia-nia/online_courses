@@ -19,7 +19,6 @@
 
 </head>
 <body>
-
     <div class="form-popup" id="myForm">
         <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
             <div class="modal-dialog" role="document">
@@ -61,12 +60,11 @@
         </div>
         <h2>{{ item.title }}</h2>
             <p>{{ item.description }}</p>
-            <a href="#" class="icon-link">
-          Call to action
-          <svg class="bi" width="1em" height="1em"></svg>
-        </a>
+            <td>
+                <a href="edit_course/{{item.id}}">Управление</a> |
+                <a href="delete/{{item.id}}">Удалить</a>
+            </td>
       </div>
-
      {% endfor %}
 
     </div>

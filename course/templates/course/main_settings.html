@@ -1,0 +1,30 @@
+{% extends "course/base.html" %}
+
+{% block content %}
+    <h1>hii</h1>
+   <form method="post">
+         {% csrf_token %}
+           <div class="form-group">
+            <label for="exampleInputEmail1">Формат</label>
+            <input type="text" class="form-control" name="learning_format" id="titlecourse"  value="{{setting.learning_format}}">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputEmail1">Предмет</label>
+            <input type="text" class="form-control" name="subject" id="titlecourse"  value="{{setting.subject}}">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword1">Язык</label>
+            <input type="text" class="form-control" name="language" id="descourse" value="{{setting.language}}">
+          </div>
+
+{#         <div class="form-group">#}
+{#             <input type="checkbox" name="is_published" value="{{setting.is_published}}">#}
+{#             <label for="exampleInputPassword11">Публикация курса</label>#}
+{##}
+{#          </div>#}
+
+         <button button_type="submit" class="btn btn-primary">Submit</button>
+     </form>
+{% endblock %}

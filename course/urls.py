@@ -8,6 +8,9 @@ from .views import pageNotFound
 urlpatterns = [
     path('', views.index, name='index'),
     path('create_course/', views.create_course),
+    path('edit_course/<int:id>/', views.edit_course, name='edit'),
+    path('main_settings/<int:id>/', views.settings_edit, name='setting'),
+    path('delete/<int:id>/', views.delete_course),
 ]
 
 # debug with media

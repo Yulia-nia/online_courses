@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование</title>
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+</head>
+<body>
+    {% block mainmenu %}
+    <section>
+        <table>
+            <td>
+                <a href="{% url 'index'%}">Мои курсы</a>
+                <a href="{% url 'edit' item_id%}">Основное </a>
+                <a href="{% url 'setting' item_id%}">Управление</a>
+            </td>
+        </table>
+    </section>
+    {% endblock mainmenu%}
+
+
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

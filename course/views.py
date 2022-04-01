@@ -8,7 +8,8 @@ from course.models import Course
 
 def index(request):
     courseform = CourseForm()
-    return render(request, "course/index.html", {"form": courseform})
+    courses = Course.objects.all()
+    return render(request, "course/index.html", {"form": courseform, "courses": courses})
 
 
 def create_course(request):

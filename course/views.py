@@ -65,3 +65,7 @@ def delete_course(request, id):
         return HttpResponseRedirect("/")
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Course not found</h2>")
+
+
+def module_course(request, id):
+    return render(request, "course/module.html", {"item_id": id})

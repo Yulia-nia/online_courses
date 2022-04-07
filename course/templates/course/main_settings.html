@@ -2,11 +2,14 @@
 
 {% block content %}
     <h1>hii</h1>
+
+
    <form method="post">
          {% csrf_token %}
            <div class="form-group">
             <label for="exampleInputEmail1">Формат</label>
-            <input type="text" class="form-control" name="learning_format" id="titlecourse"  value="{{setting.learning_format}}">
+            <input type="text" class="form-control"  name="learning_format" id="titlecqourse"
+                   value="{{setting.learning_format}}">
           </div>
 
           <div class="form-group">

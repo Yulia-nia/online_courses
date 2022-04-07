@@ -7,18 +7,7 @@
     {% bootstrap_css %}
 </head>
 <body>
-    {% block mainmenu %}
-    <section>
-        <table>
-            <td>
-                <a href="{% url 'index'%}">Мои курсы</a>
-                <a href="{% url 'edit' item_id%}">Основное </a>
-                <a href="{% url 'setting' item_id%}">Управление</a>
-                <a href="{% url 'module' item_id%}">Модуль</a>
-            </td>
-        </table>
-    </section>
-    {% endblock mainmenu%}
+    {% include 'C:\Users\User\PycharmProjects\online_courses\templates\header.html' with item_id=item_id %}
 
 
     {% block content %}

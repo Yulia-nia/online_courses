@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 from django.conf.urls.static import static
@@ -11,7 +11,8 @@ urlpatterns = [
     path('edit_course/<int:id>/', views.edit_course, name='edit'),
     path('main_settings/<int:id>/', views.settings_edit, name='setting'),
     path('delete/<int:id>/', views.delete_course),
-    path('module/<int:id>/', views.module_course, name='module'),
+    path('/<int:id>/module/', include('module.urls'), name='module'),
+    #path('module/<int:id>/', views.module_course, name='module'),
 ]
 
 # debug with media

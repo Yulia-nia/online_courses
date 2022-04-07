@@ -24,10 +24,8 @@ class Module(models.Model):
 class Lesson(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-
     update = models.DateTimeField(auto_now=True)
     create = models.DateTimeField(auto_now_add=True)
-
     short_description = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)
     is_published = models.BooleanField(default=False)

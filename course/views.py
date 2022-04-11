@@ -1,11 +1,13 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
-
+from rest_framework import generics
 # Create your views here.
 from django.urls import reverse
+from rest_framework.response import Response
 
 from course.forms import CourseForm
 from course.models import Course, Settings
+from course.serializer import CourseSerializer
 
 
 def index(request):
@@ -70,3 +72,33 @@ def delete_course(request, id):
         return HttpResponseRedirect("/")
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Course not found</h2>")
+
+
+class CourseAPIView(generics.ListAPIView):
+    # queryset = Course.objects.all()
+    # serializer_class = CourseSerializer
+
+    def get(self, request):
+        course = Course.objects.all()
+        return Response({'courses': CourseSerializer(course, many=True).data})
+
+    # def post(self, request):
+    #     serializer = CourseSerializer(data=request.data)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response({'course': serializer.data})
+    #
+    # # update
+    # def put(self, request, *args, **kwargs):
+    #     pk = kwargs.get("pk", None)
+    #     if not pk:
+    #         return Response({"error": "Method PUT not allowed"})
+    #     try:
+    #         instance = Course.objects.get(pk=pk)
+    #     except:
+    #         return Response({"error": "Object does not exists"})
+    #     serializer = CourseSerializer(data=request.data, instance=instance)
+    #     serializer.is_valid(raise_exception=True)
+    #     serializer.save()
+    #     return Response({"course": serializer.data})
+

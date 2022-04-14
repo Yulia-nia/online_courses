@@ -11,7 +11,7 @@ urlpatterns = [
     path('edit_course/<int:id>/', views.edit_course, name='edit'),
     path('main_settings/<int:id>/', views.settings_edit, name='setting'),
     path('delete/<int:id>/', views.delete_course),
-    path('/<int:id>/module/', include('module.urls'), name='module'),
+    path('<int:id>/module/', include('module.urls'), name='module'),
     path('api/v1/courselist/', CourseAPIView.as_view()),
     #path('module/<int:id>/', views.module_course, name='module'),
 ]

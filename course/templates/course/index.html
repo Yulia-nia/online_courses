@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +6,9 @@
     <title>Course</title>
     {% load django_bootstrap5 %}
     {% bootstrap_css %}
+
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
 
     <STYLE>
         /* Всплывающая форма-скрыта по умолчанию */
@@ -19,8 +23,71 @@
 
 </head>
 <body>
-    <div class="form-popup" id="myForm">
-        <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+
+{% if courses.count > 0 %}
+    <div class="section wb">
+        <div class="container">
+            <div class="row">
+                {% for course in courses %}
+                <div class="col-lg-4 col-md-6 col-12">
+
+
+                        <div class="blog-item">
+
+                        <div class="image-blog">
+							<img src="{% static 'img/blog_1.jpg' %}"  alt="" class="img-fluid">
+						</div>
+
+                        <div class="meta-info-blog">
+                            <span> {{ course.settings.learning_format }} </span>
+                        </div>
+
+						<div class="blog-title">
+							<h2>{{ course.title }}</h2>
+						</div>
+
+						<div class="blog-desc">
+							<p> {{ course.description }} </p>
+						</div>
+
+                        <table>
+                            <tr style="width: 100%;">
+                                <td style="width: 40%;">
+                                    <div class="blog-button">
+                                        <a href="edit_course/{{course.id}}" class="button7">Управление</a>
+						            </div>
+                                </td>
+                                <td style="width: 60%;">
+                                    <div class="blog-button">
+                                        <a href="edit_course/{{course.id}}" class="button7">Просмотр</a>
+						            </div>
+                                </td>
+                            </tr>
+                        </table>
+
+                            <div class="blog-button">
+                                <a href="delete/{{course.id}}" class="button7">Удалить</a>
+						    </div>
+					    </div>
+                    <p> </p>
+                </div><!-- end col -->
+                   {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+{#        <div id="myModal" class="modal">#}
+
+{#          <!-- Modal content -->#}
+{#          <div class="modal-content">#}
+{#        #}
+{#            <span class="close">&times;</span>#}
+{#            <p>Some text in the Modal..</p>#}
+{#        #}
+             <div class="form-popup" id="myModal">
+         <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-6 shadow">
                     <div class="modal-header border-bottom-0">
@@ -43,45 +110,55 @@
                 </div>
             </div>
         </div>
-    </div>
+          </div>
 
-
-    {% if courses.count > 0 %}
-           <h2>Список курсов</h2>
-    <div class="container px-4 py-5" id="featured-3">
-    <h2 class="pb-2 border-bottom">МОИ КУРСЫ</h2>
-        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-
-            {% for item in courses %}
-
-        <div class="feature col">
-        <div class="feature-icon bg-primary bg-gradient">
-          <svg class="bi" width="1em" height="1em"></svg>
         </div>
-        <h2>{{ item.title }}</h2>
-            <p>{{ item.description }}</p>
-            <td>
-                <a href="edit_course/{{item.id}}">Управление</a> |
-                <a href="delete/{{item.id}}">Удалить</a>
-            </td>
-      </div>
-     {% endfor %}
 
-    </div>
-  </div>
-    {% endif %}
+<button id="myBtn" class="btn btn-lg position-center btn-light w-30 mx-0">Создать курс</button>
+
+{#    <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">Создать курс</button>#}
 
 
-    <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">Создать курс</button>
 
-    <script>
-        function openForm() {
-          document.getElementById("myForm").style.display = "block";
+            <script>
+        // Get the modal
+        var modal = document.getElementById("myModal");
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("myBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function() {
+          modal.style.display = "block";
         }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+          modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        }
+
         function closeForm() {
-          document.getElementById("myForm").style.display = "none";
+          document.getElementById("myModal").style.display = "none";
         }
-    </script>
+        </script>
+{#    <script>#}
+{#        function openForm() {#}
+{#          document.getElementById("myForm").style.display = "block";#}
+{#        }#}
+{#        function closeForm() {#}
+{#          document.getElementById("myForm").style.display = "none";#}
+{#        }#}
+{#    </script>#}
 </body>
 </html>
 

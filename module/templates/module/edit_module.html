@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Module edit</title>
+</head>
+<body>
+    <p>Название модуля {{ module.title }} </p>
+
+    {% for lesson in lessons %}
+
+        <p>{{ lesson.title }}</p>
+        <a href="../../edit_module/{{ module.id }}/edit_lesson/{{ lesson.id }}/">Редактировать урок</a>
+
+        <HR/>
+    {% endfor %}
+</body>
+</html>

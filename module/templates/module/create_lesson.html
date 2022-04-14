@@ -1,0 +1,32 @@
+ <form method="post">
+         {% csrf_token %}
+
+          <div class="form-group">
+
+            <label for="exampleInputEmail1">Название</label>
+            <input type="text" class="form-control" name="title" id="titlecourse"  value="{{lesson.title}}">
+          </div>
+
+          <div class="form-group">
+            <label for="exampleInputPassword1">Описание</label>
+            <input type="text" class="form-control" name="short_description" id="descourse" value="{{lesson.short_description}}">
+          </div>
+
+     {% if lesson.description is None %}
+
+      <div class="form-group">
+            <label for="exampleInputPassword1">Описание</label>
+            <input type="text" class="form-control" name="description" id="descosurse">
+          </div>
+
+         {% else %}
+
+          <div class="form-group">
+            <label for="exampleInputPassword1">Описание</label>
+            <input type="text" class="form-control" name="description" id="descosurse" value="{{lesson.description}}">
+          </div>
+
+     {% endif %}
+
+         <button button_type="submit" class="btn btn-primary">Submit</button>
+     </form>

@@ -12,7 +12,7 @@ class Module(models.Model):
     create = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('id',)
         db_table = 'module'
         verbose_name = 'Модуль',
         verbose_name_plural = 'Модули'
@@ -26,12 +26,12 @@ class Lesson(models.Model):
     title = models.CharField(max_length=200)
     update = models.DateTimeField(auto_now=True)
     create = models.DateTimeField(auto_now_add=True)
-    short_description = models.CharField(max_length=200)
+    short_description = models.TextField(max_length=250)
     description = models.TextField(null=True, blank=True)
     is_published = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('id',)
         db_table = 'lesson'
         verbose_name = 'Урок',
         verbose_name_plural = 'Уроки'

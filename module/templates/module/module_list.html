@@ -43,12 +43,6 @@
         </div>
     </div>
 
-
-
-
-
-
-
     <P>HIIIIII MODULE</P>
 
      {% if modules.count > 0 %}
@@ -63,18 +57,38 @@
           <svg class="bi" width="1em" height="1em"></svg>
         </div>
         <h2>{{ item.title }}</h2>
+
+                <a href="edit_module/{{ item.id }}/">Редактировать МОДУЛЬ</a>
+
                 <h2>Кол-во уроков {{ item.lesson_set.count }}</h2>
 {#            <td>#}
 {#                <a href="edit_course/{{item.id}}">Управление</a> |#}
 {#                <a href="delete/{{item.id}}">Удалить</a>#}
 {#            </td>#}
-{#      </div>#}
-                {% if item.lesson_set.count > 0 %}
-                    <a href="#" >добавить урок</a>
-                    {% else %}
-                    <a href="#" >добавить первый урок</a>
-                {% endif %}
 
+
+                {% for lesson in lessons %}
+                    {% if lesson.module_id == item.id %}
+
+                        <p> {{ lesson.title }} </p>
+                        <a href="edit_lesson/{{ lesson.id }}/">Редактировать урок</a>
+
+                    {% endif %}
+                {% endfor %}
+{#      </div>#}
+
+                <hr/>
+                <p>Добавить</p>
+{#                {% if item.lesson_set.count > 0 %}#}
+{#                    <a href="#" >добавить урок</a>#}
+{#                    {% else %}#}
+{#                    <a href="#" >добавить первый урок</a>#}
+{#                {% endif %}#}
+
+                <a href="{{item.id}}/lesson_create/"> Урок </a> |
+
+                <a href="#" > Задание </a>
+                <p> </p>
             {% endfor %}
             </div>
         </div>

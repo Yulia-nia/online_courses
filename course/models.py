@@ -9,7 +9,7 @@ class Course(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)         # value does not change
 
     class Meta:
-        ordering = ('title',)
+        ordering = ('id',)
         db_table = 'course'
         verbose_name = 'Курс',
         verbose_name_plural = 'Курсы'

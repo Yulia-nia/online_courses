@@ -23,6 +23,7 @@ class Settings(models.Model):
     subject = models.CharField(max_length=200, null=True)
     language = models.CharField(max_length=200, null=True)
     course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True)
+    image = models.FileField(upload_to='course_img/', blank=True, null=True)
     # изображение (должно быть, установить сначала дефолтное)
     # picture =
     # обложка

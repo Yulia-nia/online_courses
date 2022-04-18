@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpRespons
 from rest_framework import generics
 # Create your views here.
 from django.urls import reverse
+from django.core.files.storage import FileSystemStorage
 from rest_framework.response import Response
 
 from course.forms import CourseForm
@@ -20,20 +21,22 @@ def settings_edit(request, id):
     setting = Settings.objects.all()
     setting = Settings.objects.filter(course_id=id)
     if setting.count() == 0:
-        if request.method == "POST":
-             setting = Settings()
-             setting.learning_format = request.POST.get("learning_format")
-             setting.subject = request.POST.get("subject")
-             setting.language = request.POST.get("language")
-             setting.course_id = id
-             setting.save()
-        return render(request, "course/main_settings.html", {"setting": setting, "item_id": id})
-    else:
-        setting = Settings.objects.get(course_id=id)
-        if request.method == "POST":
+        if request.method == "POST" and request.FILES:
+            setting = Settings()
             setting.learning_format = request.POST.get("learning_format")
             setting.subject = request.POST.get("subject")
             setting.language = request.POST.get("language")
+            setting.image = request.FILES.get('image')
+            setting.course_id = id
+            setting.save()
+        return render(request, "course/main_settings.html", {"setting": setting, "item_id": id})
+    else:
+        setting = Settings.objects.get(course_id=id)
+        if request.method == "POST" and request.FILES:
+            setting.learning_format = request.POST.get("learning_format")
+            setting.subject = request.POST.get("subject")
+            setting.language = request.POST.get("language")
+            setting.image = request.FILES.get("image")
             setting.save()
         return render(request, "course/main_settings.html", {"setting": setting, "item_id": id})
 

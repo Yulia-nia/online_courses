@@ -1,12 +1,12 @@
-from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response
 from rest_framework import generics
 # Create your views here.
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from rest_framework.response import Response
 
-from course.forms import CourseForm
+from course.forms import CourseForm, SettingsForm
 from course.models import Course, Settings
 from course.serializer import CourseSerializer
 
@@ -21,24 +21,57 @@ def settings_edit(request, id):
     setting = Settings.objects.all()
     setting = Settings.objects.filter(course_id=id)
     if setting.count() == 0:
-        if request.method == "POST" and request.FILES:
+        form = SettingsForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
             setting = Settings()
-            setting.learning_format = request.POST.get("learning_format")
-            setting.subject = request.POST.get("subject")
-            setting.language = request.POST.get("language")
-            setting.image = request.FILES.get('image')
+            setting.learning_format = form.cleaned_data['learning_format']
+            setting.subject = form.cleaned_data["subject"]
+            setting.language = form.cleaned_data['language']
+            setting.image = form.cleaned_data["image"]
+            setting.is_published = form.cleaned_data["is_published"]
             setting.course_id = id
             setting.save()
-        return render(request, "course/main_settings.html", {"setting": setting, "item_id": id})
+        return render(request, "course/main_settings.html", {"form": form, "item_id": id})
     else:
         setting = Settings.objects.get(course_id=id)
-        if request.method == "POST" and request.FILES:
-            setting.learning_format = request.POST.get("learning_format")
-            setting.subject = request.POST.get("subject")
-            setting.language = request.POST.get("language")
-            setting.image = request.FILES.get("image")
+        form = SettingsForm(request.POST or None, request.FILES or None, initial=
+                            { 'learning_format': setting.learning_format,
+                              'subject': setting.subject,
+                                      'language': setting.language,
+                                      'image': setting.image,
+                                      'is_published': setting.is_published,
+                                      'course_id': setting.course_id,}
+                            )
+        if form.is_valid():
+            setting.learning_format = form['learning_format'].value()
+            setting.subject = form["subject"].value()
+            setting.language = form['language'].value()
+            setting.image = form["image"].value()
+            setting.is_published = form["is_published"].value()
+            setting.course_id = id
             setting.save()
-        return render(request, "course/main_settings.html", {"setting": setting, "item_id": id})
+
+        # setting = Settings.objects.get(course_id=id)
+        # if (request.method == "POST" or None) and (request.FILES or None):
+        #     setting.learning_format = request.POST.get("learning_format")
+        #     setting.subject = request.POST.get("subject")
+        #     setting.language = request.POST.get("language")
+        #
+        #     # if request.FILES.get("image"):
+        #     #     setting.image = request.FILES.get("image")
+        #     # else:
+        #     #     setting.image = 'settings.MEDIA_ROOT/course_img/blog_1.jpg'
+        #     if request.FILES.get("image"):
+        #         setting.image = request.FILES.get('image')
+        #     else:
+        #         setting.image = request.FILES.get('image1')
+        #
+        #     if request.POST.get("player_check") == 'on':
+        #         setting.is_published = True
+        #     else:
+        #         setting.is_published = False
+        #     setting.save()
+        return render(request, "course/main_settings.html", {"form": form, "item_id": id})
 
 
 def create_course(request):

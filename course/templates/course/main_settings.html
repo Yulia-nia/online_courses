@@ -6,47 +6,55 @@
 
    <form method="post" enctype="multipart/form-data">
          {% csrf_token %}
-           <div class="form-group">
-            <label for="exampleInputEmail1">Формат</label>
-            <input type="text" class="form-control"  name="learning_format" id="titlecqourse"
-                   value="{{setting.learning_format}}">
-          </div>
-
-          <div class="form-group">
-            <label for="exampleInputEmail1">Предмет</label>
-            <input type="text" class="form-control" name="subject" id="titlecourse"  value="{{setting.subject}}">
-          </div>
-
-          <div class="form-group">
-            <label for="exampleInputPassword1">Язык</label>
-            <input type="text" class="form-control" name="language" id="descourse" value="{{setting.language}}">
-          </div>
-
+{#           <div class="form-group">#}
+{#            <label for="exampleInputEmail1">Формат</label>#}
+{#            <input type="text" class="form-control"  name="learning_format" id="titlecqourse"#}
+{#                   value="{{setting.learning_format}}">#}
+{#          </div>#}
+{##}
+{#          <div class="form-group">#}
+{#            <label for="exampleInputEmail1">Предмет</label>#}
+{#            <input type="text" class="form-control" name="subject" id="titlecourse"  value="{{setting.subject}}">#}
+{#          </div>#}
+{##}
+{#          <div class="form-group">#}
+{#            <label for="exampleInputPassword1">Язык</label>#}
+{#            <input type="text" class="form-control" name="language" id="descourse" value="{{setting.language}}">#}
+{#          </div>#}
+{##}
 {#         <div class="form-group">#}
 {#             <input type="checkbox" name="is_published" value="{{setting.is_published}}">#}
 {#             <label for="exampleInputPassword11">Публикация курса</label>#}
 {##}
 {#          </div>#}
-       <div class="form-group">
-           <label for="image">Картинка</label>
-           {% if setting.image %}
-                 <input type="file" name="image" value="{{setting.image}}">
-            {% else %}
-                    <input type="file" name="image" value="{{setting.image}}">
-            {% endif %}
+{##}
+{#     <div class="form-group">#}
+{#         <label for="pub">Опубликовать</label>#}
+{##}
+{#     <input type="checkbox" name="player_check"{% if setting.is_published %} checked{% endif %}>#}
+{##}
+{#     </div>#}
+{##}
+{##}
+{#       <div class="form-group">#}
+{#           <label for="image">Картинка</label>#}
+{#           {% if setting.image %}#}
+{#               <input type="file" name="image" value="{{ setting.image.url }}">#}
+{#            {% else %}#}
+{#               <input type="file" name="image" value="course_img/blog_1.jpg">#}
+{#            {% endif %}#}
+{#        </div>#}
 
-        </div>
 
-
-
+       {{ form.as_p }}
          <button button_type="submit" class="btn btn-primary">Submit</button>
      </form>
 
 
-    {% if setting.image %}
-        <h3>Succesfully uploaded</h3>
-        <img src="{{ setting.image.url}}" alt="connect" style="max-height:300px">
-    {% endif %}
+{#    {% if setting.image %}#}
+{#        <h3> Succesfully uploaded</h3>#}
+{#        <img src="{{ setting.image.url}}" alt="connect" style="max-height:300px">#}
+{#    {% endif %}#}
 
 
 {% endblock %}

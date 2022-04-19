@@ -1,4 +1,7 @@
+from django.core.files.storage import FileSystemStorage
 from django.db import models
+
+from online_courses import settings
 
 
 class Course(models.Model):
@@ -23,7 +26,8 @@ class Settings(models.Model):
     subject = models.CharField(max_length=200, null=True)
     language = models.CharField(max_length=200, null=True)
     course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True)
-    image = models.FileField(upload_to='course_img/', blank=True, null=True)
+    image = models.FileField(upload_to='course_img/', null=True, blank=True)
+    is_published = models.BooleanField(null=True, default=False)
     # изображение (должно быть, установить сначала дефолтное)
     # picture =
     # обложка

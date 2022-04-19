@@ -1,7 +1,8 @@
 {% extends "course/base.html" %}
 
 {% block content %}
-    <h1>hii</h1>
+    <h1>{{ course.settings.about_course | safe }}</h1>
+
    <form method="post">
          {% csrf_token %}
           <div class="form-group">

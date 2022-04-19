@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "django_bootstrap5",
     'module.apps.ModuleConfig',
     'rest_framework',
-    'crispy_forms'
+    'crispy_forms',
+    'django_summernote',
 
 ]
 

@@ -1,4 +1,5 @@
 from django import forms
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 
 class CourseForm(forms.Form):
@@ -22,7 +23,9 @@ class SettingsForm(forms.Form):
     image = forms.ImageField(required=False, label='')
     is_published = forms.BooleanField(required=False, label='Опубликован')
 
-    about_course = forms.CharField(required=False, label='', widget=forms.Textarea(attrs={'rows': 5}))
+    about_course = forms.CharField(required=False, label='',
+                                   widget=SummernoteWidget(attrs={'rows': 5})
+                                  )
 
     how_training = forms.CharField(required=False, label='', widget=forms.Textarea(attrs={'rows': 3}))
     what_you_get = forms.CharField(required=False, label='', widget=forms.Textarea(attrs={'rows': 3}))

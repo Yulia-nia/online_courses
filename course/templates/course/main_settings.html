@@ -1,60 +1,256 @@
 {% extends "course/base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+
 
 {% block content %}
-    <h1>hii</h1>
+    <div class="container">
+        <div class="py-5 text-center">
+            <form method="post" enctype= multipart/form-data>
+                {% csrf_token %}
+
+                {# image #}
+                <div>
+                    <h4 class="text-start">Изображение курса</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Изображение курса будет показано ученику на странице списка курсов,
+                              на которых он проходит обучение. <br>
+                              Вы можете не загружать изображение, в таком случае система подставит вашему курсу
+                              изображение по-умолчанию.<br>
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="row mt-3" style="height: 30%; width: 100%">
+                        <div style="height: 30%; width: 60%">
+                            {% bootstrap_field form.image class="custom-control-input"%}
+                        </div>
+
+                        <div style="height: 30%; width: 40%">
+                            {% if setting.image %}
+                                <img src="{{ setting.image.url }}" width="100%" height="100%" style="position: center">
+                            {% endif %}
+                        </div>
+                    </div>
 
 
-   <form method="post" enctype="multipart/form-data">
-         {% csrf_token %}
-{#           <div class="form-group">#}
-{#            <label for="exampleInputEmail1">Формат</label>#}
-{#            <input type="text" class="form-control"  name="learning_format" id="titlecqourse"#}
-{#                   value="{{setting.learning_format}}">#}
-{#          </div>#}
-{##}
-{#          <div class="form-group">#}
-{#            <label for="exampleInputEmail1">Предмет</label>#}
-{#            <input type="text" class="form-control" name="subject" id="titlecourse"  value="{{setting.subject}}">#}
-{#          </div>#}
-{##}
-{#          <div class="form-group">#}
-{#            <label for="exampleInputPassword1">Язык</label>#}
-{#            <input type="text" class="form-control" name="language" id="descourse" value="{{setting.language}}">#}
-{#          </div>#}
-{##}
-{#         <div class="form-group">#}
-{#             <input type="checkbox" name="is_published" value="{{setting.is_published}}">#}
-{#             <label for="exampleInputPassword11">Публикация курса</label>#}
-{##}
-{#          </div>#}
-{##}
-{#     <div class="form-group">#}
-{#         <label for="pub">Опубликовать</label>#}
-{##}
-{#     <input type="checkbox" name="player_check"{% if setting.is_published %} checked{% endif %}>#}
-{##}
-{#     </div>#}
-{##}
-{##}
-{#       <div class="form-group">#}
-{#           <label for="image">Картинка</label>#}
-{#           {% if setting.image %}#}
-{#               <input type="file" name="image" value="{{ setting.image.url }}">#}
-{#            {% else %}#}
-{#               <input type="file" name="image" value="course_img/blog_1.jpg">#}
-{#            {% endif %}#}
-{#        </div>#}
+                </div>
 
 
-       {{ form.as_p }}
-         <button button_type="submit" class="btn btn-primary">Submit</button>
-     </form>
+                {# level #}
+                <div>
+                    <h4 class="text-start">Уровень подготовки</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Выберите уровень подготовки.<br>
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mt-3">
+                        {% bootstrap_field form.level class="custom-control-input"%}
+                    </div>
+                </div>
 
 
-{#    {% if setting.image %}#}
-{#        <h3> Succesfully uploaded</h3>#}
-{#        <img src="{{ setting.image.url}}" alt="connect" style="max-height:300px">#}
-{#    {% endif %}#}
+                {# about course #}
+                <div>
+                    <h4 class="text-start">О курсе</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Перечислите все, что важно знать учащимся до поступления на курс.<br>
+                              Например: цели курса, разделы и задания, особенности курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.about_course class="custom-control-input"%}
+                    </div>
+                </div>
 
+                {# learning format#}
+                <div>
+                    <h4 class="text-start">Формат обучения</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь, какие материалы вы размещаете.<br>
+                              Например: онлайн-курс, марафон, практикум, семинар, записи конференции, методические пособия,
+                              записи вебинаров и так далее. <br>Этот тизер будет размещен рядом с заголовком вашего курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.learning_format class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# will learn #}
+                <div>
+                    <h4 class="text-start">Результаты обучения</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Перечислите ожидаемые результаты обучения - что будут знать и уметь учащиеся после
+                              успешного окончания курса.
+                              <br>
+                              <br>
+                              Каждый пункт начинайте с новой строки.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.will_learn class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# necessary training #}
+                <div>
+                    <h4 class="text-start">Необходимая подготовка</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Что нужно уметь знать и уметь до старта курса.<br>
+                              Необходимо, чтобы курс не оказался слишком сложными или слишком простым.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.necessary_training class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# how training #}
+                <div>
+                    <h4 class="text-start">Как проходит обучение</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Что и как нужно будет делать, что входит в данный курс.<br>
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.how_training class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# what you get #}
+                <div>
+                    <h4 class="text-start">Почему имеено ваш курс</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Перечислите почему курс будет полезен. Что получит учащийся курса, после прохождения.<br>
+                              Например: навыки и знания, возможность отработать теорию на практике, поддержка наставников, проекты в портфолио.
+                              <br> <br>Каждый пункт начинайте с новой строки.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.what_you_get class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# language #}
+                <div>
+                    <h4 class="text-start">Язык курса</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Язык курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.language class="custom-control-input"%}
+                    </div>
+                </div>
+
+                 {# subject #}
+                <div>
+                    <h4 class="text-start">Предмет курса</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Предмет курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.subject class="custom-control-input"%}
+                    </div>
+                </div>
+
+                {# is published #}
+                <div>
+                    <h4 class="text-start">Публикация курса</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Пока ваш курс находится в статусе "не опубликован", никто не сможет получить к нему доступ.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        {%  bootstrap_field form.is_published class="custom-control-input"%}
+                    </div>
+                </div>
+
+
+                {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+            </form>
+        </div>
+    </div>
 
 {% endblock %}

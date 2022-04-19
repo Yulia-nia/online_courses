@@ -8,7 +8,6 @@ class CourseSerializer(serializers.Serializer):
     time_update = serializers.DateTimeField(read_only=True) # автоматически
     # Чтобы сериализатор корректно обрабатывал эти поля, в их определении нужно добавить аргумент read_only=True:
     time_create = serializers.DateTimeField(read_only=True)
-
     # category_id = serializers.IntegerField()
 
     def create(self, validated_data):

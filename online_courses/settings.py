@@ -42,7 +42,11 @@ INSTALLED_APPS = [
     "django_bootstrap5",
     'module.apps.ModuleConfig',
     'rest_framework',
+    'crispy_forms'
+
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

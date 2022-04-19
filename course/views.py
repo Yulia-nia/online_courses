@@ -29,9 +29,17 @@ def settings_edit(request, id):
             setting.language = form.cleaned_data['language']
             setting.image = form.cleaned_data["image"]
             setting.is_published = form.cleaned_data["is_published"]
+
+            setting.will_learn = form.cleaned_data["will_learn"]
+            setting.about_course = form.cleaned_data["about_course"]
+            setting.necessary_training = form.cleaned_data["necessary_training"]
+            setting.how_training = form.cleaned_data["how_training"]
+            setting.what_you_get = form.cleaned_data["what_you_get"]
+            setting.level = form.cleaned_data["level"]
+
             setting.course_id = id
             setting.save()
-        return render(request, "course/main_settings.html", {"form": form, "item_id": id})
+        return render(request, "course/main_settings.html", {"form": form, "setting": setting, "item_id": id})
     else:
         setting = Settings.objects.get(course_id=id)
         form = SettingsForm(request.POST or None, request.FILES or None, initial=
@@ -40,7 +48,14 @@ def settings_edit(request, id):
                                       'language': setting.language,
                                       'image': setting.image,
                                       'is_published': setting.is_published,
-                                      'course_id': setting.course_id,}
+                                      'course_id': setting.course_id,
+                              'will_learn': setting.will_learn,
+                              'about_course': setting.about_course,
+                              'necessary_training': setting.necessary_training,
+                              'how_training': setting.how_training,
+                              'what_you_get': setting.what_you_get,
+                              'level': setting.level,
+                              }
                             )
         if form.is_valid():
             setting.learning_format = form['learning_format'].value()
@@ -48,30 +63,17 @@ def settings_edit(request, id):
             setting.language = form['language'].value()
             setting.image = form["image"].value()
             setting.is_published = form["is_published"].value()
+
+            setting.will_learn = form["will_learn"].value()
+            setting.about_course = form["about_course"].value()
+            setting.necessary_training = form["necessary_training"].value()
+            setting.how_training = form["how_training"].value()
+            setting.what_you_get = form["what_you_get"].value()
+            setting.level = form["level"].value()
+
             setting.course_id = id
             setting.save()
-
-        # setting = Settings.objects.get(course_id=id)
-        # if (request.method == "POST" or None) and (request.FILES or None):
-        #     setting.learning_format = request.POST.get("learning_format")
-        #     setting.subject = request.POST.get("subject")
-        #     setting.language = request.POST.get("language")
-        #
-        #     # if request.FILES.get("image"):
-        #     #     setting.image = request.FILES.get("image")
-        #     # else:
-        #     #     setting.image = 'settings.MEDIA_ROOT/course_img/blog_1.jpg'
-        #     if request.FILES.get("image"):
-        #         setting.image = request.FILES.get('image')
-        #     else:
-        #         setting.image = request.FILES.get('image1')
-        #
-        #     if request.POST.get("player_check") == 'on':
-        #         setting.is_published = True
-        #     else:
-        #         setting.is_published = False
-        #     setting.save()
-        return render(request, "course/main_settings.html", {"form": form, "item_id": id})
+        return render(request, "course/main_settings.html", {"form": form, "setting": setting, "item_id": id})
 
 
 def create_course(request):

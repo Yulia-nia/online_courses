@@ -3,12 +3,10 @@ from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
 
 class CourseForm(forms.Form):
-    title = forms.CharField(max_length=200, min_length=4,
-                            label="Название", help_text="Введите название")
-    description = forms.CharField(
-        widget=forms.Textarea(attrs={'rows': 3}),
-                                  required=False,
-                                  label="Краткое описание")
+    title = forms.CharField(max_length=64, min_length=4, label='')
+    description = forms.CharField(max_length=200, label='',
+                                  widget=forms.Textarea(attrs={'rows': 3}),
+                                  required=False)
 
 
 class SettingsForm(forms.Form):
@@ -24,11 +22,16 @@ class SettingsForm(forms.Form):
     is_published = forms.BooleanField(required=False, label='Опубликован')
 
     about_course = forms.CharField(required=False, label='',
-                                   widget=SummernoteWidget(attrs={'rows': 5})
-                                  )
+                                   widget=SummernoteWidget(attrs={'rows': 4,
+                                    'summernote': {'width': '100%'}}
+                                   ))
 
-    how_training = forms.CharField(required=False, label='', widget=forms.Textarea(attrs={'rows': 3}))
-    what_you_get = forms.CharField(required=False, label='', widget=forms.Textarea(attrs={'rows': 3}))
+    how_training = forms.CharField(required=False, label='',  widget=SummernoteWidget(attrs={'rows': 4,
+                                    'summernote': {'width': '100%'}}
+                                   ))
+    what_you_get = forms.CharField(required=False, label='',  widget=SummernoteWidget(attrs={'rows': 4,
+                                    'summernote': {'width': '100%'}}
+                                   ))
     LEVEL_CHOICES = (
         ('1', u"для начаниющих"),
         ('2', u"для продолжающих"),

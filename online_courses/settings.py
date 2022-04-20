@@ -46,8 +46,10 @@ INSTALLED_APPS = [
     'django_summernote',
 
 ]
-
+SUMMERNOTE_THEME = 'bs4'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+USE_THOUSAND_SEPARATOR = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

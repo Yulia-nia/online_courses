@@ -90,6 +90,18 @@ def pageNotFound(request, exception):
 
 
 def edit_course(request, id):
+    course = Course.objects.get(id=id)
+    form = CourseForm(request.POST or None, initial=
+        {'title': course.title, 'description': course.description})
+    if form.is_valid():
+        course.title = form['title'].value()
+        course.description = form["description"].value()
+        course.save()
+    return render(request, "course/edit_course.html", {"course": course, 'form': form, "item_id": id})
+
+
+
+def edit_course1(request, id):
     try:
         course = Course.objects.get(id=id)
         if request.method == "POST":

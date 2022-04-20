@@ -38,3 +38,20 @@ class Lesson(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Announcement(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    content = models.CharField(max_length=250)
+    # description = models.TextField(null=True, blank=True)  # empty values
+    time_update = models.DateTimeField(auto_now=True)
+    time_create = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('id',)
+        db_table = 'announcement'
+        verbose_name = 'Обявление',
+        verbose_name_plural = 'Объявление'
+
+    def __str__(self):
+        return self.content

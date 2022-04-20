@@ -3,20 +3,38 @@ from django.shortcuts import render
 from django.urls import reverse
 # Create your views here.
 from course.models import Course
-from module.forms import ModuleForm
-from module.models import Module, Lesson
+from module.forms import ModuleForm, AnnouncementForm
+from module.models import Module, Lesson, Announcement
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 
 
 def list_module(request, id):
-    #course = Course.objects.get(id=id)
+    course = Course.objects.get(id=id)
     form = ModuleForm()
     modules = Module.objects.all()
+    form_announcement = AnnouncementForm()
+
+    announcements = Announcement.objects.all().filter(course_id=id)
+
+    count_list = zip(announcements, range(1, announcements.count()+1))
     # in case to filter by id
     modules = Module.objects.filter(course_id=id)
     lessons = Lesson.objects.all().filter(module__course_id=id)
-    return render(request, "module/module_list.html", {"form": form, "modules": modules, 'lessons': lessons, "item_id": id})
+    return render(request, "module/module_list.html", {"form": form, "modules": modules,
+                                                       "form_announcement": form_announcement,
+                                                       "announcements": announcements,
+                                                       "count_list": count_list,
+                                                       "course": course, "lessons": lessons, "item_id": id})
+
+
+def create_announcement(request, id):
+    if request.method == "POST":
+        announcement = Announcement()
+        announcement.content = request.POST.get("content")
+        announcement.course_id = id
+        announcement.save()
+    return HttpResponseRedirect(reverse('list', args=(id,)))
 
 
 def create_module(request, id):

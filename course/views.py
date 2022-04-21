@@ -9,6 +9,8 @@ from rest_framework.response import Response
 from course.forms import CourseForm, SettingsForm
 from course.models import Course, Settings
 from course.serializer import CourseSerializer
+from module.forms import AnnouncementForm
+from module.models import Announcement
 
 
 def index(request):
@@ -100,21 +102,6 @@ def edit_course(request, id):
     return render(request, "course/edit_course.html", {"course": course, 'form': form, "item_id": id})
 
 
-
-def edit_course1(request, id):
-    try:
-        course = Course.objects.get(id=id)
-        if request.method == "POST":
-            course.title = request.POST.get("title")
-            course.description = request.POST.get("description")
-            course.save()
-            return render(request, "course/edit_course.html", {"course": course, "item_id": id})
-        else:
-            return render(request, "course/edit_course.html", {"course": course, "item_id": id})
-    except Course.DoesNotExist:
-        return HttpResponseNotFound("<h2>Course not found</h2>")
-
-
 def delete_course(request, id):
     try:
         course = Course.objects.get(id=id)
@@ -122,6 +109,30 @@ def delete_course(request, id):
         return HttpResponseRedirect("/")
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Course not found</h2>")
+
+
+def announcement_list(request, id):
+    form_announcement = AnnouncementForm()
+    announcements = Announcement.objects.all().filter(course_id=id)
+    count_list = zip(announcements, range(1, announcements.count()+1))
+    return render(request, "course/announcement_list.html", {"form_announcement": form_announcement,
+                                                             "announcements": announcements,
+                                                             "count_list": count_list,
+                                                             "item_id": id})
+
+
+def create_announcement(request, id):
+    if request.method == "POST":
+        announcement = Announcement()
+        announcement.content = request.POST.get("content")
+        announcement.course_id = id
+        announcement.save()
+    return HttpResponseRedirect(reverse('announcement_list', args=(id,)))
+
+
+def check_list(request, id):
+
+    return render(request, "course/check_list.html", {"item_id": id})
 
 
 class CourseAPIView(generics.ListAPIView):

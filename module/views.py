@@ -13,28 +13,19 @@ def list_module(request, id):
     course = Course.objects.get(id=id)
     form = ModuleForm()
     modules = Module.objects.all()
-    form_announcement = AnnouncementForm()
+    #form_announcement = AnnouncementForm()
 
-    announcements = Announcement.objects.all().filter(course_id=id)
+    #announcements = Announcement.objects.all().filter(course_id=id)
 
-    count_list = zip(announcements, range(1, announcements.count()+1))
+    #count_list = zip(announcements, range(1, announcements.count()+1))
     # in case to filter by id
     modules = Module.objects.filter(course_id=id)
     lessons = Lesson.objects.all().filter(module__course_id=id)
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
-                                                       "form_announcement": form_announcement,
-                                                       "announcements": announcements,
-                                                       "count_list": count_list,
+                                                       # "form_announcement": form_announcement,
+                                                       # "announcements": announcements,
+                                                       # "count_list": count_list,
                                                        "course": course, "lessons": lessons, "item_id": id})
-
-
-def create_announcement(request, id):
-    if request.method == "POST":
-        announcement = Announcement()
-        announcement.content = request.POST.get("content")
-        announcement.course_id = id
-        announcement.save()
-    return HttpResponseRedirect(reverse('list', args=(id,)))
 
 
 def create_module(request, id):

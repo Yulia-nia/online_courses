@@ -1,12 +1,60 @@
-<section>
-        <table>
-            <td>
-                <a href="{% url 'index' %}">Мои курсы</a>
-                |
-                <a href="{% url 'edit' item_id%}">Основное </a>
-                <a href="{% url 'setting' item_id%}">Управление</a>
-                |
-                <a href="{% url 'list' item_id%}">Обучение</a>
-            </td>
-        </table>
-</section>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирование</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+
+    <script src="{% static 'js/sidebars.js'%}"></script>
+    <link href="{% static 'css/sidebars.css' %}" rel="stylesheet">
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+
+</head>
+<body>
+<main class="container-fluid- g-0 vh-100">
+<header class="p-2 mb-3 border-bottom bg-dark ">
+    <div class="container">
+      <div class="d-flex flex-wrap  align-items-center justify-content-center justify-content-md-start">
+        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
+        </a>
+
+        <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
+          <li><a href="#" class="nav-link px-2 link-light">Overview</a></li>
+          <li><a href="#" class="nav-link px-2 link-light">Inventory</a></li>
+          <li><a href="#" class="nav-link px-2 link-light">Customers</a></li>
+          <li><a href="#" class="nav-link px-2 link-light">Products</a></li>
+        </ul>
+
+        <form class="col-12 col-md-auto mb-3 mb-md-0 me-md-3">
+          <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
+        </form>
+
+        <div class="dropdown text-end">
+          <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+            <li><a class="dropdown-item" href="#">New project...</a></li>
+            <li><a class="dropdown-item" href="#">Settings</a></li>
+            <li><a class="dropdown-item" href="#">Profile</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Sign out</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <div class="container-xxl">
+        {% block content1 %}
+
+        {% endblock %}
+    </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+
+{% block content %}
+    <STYLE>
+        /* Всплывающая форма-скрыта по умолчанию */
+        .form-popup {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 3px solid #f1f1f1;
+        }
+ </STYLE>
+
+
+     <section class="container py-3">
+
+    {% if announcements.count > 0 %}
+        <section>
+            <div class="list-group container md-3 my-3">
+                {% for item, id in count_list %}
+
+              <div class="list-group-item list-group-item-action d-flex gap-3 py-3">
+{#                <img src="https://github.com/twbs.png" alt="twbs" width="32" height="32" class="rounded-circle flex-shrink-0">#}
+                <div class="d-flex gap-2 w-100 justify-content-between">
+                  <div>
+                    <h6 class="mb-3">Объявление {{ id }}</h6>
+                    <p class="mb-3 opacity-75">
+                        {{ item.content | safe}}
+                    </p>
+                  </div>
+                  <small class="opacity-50 text-nowrap">{{ item.time_update }}</small>
+                </div>
+              </div>
+                    <hr>
+                {% endfor %}
+            </div>
+        </section>
+        <section>
+            <p>Добавьте объявление ученикам</p>
+            <button class="btn btn-lg position-center btn-light w-30 mx-0"
+                    onclick="openForm_Announcement()">+ Добавить</button>
+        </section>
+    {% else %}
+        <section>
+            {# right #}
+            <p>Добавьте объявление ученикам</p>
+            <button class="btn btn-lg position-center btn-light w-30 mx-0"
+                    onclick="openForm_Announcement()">+ Добавить первое объявление</button>
+        </section>
+    {% endif %}
+
+
+
+      {#  FORM  announcement #}
+    <div class="form-popup mb-3" id="myFormAnnouncement" >
+        <div class="modal position-fixed d-block mb-lg-5 bg-body py-5"
+            style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content rounded-6 shadow">
+                    <div class="modal-header border-bottom-0">
+                        <h5 class="modal-title">
+                            Введите текст объявления, которое увидят участники курса
+                        </h5>
+                        <button type="button" class="btn-close" onclick="closeForm_Announcement()" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <div class="modal-body py-0">
+
+                        <form method="post" action="create_announcement/" >
+                             {% csrf_token %}
+                             {% bootstrap_form form_announcement layout='gorizontal' %}
+                            <div class="row">
+                                <div class="col-6">
+                                {% bootstrap_button "Опубликовать объявление" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+                                </div>
+                                <div class="col-6">
+                                   <button type="button" class="btn btn-lg btn-outline-secondary w-100 mx-0" onclick="closeForm_Announcement()" data-bs-dismiss="modal">
+                                        Отменить
+                                   </button>
+                                </div>
+                            </div>
+
+                         </form>
+
+                    </div>
+                    <div class="modal-footer flex-column border-top-0">
+
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+
+
+
+     </section>
+
+<script>
+      function openForm_Announcement() {
+          document.getElementById("myFormAnnouncement").style.display = "block";
+        }
+        function closeForm_Announcement() {
+          document.getElementById("myFormAnnouncement").style.display = "none";
+        }
+</script>
+{% endblock %}

@@ -18,10 +18,19 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from online_courses import views
+
+
 urlpatterns = [
+    # path('accounts/', include('django.contrib.auth.urls')),
+    path("", include("users.urls")),
+    path('accounts/', include('django.contrib.auth.urls')),
+    path('summernote/', include('django_summernote.urls')),
     path('admin/', admin.site.urls),
     path('courses/', include('course.urls')),
-    path('summernote/', include('django_summernote.urls')),
+
+    # path('accounts/', include('django.contrib.auth.urls')),
+    # path('users/', include('users.urls')),
 ]
 
 if settings.DEBUG:

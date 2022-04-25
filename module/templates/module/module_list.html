@@ -1,9 +1,13 @@
 {% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
 
 
 {% block content %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
  <STYLE>
         /* Всплывающая форма-скрыта по умолчанию */
         .form-popup {
@@ -14,61 +18,52 @@
             border: 3px solid #f1f1f1;
         }
  </STYLE>
-    <section class="container py-3">
-
-
-    <P>HIIIIII MODULE</P>
+ <section class="container py-3">
 
      {% if modules.count > 0 %}
-    <div class="container px-4 py-3" id="featured-3">
-    <h2 class="pb-2 border-bottom">Список модулей куса</h2>
-        <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-
+        <ol class="list1b">
             {% for item in modules %}
+                <li>
+                    <div class="d-flex justify-content-between h-30">
+                        <strong class="text-gray-dark ">{{ item.title }}</strong>
+                        <div>
+                            <a href="edit_module/{{ item.id }}/" title="Редактировать модуль" class="btn"><i class="fa fa-edit"></i></a>
+                            <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn"><i class="fa fa-trash"></i></a>
+                        </div>
+                    </div>
+                    {% if item.lesson_set.count == 0 %}
+                        <p>В этом модуле пока ничего нет :(</p>
+                    {% else %}
+                        <details open>
+                            <summary><h5>Содержимое модуля <small> (Кол-во уроков {{ item.lesson_set.count }})</small></h5> </summary>
+                            <div class="container p-3">
+                                <ul class="list4b">
+                                    {% for lesson in item.lesson_set.all %}
+                                        <ol>
+                                            <div class="d-flex top-0 h-30">
+                                                <div class="" style="padding: 8px">
+                                                     <p>{{ lesson.title }} </p>
+                                                </div>
+                                                <div class="" style="padding: 1px">
+                                                    <a href="edit_lesson/{{ lesson.id }}/" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
+                                                </div>
+                                            </div>
 
-        <div class="feature col">
-        <div class="feature-icon bg-primary bg-gradient">
-          <svg class="bi" width="1em" height="1em"></svg>
-        </div>
-        <h2>{{ item.title }}</h2>
-
-                <a href="edit_module/{{ item.id }}/">Редактировать МОДУЛЬ</a>
-
-                <h2>Кол-во уроков {{ item.lesson_set.count }}</h2>
-{#            <td>#}
-{#                <a href="edit_course/{{item.id}}">Управление</a> |#}
-{#                <a href="delete/{{item.id}}">Удалить</a>#}
-{#            </td>#}
-
-
-                {% for lesson in lessons %}
-                    {% if lesson.module_id == item.id %}
-
-                        <p> {{ lesson.title }} </p>
-                        <a href="edit_lesson/{{ lesson.id }}/">Редактировать урок</a>
-
+                                        </ol>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </details>
                     {% endif %}
-                {% endfor %}
-{#      </div>#}
 
-                <hr/>
-                <p>Добавить</p>
-{#                {% if item.lesson_set.count > 0 %}#}
-{#                    <a href="#" >добавить урок</a>#}
-{#                    {% else %}#}
-{#                    <a href="#" >добавить первый урок</a>#}
-{#                {% endif %}#}
+                    <p>Добавить</p>
+                    <a href="{{item.id}}/lesson_create/"> Урок </a> |
+                    <a href="#" > Задание </a>
 
-                <a href="{{item.id}}/lesson_create/"> Урок </a> |
-
-                <a href="#" > Задание </a>
-                <p> </p>
+                </li>
             {% endfor %}
-            </div>
-        </div>
-    </div>
-
-    {% endif %}
+        </ol>
+     {% endif %}
 
 
      <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">+ модуль</button>
@@ -101,6 +96,29 @@
         </div>
     </div>
     </section>
+{##}
+{#    FORM DELETE MODULE#}
+{##}
+{#    <div class="form-popup" id="myFormDeleteModule">#}
+{#        <div class="modal modal-alert position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalChoice">#}
+{#            <div class="modal-dialog" role="document">#}
+{#                <div class="modal-content rounded-4 shadow">#}
+{#                    <div class="modal-body p-4 text-center">#}
+{#                        <h5 class="mb-0">Удаление модуля навсегда</h5>#}
+{#                        <p class="mb-0">Вы можете навсегда удалить модуль.#}
+{#                                    <br>Восстановить его будет нельзя</p>#}
+{#                    </div>#}
+{##}
+{#                    <div class="modal-footer flex-nowrap p-0">#}
+{##}
+{#                        <a id='index' type="button" href="delete_module/{{ i_id }}" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right"><strong>Удалить навсегда</strong></a>#}
+{##}
+{#                            <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" onclick="closeFormDeleteModule()" data-bs-dismiss="modal">Отмена</button>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
 
     <script>
         function openForm() {

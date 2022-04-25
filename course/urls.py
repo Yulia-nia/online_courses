@@ -6,7 +6,9 @@ from online_courses import settings
 from .views import pageNotFound, CourseAPIView
 
 urlpatterns = [
+
     path('', views.index, name='index'),
+
     path('create_course/', views.create_course),
 
     path('edit_course/<int:id>/', views.edit_course, name='edit'),

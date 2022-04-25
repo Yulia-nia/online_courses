@@ -55,3 +55,20 @@ class Announcement(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class File(models.Model):
+    title = models.CharField(max_length=250)
+    file = models.FileField(upload_to='files/%Y-%m-%d/', null=True, blank=True)
+    time_update = models.DateTimeField(auto_now=True)
+    time_create = models.DateTimeField(auto_now_add=True)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ('id',)
+        db_table = 'files'
+        verbose_name = 'Файл',
+        verbose_name_plural = 'Файлы'
+
+    def __str__(self):
+        return self.title

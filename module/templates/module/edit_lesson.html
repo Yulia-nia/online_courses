@@ -21,4 +21,14 @@
           </div>
 
          <button button_type="submit" class="btn btn-primary">Submit</button>
-     </form>
+</form>
+
+<p>
+    Добавить файл
+</p>
+{{ files.count }}
+{% for item in files %}
+
+    <a href="{{ item.file.url }}">{{ item.title }}</a>
+
+{% endfor %}

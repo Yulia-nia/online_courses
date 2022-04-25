@@ -25,7 +25,8 @@ SECRET_KEY = 'django-insecure-9d2l0@ei7-#gss51eyfd^-(51m5jeofg4g24v@n%5o5*5k*sys
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+# ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['198.211.99.20', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -37,15 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'course.apps.CourseConfig',
     "django_bootstrap5",
     'module.apps.ModuleConfig',
+    'users.apps.UserConfig',
+    # 'module.apps.UserConfig',
     'rest_framework',
     'crispy_forms',
     'django_summernote',
-
 ]
+
 SUMMERNOTE_THEME = 'bs4'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -66,8 +68,8 @@ ROOT_URLCONF = 'online_courses.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
+        # 'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -141,3 +143,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+AUTH_USER_MODEL = 'users.User'
+# LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'dashboard'
+# перенаправляем после входа
+LOGIN_REDIRECT_URL = "dashboard"
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# EMAIL_HOST = "localhost"
+# EMAIL_PORT = 1025
+
+EMAIL_HOST = "smtp.mailgun.org"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "postmaster@sandboxda837e888697430282a9ed73f13ebbb2.mailgun.org"
+EMAIL_HOST_PASSWORD = "192d346f63b57c86f59b15b8efaee62c-7fba8a4e-77933c8b"
+EMAIL_USE_TLS = True
+

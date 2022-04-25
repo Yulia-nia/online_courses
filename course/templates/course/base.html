@@ -16,12 +16,12 @@
 </head>
 <body>
 {% block content1 %}
-    <main class="container-fluid g-0 vh-100" style="height: 100px;">
+    <main class="container-fluid g-0">
 
 
         <div class="row g-0 h-100">
             <div class="col-md-2 bg-dark " >
-                <div class=" sticky-top d-flex flex-column flex-shrink-1 p-3  w-100 text-white bg-light">
+                <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
                     <a href="{% url 'index' %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                       <svg class="bi me-2" width="30" height="24"></svg>
                       <span class="fs-5 fw-semibold">НАЗВАНИЕ</span>
@@ -86,7 +86,7 @@
 
 
             <div class="col-md-10 gx-4">
-
+                    <div class="container">
                     {#{% include 'C:\Users\User\PycharmProjects\online_courses\templates\header.html' with item_id=item_id %}#}
 
                     {% block content %}

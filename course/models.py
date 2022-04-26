@@ -7,7 +7,7 @@ from online_courses import settings
 class Course(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField(null=True, blank=True)   # empty values
-    # author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     time_update = models.DateTimeField(auto_now=True)
     time_create = models.DateTimeField(auto_now_add=True)         # value does not change
 

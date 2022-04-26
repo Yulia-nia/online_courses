@@ -36,7 +36,11 @@
                         <div class="blog-item">
 
                         <div class="image-blog">
+                            {% if course.settings.image %}
+                            <img src="{{ course.settings.image.url }}"  alt="" class="img-fluid">
+                            {% else %}
 							<img src="{% static 'img/blog_1.jpg' %}"  alt="" class="img-fluid">
+                            {% endif %}
 						</div>
 
                         <div class="meta-info-blog">

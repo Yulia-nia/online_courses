@@ -11,11 +11,13 @@ from course.models import Course, Settings
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement
+from users.models import User
 
 
 def index(request):
     courseform = CourseForm()
-    courses = Course.objects.all()
+    user = User.objects.get(username=request.user.username)
+    courses = Course.objects.all().filter(author_id=user.id)
     return render(request, "course/index.html", {"form": courseform, "courses": courses})
 
 
@@ -83,6 +85,7 @@ def create_course(request):
         course = Course()
         course.title = request.POST.get("title")
         course.description = request.POST.get("description")
+        course.author = User.objects.get(username=request.user.username)
         course.save()
     return HttpResponseRedirect("/")
 
@@ -98,6 +101,7 @@ def edit_course(request, id):
     if form.is_valid():
         course.title = form['title'].value()
         course.description = form["description"].value()
+
         course.save()
     return render(request, "course/edit_course.html", {"course": course, 'form': form, "item_id": id})
 

@@ -28,7 +28,7 @@ class Lesson(models.Model):
     create = models.DateTimeField(auto_now_add=True)
     short_description = models.TextField(max_length=250)
     description = models.TextField(null=True, blank=True)
-    is_published = models.BooleanField(default=False)
+    is_published = models.BooleanField(null=True, default=False)
 
     class Meta:
         ordering = ('id',)

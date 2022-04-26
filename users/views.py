@@ -2,14 +2,24 @@ from django.contrib.auth import login
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+
+from course.models import Course
 from users.forms import CustomUserCreationForm, UserEditForm
 from django.contrib.auth.models import Group
 
-from users.models import User
+from users.models import User, BookmarkCourse
 
 
 def dashboard(request):
     return render(request, "users/dashboard.html")
+
+
+def profile(request):
+    user = User.objects.get(username=request.user.username)
+    courses = []
+    for i in BookmarkCourse.objects.all().filter(user=user):
+        courses.append(Course.objects.get(id=i.obj_id))
+    return render(request, "users/profile.html", {'user': user, "courses": courses})
 
 
 def register(request):

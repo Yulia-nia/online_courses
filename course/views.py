@@ -1,3 +1,4 @@
+from django.contrib import auth
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response
 from rest_framework import generics
@@ -11,7 +12,7 @@ from course.models import Course, Settings
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement
-from users.models import User
+from users.models import User, BookmarkCourse
 
 
 def index(request):
@@ -19,6 +20,28 @@ def index(request):
     user = User.objects.get(username=request.user.username)
     courses = Course.objects.all().filter(author_id=user.id)
     return render(request, "course/index.html", {"form": courseform, "courses": courses})
+
+
+def catalog_courses(request):
+    courses = Course.objects.all()
+    return render(request, "course/course_catalog.html", {"courses": courses})
+
+
+def view_course(request, id):
+    course = Course.objects.get(id=id)
+    user = auth.get_user(request)
+    bookmark, created = BookmarkCourse.objects.get_or_create(user=user, obj_id=id)
+    # если не была создана новая закладка,
+    # то считаем, что запрос был на удаление закладки
+    if not created:
+        bookmark.delete()
+
+    return render(request, "course/view_course.html", {"course": course})
+
+
+def pass_course(request, id):
+    course = Course.objects.get(id=id)
+    return render(request, "course/pass_course.html", {"course": course})
 
 
 def settings_edit(request, id):
@@ -166,4 +189,3 @@ class CourseAPIView(generics.ListAPIView):
     #     serializer.is_valid(raise_exception=True)
     #     serializer.save()
     #     return Response({"course": serializer.data})
-

@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.urls import reverse
 # Create your views here.
 from course.models import Course
-from module.forms import ModuleForm, AnnouncementForm
+from module.forms import ModuleForm, AnnouncementForm, LessonEditForm
 from module.models import Module, Lesson, Announcement, File
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
@@ -65,21 +65,29 @@ def create_lesson(request, id):
                                                          })
 
 
-
 def edit_lesson(request, id):
     try:
         lesson = Lesson.objects.get(id=id)
+        module = Module.objects.get(id=lesson.module_id)
+        form = LessonEditForm(request.POST or None, request.FILES or None, initial=
+                                    {'title': lesson.title,
+                                     'description': lesson.description,
+                                     'short_description': lesson.short_description,
+                                     'is_published': lesson.is_published,
+                                     })
         files = File.objects.all().filter(lesson_id=lesson.id)
-        if request.method == "POST":
-            lesson.title = request.POST.get("title")
-            lesson.short_description = request.POST.get("short_description")
-            lesson.description = request.POST.get("description")
+        if form.is_valid():
+            lesson.title = form['title'].value()
+            lesson.description = form["description"].value()
+            lesson.short_description = form['short_description'].value()
+            lesson.is_published = form['is_published'].value()
             lesson.save()
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": id,
+            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": module.course_id,
+                                                               "form": form,
                                                                "files": files})
         else:
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": id,
-                                                               "files": files})
+            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": module.course_id,
+                                                               "form": form, "files": files})
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 

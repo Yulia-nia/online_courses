@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Profile</h2>
+
+    {{ user.username }}
+    {% for item in courses %}
+        <p>{{ item.title }}</p>
+    {% endfor %}
+{% endblock %}

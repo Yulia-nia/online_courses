@@ -1,0 +1,82 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\templates\header.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+
+
+{% block content1 %}
+
+{#    <STYLE>#}
+{#        /* Всплывающая форма-скрыта по умолчанию */#}
+{#        .form-popup {#}
+{#            display: none;#}
+{#            position: fixed;#}
+{#            bottom: 0;#}
+{#            right: 15px;#}
+{#            border: 3px solid #f1f1f1;#}
+{#        }#}
+{#    </STYLE>#}
+
+
+
+ <div class="section wb">
+        <div class="container">
+            <div class="row">
+                {% for course in courses %}
+                <div class="col-lg-4 col-md-6 col-12">
+
+
+                        <div class="blog-item">
+
+                        <div class="image-blog">
+                            {% if course.settings.image %}
+                            <img src="{{ course.settings.image.url }}"  alt="" class="img-fluid">
+                            {% else %}
+							<img src="{% static 'img/blog_1.jpg' %}"  alt="" class="img-fluid">
+                            {% endif %}
+						</div>
+
+                        <div class="meta-info-blog">
+                            <span> {{ course.settings.learning_format }} </span>
+                        </div>
+
+						<div class="blog-title">
+							<h2>{{ course.title }}</h2>
+						</div>
+
+						<div class="blog-desc">
+							<p> {{ course.description }} </p>
+						</div>
+
+                        <table>
+                            <tr style="width: 100%;">
+{#                                <td style="width: 40%;">#}
+{#                                    <div class="blog-button">#}
+{#                                        <a href="edit_course/{{course.id}}" class="button7">Управление</a>#}
+{#						            </div>#}
+{#                                </td>#}
+                                <td style="width: 60%;">
+                                    <div class="blog-button">
+                                        <a href="{%  url  'view_course' course.id %}" class="button7">Просмотр</a>
+						            </div>
+                                </td>
+                            </tr>
+                        </table>
+{##}
+{#                            <div class="blog-button">#}
+{#                                <a href="delete/{{course.id}}" class="button7">Удалить</a>#}
+{#						    </div>#}
+					    </div>
+                    <p> </p>
+                </div><!-- end col -->
+                   {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+
+

@@ -1,27 +1,105 @@
-<h6> ФОРМА РЕДАКТИРОВАНИЯ УРОКА {{ lesson.title }}</h6>
+{% extends "course/base.html" %}
+{% load static %}
 
-<form method="post">
-         {% csrf_token %}
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
 
-          <div class="form-group">
-
-            <label for="exampleInputEmail1">Название</label>
-            <input type="text" class="form-control" name="title" id="titlecourse"  value="{{lesson.title}}">
-          </div>
-
-          <div class="form-group">
-            <label for="exampleInputPassword1">Описание</label>
-            <input type="text" class="form-control" name="short_description" id="descourse" value="{{lesson.short_description}}">
-          </div>
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
 
 
-          <div class="form-group">
-            <label for="exampleInputPassword1">Описание</label>
-            <input type="text" class="form-control" name="description" id="descosurse" value="{{lesson.description}}">
-          </div>
+{% block content %}
 
-         <button button_type="submit" class="btn btn-primary">Submit</button>
-</form>
+<div class="container">
+    <div class="py-3 text-center">
+
+        <form method="post" enctype= multipart/form-data>
+            {% csrf_token %}
+                <div>
+                    <h4 class="text-start">Название</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь, какие материалы вы размещаете.<br>
+                              Например: онлайн-курс, марафон, практикум, семинар, записи конференции, методические пособия,
+                              записи вебинаров и так далее. <br>Этот тизер будет размещен рядом с заголовком вашего курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.title class="custom-control-input"%}
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-start">Описание</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь, какие материалы вы размещаете.<br>
+                              Например: онлайн-курс, марафон, практикум, семинар, записи конференции, методические пособия,
+                              записи вебинаров и так далее. <br>Этот тизер будет размещен рядом с заголовком вашего курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.description class="custom-control-input"%}
+                    </div>
+                </div>
+
+
+                <div>
+                    <h4 class="text-start">МИНИ Описание</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь, какие материалы вы размещаете.<br>
+                              Например: онлайн-курс, марафон, практикум, семинар, записи конференции, методические пособия,
+                              записи вебинаров и так далее. <br>Этот тизер будет размещен рядом с заголовком вашего курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.short_description class="custom-control-input"%}
+                    </div>
+                </div>
+
+
+                 <div>
+                    <h4 class="text-start">Черновик</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь, какие материалы вы размещаете.<br>
+                              Например: онлайн-курс, марафон, практикум, семинар, записи конференции, методические пособия,
+                              записи вебинаров и так далее. <br>Этот тизер будет размещен рядом с заголовком вашего курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.is_published class="custom-control-input"%}
+                    </div>
+                </div>
+            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+        </form>
+    </div>
+</div>
+
 
 <p>
     Добавить файл
@@ -32,3 +110,5 @@
     <a href="{{ item.file.url }}">{{ item.title }}</a>
 
 {% endfor %}
+
+{% endblock %}

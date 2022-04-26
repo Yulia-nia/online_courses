@@ -34,8 +34,8 @@
           </a>
 
           <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
-              <li><a href="#" class="nav-link px-2 link-light">Главная</a></li>
-              <li><a href="#" class="nav-link px-2 link-light">Каталог</a></li>
+              <li><a href="{% url 'dashboard' %}" class="nav-link px-2 link-light">Главная</a></li>
+              <li><a href="{% url 'catalog' %}" class="nav-link px-2 link-light">Каталог</a></li>
 
               {% if user.is_authenticated %}
                   {% if request.user|has_group:"Преподаватель" %}
@@ -68,7 +68,7 @@
               <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
 {#                <li><a class="dropdown-item" href="#">New project...</a></li>#}
                 <li><a class="dropdown-item" href="{% url 'edit_data' %}">Настройки профиля</a></li>
-                <li><a class="dropdown-item" href="#">Профиль</a></li>
+                <li><a class="dropdown-item" href="{% url 'profile' %}">Профиль</a></li>
                 <li><hr class="dropdown-divider"></li>
                 <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
               </ul>

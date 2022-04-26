@@ -8,12 +8,16 @@ from .views import pageNotFound, CourseAPIView
 urlpatterns = [
 
     path('', views.index, name='index'),
+    path('course_catalog/', views.catalog_courses, name='catalog'),
+    path('view_course/<int:id>/', views.view_course, name='view_course'),
+    path('pass_course/<int:id>/', views.pass_course, name='pass_course'),
 
     path('create_course/', views.create_course),
-
     path('edit_course/<int:id>/', views.edit_course, name='edit'),
-    path('main_settings/<int:id>/', views.settings_edit, name='setting'),
     path('delete/<int:id>/', views.delete_course),
+
+    path('main_settings/<int:id>/', views.settings_edit, name='setting'),
+
     path('<int:id>/module/', include('module.urls'), name='module'),
 
     path('<int:id>/check_list/', views.check_list, name='check_list'),

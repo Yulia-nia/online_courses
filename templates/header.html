@@ -1,4 +1,6 @@
 {% load static %}
+{% load auth_extras %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,33 +26,59 @@
     <div class="container">
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 {#      <div class="d-flex flex-wrap  align-items-center justify-content-center justify-content-md-start">#}
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
-          <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"/></svg>
-        </a>
 
-        <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
-          <li><a href="#" class="nav-link px-2 link-light">Overview</a></li>
-          <li><a href="#" class="nav-link px-2 link-light">Inventory</a></li>
-          <li><a href="#" class="nav-link px-2 link-light">Customers</a></li>
-          <li><a href="#" class="nav-link px-2 link-light">Products</a></li>
+          <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-dark text-decoration-none">
+              <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                  <use xlink:href="#bootstrap"/>
+              </svg>
+          </a>
+
+          <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
+              <li><a href="#" class="nav-link px-2 link-light">Главная</a></li>
+              <li><a href="#" class="nav-link px-2 link-light">Каталог</a></li>
+
+              {% if user.is_authenticated %}
+                  {% if request.user|has_group:"Преподаватель" %}
+                  <li><a href="#" class="nav-link px-2 link-light">Преподавание</a></li>
+                  {% elif request.user|has_group:"Ученик" %}
+                  <li><a href="#" class="nav-link px-2 link-light">Обучение</a></li>
+                      {% elif request.user|has_group:"Модератор" %}
+                       <li><a href="#" class="nav-link px-2 link-light">Админка</a></li>
+                  {% endif %}
+                {% endif %}
         </ul>
 
         <form class="col-12 col-md-auto mb-3 mb-md-0 me-md-3">
           <input type="search" class="form-control" placeholder="Search..." aria-label="Search">
         </form>
 
-        <div class="dropdown text-end">
-          <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
-          </a>
-          <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-            <li><a class="dropdown-item" href="#">New project...</a></li>
-            <li><a class="dropdown-item" href="#">Settings</a></li>
-            <li><a class="dropdown-item" href="#">Profile</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
-          </ul>
-        </div>
+
+          {% if user.is_authenticated %}
+            <div class="dropdown text-end">
+              <a href="#" class="d-block link-light text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                  {% if user.image_pic %}
+                      <img src="{{ user.image_pic.url }}" alt="mdo" width="32" height="32" class="rounded-circle">
+                  {% else %}
+                        <img src="https://github.com/mdo.png" alt="mdo" width="32" height="32" class="rounded-circle">
+                  {% endif %}
+               </a>
+              <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
+{#                <li><a class="dropdown-item" href="#">New project...</a></li>#}
+                <li><a class="dropdown-item" href="{% url 'edit_data' %}">Настройки профиля</a></li>
+                <li><a class="dropdown-item" href="#">Профиль</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Выйти</a></li>
+              </ul>
+            </div>
+
+          {% else %}
+            <div class="dropdown text-end">
+                 <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
+                     <li><a href="{% url 'login' %}" class="nav-link px-2 link-light">Вход</a></li>
+                     <li><a href="{% url 'register' %}" class="nav-link px-2 link-light">Регистрация</a></li>
+                 </ul>
+            </div>
+          {% endif %}
       </div>
 {#    </div>#}
 

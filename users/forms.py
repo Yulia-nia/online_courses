@@ -14,6 +14,13 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ('username', 'password1', 'password2', 'email', 'location')
        #etc etc, other fields you want displayed on the form)
 
+
+class CustomInstructorCreationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ('username', 'password1', 'password2', 'email', 'location')
+
+
 #
 # class CustomUserCreationForm(UserCreationForm):
 #     class Meta(UserCreationForm.Meta):

@@ -14,7 +14,14 @@
         {% for module in course.module_set.values %}
             <p>{{ module.title }}</p>
         {%endfor %}
+
+
         <p></p>
+
+        <div data-id="{{ like_obj.id }}" data-type="article" data-action="bookmark" title="Избранное">
+            <span class="glyphicon glyphicon-star"></span>
+            <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>
+        </div>
 
         <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>
     </div>

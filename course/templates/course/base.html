@@ -57,11 +57,12 @@
                             <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
                               Общение
                             </button>
-                            <div class="collapse" id="dashboard-collapse">
-                              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li><a href="#" class="link-dark rounded">Рассылка</a></li>
-                                <li><a href="#" class="link-dark rounded">Комментарии</a></li>
-                              </ul>
+                            <div class="collapse show" id="dashboard-collapse">
+                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="{% url 'students_list' item_id%}" class="link-dark rounded">Учащиеся</a></li>
+                                    <li><a href="#" class="link-dark rounded">Рассылка</a></li>
+                                    <li><a href="#" class="link-dark rounded">Комментарии</a></li>
+                                </ul>
                             </div>
                         </li>
 

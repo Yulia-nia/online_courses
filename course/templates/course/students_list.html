@@ -1,0 +1,14 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+
+{% block content %}
+    <div class="container py-3">
+        <p>students list</p>
+        {% for student in students %}
+
+            <p>{{ student.email }}</p>
+        {% endfor %}
+     </div>
+{% endblock %}

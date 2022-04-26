@@ -39,6 +39,24 @@ class Lesson(models.Model):
     def __str__(self):
         return self.title
 
+#
+# class Task(models.Model):
+#     module = models.ForeignKey(Module, on_delete=models.CASCADE)
+#     title = models.CharField(max_length=200)
+#     update = models.DateTimeField(auto_now=True)
+#     create = models.DateTimeField(auto_now_add=True)
+#
+#     short_description = models.TextField(max_length=250)
+#
+#     class Meta:
+#         ordering = ('id',)
+#         db_table = 'lesson'
+#         verbose_name = 'Урок',
+#         verbose_name_plural = 'Уроки'
+#
+#     def __str__(self):
+#         return self.title
+
 
 class Announcement(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)

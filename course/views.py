@@ -35,7 +35,6 @@ def view_course(request, id):
     # то считаем, что запрос был на удаление закладки
     if not created:
         bookmark.delete()
-
     return render(request, "course/view_course.html", {"course": course})
 
 
@@ -158,8 +157,16 @@ def create_announcement(request, id):
 
 
 def check_list(request, id):
-
     return render(request, "course/check_list.html", {"item_id": id})
+
+
+def students_list(request, id):
+    course = Course.objects.get(id=id)
+    students = []
+    users = BookmarkCourse.objects.all().filter(obj_id=id)
+    for i in users:
+        students.append(User.objects.get(id=i.user_id))
+    return render(request, "course/students_list.html", {"item_id": id, "students": students})
 
 
 class CourseAPIView(generics.ListAPIView):
@@ -189,3 +196,4 @@ class CourseAPIView(generics.ListAPIView):
     #     serializer.is_valid(raise_exception=True)
     #     serializer.save()
     #     return Response({"course": serializer.data})
+

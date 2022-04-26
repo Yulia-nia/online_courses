@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 from online_courses import settings
 from .views import pageNotFound, CourseAPIView
 
+
 urlpatterns = [
 
     path('', views.index, name='index'),
@@ -12,6 +13,7 @@ urlpatterns = [
     path('view_course/<int:id>/', views.view_course, name='view_course'),
     path('pass_course/<int:id>/', views.pass_course, name='pass_course'),
 
+    path('<int:id>/students_list/', views.students_list, name="students_list"),
     path('create_course/', views.create_course),
     path('edit_course/<int:id>/', views.edit_course, name='edit'),
     path('delete/<int:id>/', views.delete_course),

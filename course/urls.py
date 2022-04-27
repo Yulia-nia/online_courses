@@ -22,6 +22,8 @@ urlpatterns = [
 
     path('<int:id>/module/', include('module.urls'), name='module'),
 
+    path('chat/', include('chat.urls'), name='chat'),
+
     path('<int:id>/check_list/', views.check_list, name='check_list'),
 
     path('<int:id>/announcement_list/', views.announcement_list, name='announcement_list'),

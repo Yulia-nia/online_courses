@@ -1,0 +1,31 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\templates\header.html" %}
+{% load static %}
+
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% load chat_extras %}
+
+{% block content1 %}
+
+        <div id="messages" class="panel">
+            <div id="innerMessages">
+                {% for message in chat.message_set.all %}
+                        {% include 'chat/message.html' with message_item=message %}
+                {% endfor %}
+            </div>
+        </div>
+
+    <div id="message_form">
+        <form id="message-form" class="panel panel-body" method="post" >
+            {% csrf_token %}
+            {% bootstrap_form form %}
+            <button type="submit" class="btn btn-default btn-sm">
+{#                    onclick="return ETextEditor.validateForm('message-form')">#}
+
+                <span class="ico ico-comment">
+
+            </span>Отправить</button>
+        </form>
+    </div>
+
+{% endblock %}

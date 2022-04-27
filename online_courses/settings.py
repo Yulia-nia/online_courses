@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "django_bootstrap5",
     'module.apps.ModuleConfig',
     'users.apps.UserConfig',
+    'chat.apps.ChatConfig',
     # 'module.apps.UserConfig',
     'rest_framework',
     'crispy_forms',

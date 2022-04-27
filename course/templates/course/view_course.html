@@ -10,6 +10,7 @@
 <div class="container">
     <div class="py-3 text-center">
         <p>{{ course.title }}</p>
+    <p>{{ course.author_id }}</p>
         <p>{{ course.settings.about_course | safe }}</p>
         {% for module in course.module_set.values %}
             <p>{{ module.title }}</p>
@@ -23,7 +24,14 @@
             <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>
         </div>
 
-        <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>
+        <a href="{% url 'create_dialog' course.author_id %}">Чат с инструктором</a>
+{#        <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>#}
+{##}
+{#        <a href="http://vk.com/share.php?url=https://127.0.0.1:8000/courses/view_course/{{ course.get_absolute_url }}"#}
+{#       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"#}
+{#       target="_blank" rel="nofollow">#}
+{#            <img src="{% static 'images/social/vk.png' %}">#}
+{#        </a>#}
     </div>
 </div>
 

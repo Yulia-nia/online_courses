@@ -8,13 +8,13 @@ from chat.models import Chat
 
 
 class DialogsView(View):
-    def get(self, request):
-        chats = Chat.objects.filter(members__in=[request.user.id])
+    def get(self, request, c_id):
+        chats = Chat.objects.filter(members__in=[request.user.id], course_id=c_id)
         return render(request, 'chat/dialogs.html', {'user_profile': request.user, 'chats': chats})
 
 
 class MessagesView(View):
-    def get(self, request, chat_id):
+    def get(self, request, chat_id, id):
         try:
             chat = Chat.objects.get(id=chat_id)
             if request.user in chat.members.all():
@@ -34,14 +34,15 @@ class MessagesView(View):
             }
         )
 
-    def post(self, request, chat_id):
+    def post(self, request, chat_id, id):
+        chat = Chat.objects.get(id=chat_id)
         form = MessageForm(data=request.POST)
         if form.is_valid():
             message = form.save(commit=False)
             message.chat_id = chat_id
             message.author = request.user
             message.save()
-        return render(request, "chat/messages.html", {'chat_id': chat_id, "form":form})
+        return render(request, "chat/messages.html", {'chat_id': chat_id, "form": form, "chat": chat})
 
 
 class CreateDialogView(View):

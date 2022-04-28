@@ -24,8 +24,8 @@
             <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>
         </div>
 
-        <a href="{% url 'create_dialog' course.author_id %}">Чат с инструктором</a>
-{#        <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>#}
+        <a href="{% url 'dialog' course.id %}">Чат с инструктором</a>
+       <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>
 {##}
 {#        <a href="http://vk.com/share.php?url=https://127.0.0.1:8000/courses/view_course/{{ course.get_absolute_url }}"#}
 {#       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"#}

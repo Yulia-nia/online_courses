@@ -4,7 +4,11 @@ from django.db import models
 
 from django.utils import timezone
 
+from course.models import Course
 from users.models import User
+
+
+# class Room(models.Model):
 
 
 class Chat(models.Model):
@@ -22,6 +26,9 @@ class Chat(models.Model):
         default=DIALOG
     )
     members = models.ManyToManyField(User, verbose_name="Участник")
+    # student = models.ForeignKey(User, verbose_name="Ученик", on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, verbose_name="Курс", on_delete=models.CASCADE)
+    # author = models.ForeignKey(User, verbose_name="Инструктор", on_delete=models.CASCADE)
 
     #@models.permalink
     def get_absolute_url(self):
@@ -30,7 +37,7 @@ class Chat(models.Model):
 
 class Message(models.Model):
     chat = models.ForeignKey(Chat, verbose_name="Чат", on_delete=models.SET_NULL, null=True)
-    author = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
+    author = models.ForeignKey(User, verbose_name="Поьзователь", on_delete=models.CASCADE)
     message = models.TextField("Сообщение")
     pub_date = models.DateTimeField('Дата сообщения', default=timezone.now)
     is_readed = models.BooleanField('Прочитано', default=False)

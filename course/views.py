@@ -1,12 +1,14 @@
 from django.contrib import auth
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response
+from django.utils.timezone import now
 from rest_framework import generics
 # Create your views here.
 from django.urls import reverse
 from django.core.files.storage import FileSystemStorage
 from rest_framework.response import Response
 
+from chat.models import Chat, Message
 from course.forms import CourseForm, SettingsForm
 from course.models import Course, Settings
 from course.serializer import CourseSerializer
@@ -33,6 +35,7 @@ def view_course(request, id):
     bookmark, created = BookmarkCourse.objects.get_or_create(user=user, obj_id=id)
     # если не была создана новая закладка,
     # то считаем, что запрос был на удаление закладки
+    chat = Chat.objects.all().filter(course_id=course.id)
     if not created:
         bookmark.delete()
     return render(request, "course/view_course.html", {"course": course})
@@ -197,3 +200,28 @@ class CourseAPIView(generics.ListAPIView):
     #     serializer.save()
     #     return Response({"course": serializer.data})
 
+
+def dialog(request, c_id):
+    course = Course.objects.get(id=c_id)
+    if course.chat_set.count() == 0:
+        chat = Chat.objects.create(
+            course_id=course.id
+        )
+        chat.members.add(request.user)
+        chat.members.add(course.author_id)
+        message = Message.objects.create(chat_id=chat.id,
+                                         message='Добро пожаловать в чат',
+                                         author_id=course.author_id,
+                                         )
+        chat.save()
+        message.save()
+        return render(request, "../../chat/templates/chat/dialogs.html", {"course_id": c_id,
+                                                                          "chat": chat,
+                                                                            "chat_id": chat.id, "instructor": course.author})
+    else:
+        chat = Chat.objects.get(course_id=course.id)
+        chat.members.add(request.user)
+        chat.save()
+        return render(request, "../../chat/templates/chat/dialogs.html", {"course_id": c_id,
+                                                            "chat": chat,
+                                                            "chat_id": chat.id, "instructor": course.author})

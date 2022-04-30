@@ -1,11 +1,11 @@
 from django.db import models
 
 # Create your models here.
-from course.models import Course
+import course.models
 
 
 class Module(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey("course.Course", on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     # description = models.TextField(null=True, blank=True)  # empty values
     update = models.DateTimeField(auto_now=True)
@@ -59,7 +59,7 @@ class Lesson(models.Model):
 
 
 class Announcement(models.Model):
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey("course.Course", on_delete=models.CASCADE)
     content = models.CharField(max_length=250)
     # description = models.TextField(null=True, blank=True)  # empty values
     time_update = models.DateTimeField(auto_now=True)

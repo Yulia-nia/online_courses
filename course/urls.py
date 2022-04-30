@@ -12,10 +12,12 @@ urlpatterns = [
     path('course_catalog/', views.catalog_courses, name='catalog'),
     path('view_course/<int:id>/', views.view_course, name='view_course'),
     path('<int:c_id>/chat/dialog/', views.dialog, name='dialog'),
+
     path('<int:id>/chat/', include('chat.urls'), name='chat'),
     path('pass_course/<int:id>/', views.pass_course, name='pass_course'),
+    path('<int:id>/info', views.info_course, name='info'),
     #
-    # path('dialogs/<int:id>/', views.dialog, name='dialog'),
+    # path('dialogs/<int:d>/', views.dialog, name='dialog'),
 
     path('<int:id>/students_list/', views.students_list, name="students_list"),
     path('create_course/', views.create_course),

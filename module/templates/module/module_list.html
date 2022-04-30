@@ -27,8 +27,10 @@
                     <div class="d-flex justify-content-between h-30">
                         <strong class="text-gray-dark ">{{ item.title }}</strong>
                         <div>
+                            {% if user.id == course.author_id %}
                             <a href="edit_module/{{ item.id }}/" title="Редактировать модуль" class="btn"><i class="fa fa-edit"></i></a>
                             <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn"><i class="fa fa-trash"></i></a>
+                            {% endif %}
                         </div>
                     </div>
                     {% if item.lesson_set.count == 0 %}
@@ -44,9 +46,14 @@
                                                 <div class="" style="padding: 8px">
                                                      <p>{{ lesson.title }} </p>
                                                 </div>
+                                                {% if user.id == course.author_id %}
                                                 <div class="" style="padding: 1px">
                                                     <a href="edit_lesson/{{ lesson.id }}/" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
                                                 </div>
+                                                {% else %}
+                                                    <a href="view_lesson/{{ lesson.id }}/">Просмотреть урок</a>
+                                                {% endif %}
+
                                             </div>
 
                                         </ol>
@@ -56,18 +63,20 @@
                         </details>
                     {% endif %}
 
+                    {% if user.id == course.author_id %}
                     <p>Добавить</p>
                     <a href="{{item.id}}/lesson_create/"> Урок </a> |
                     <a href="#" > Задание </a>
+                    {% endif %}
 
                 </li>
             {% endfor %}
         </ol>
      {% endif %}
 
-
+    {% if user.id == course.author_id %}
      <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">+ модуль</button>
-
+    {% endif %}
 
     {#  FORM ADD MODULE #}
     <div class="form-popup" id="myForm">

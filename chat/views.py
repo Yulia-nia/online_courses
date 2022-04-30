@@ -1,10 +1,12 @@
 from django.db.models import Count
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 # Create your views here.
 from django.views import View
 from django.urls import reverse
 from chat.forms import MessageForm
 from chat.models import Chat
+from course.models import Course
 
 
 class DialogsView(View):
@@ -16,6 +18,7 @@ class DialogsView(View):
 class MessagesView(View):
     def get(self, request, chat_id, id):
         try:
+            course = Course.objects.get(id=id)
             chat = Chat.objects.get(id=chat_id)
             if request.user in chat.members.all():
                 chat.message_set.filter(is_readed=False).exclude(author=request.user).update(is_readed=True)
@@ -30,6 +33,7 @@ class MessagesView(View):
             {
                 'user_profile': request.user,
                 'chat': chat,
+                'course':course,
                 'form': MessageForm()
             }
         )
@@ -42,7 +46,11 @@ class MessagesView(View):
             message.chat_id = chat_id
             message.author = request.user
             message.save()
-        return render(request, "chat/messages.html", {'chat_id': chat_id, "form": form, "chat": chat})
+            form = MessageForm()
+        return render(request, "chat/messages.html", {'chat_id': chat_id,
+                                                      "form": form,
+                                                      'course': Course.objects.get(id=id),
+                                                      "chat": chat})
 
 
 class CreateDialogView(View):

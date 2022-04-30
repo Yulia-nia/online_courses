@@ -28,3 +28,4 @@ class LessonEditForm(forms.Form):
 class LessonForm(forms.Form):
     title = forms.CharField(max_length=200, min_length=4,
                             label="Название", help_text="Введите название")
+

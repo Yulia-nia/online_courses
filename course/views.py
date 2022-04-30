@@ -1,4 +1,5 @@
 from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response
 from django.utils.timezone import now
@@ -24,6 +25,7 @@ def index(request):
     return render(request, "course/index.html", {"form": courseform, "courses": courses})
 
 
+@login_required(login_url='/accounts/login/')
 def catalog_courses(request):
     courses = Course.objects.all()
     return render(request, "course/course_catalog.html", {"courses": courses})
@@ -41,12 +43,22 @@ def view_course(request, id):
     return render(request, "course/view_course.html", {"course": course})
 
 
+def info_course(request, id):
+    course = Course.objects.get(id=id)
+    setting = Settings.objects.get_or_create(course_id=id)
+    instructor = course.author
+    return render(request, "course/pass_course/info_course.html", {"course": course,
+                                                                   "instructor": instructor,
+                                                                   "setting": setting })
+
+
 def pass_course(request, id):
     course = Course.objects.get(id=id)
-    return render(request, "course/pass_course.html", {"course": course})
+    return render(request, "course/pass_course/pass_course.html", {"course": course})
 
 
 def settings_edit(request, id):
+    course = Course.objects.get(id=id)
     setting = Settings.objects.all()
     setting = Settings.objects.filter(course_id=id)
     if setting.count() == 0:
@@ -68,7 +80,10 @@ def settings_edit(request, id):
 
             setting.course_id = id
             setting.save()
-        return render(request, "course/main_settings.html", {"form": form, "setting": setting, "item_id": id})
+        return render(request, "course/main_settings.html", {"form": form,
+                                                             "course": course,
+                                                             "setting": setting,
+                                                             "item_id": id})
     else:
         setting = Settings.objects.get(course_id=id)
         form = SettingsForm(request.POST or None, request.FILES or None, initial=
@@ -102,7 +117,10 @@ def settings_edit(request, id):
 
             setting.course_id = id
             setting.save()
-        return render(request, "course/main_settings.html", {"form": form, "setting": setting, "item_id": id})
+        return render(request, "course/main_settings.html", {"form": form,
+                                                             "course": course,
+                                                             "setting": setting,
+                                                             "item_id": id})
 
 
 def create_course(request):
@@ -144,8 +162,10 @@ def announcement_list(request, id):
     form_announcement = AnnouncementForm()
     announcements = Announcement.objects.all().filter(course_id=id)
     count_list = zip(announcements, range(1, announcements.count()+1))
+    course = Course.objects.get(id=id)
     return render(request, "course/announcement_list.html", {"form_announcement": form_announcement,
                                                              "announcements": announcements,
+                                                             "course": course,
                                                              "count_list": count_list,
                                                              "item_id": id})
 
@@ -160,7 +180,9 @@ def create_announcement(request, id):
 
 
 def check_list(request, id):
-    return render(request, "course/check_list.html", {"item_id": id})
+    course = Course.objects.get(id=id)
+    return render(request, "course/check_list.html", {"item_id": id,
+                                                      "course": course})
 
 
 def students_list(request, id):
@@ -169,7 +191,9 @@ def students_list(request, id):
     users = BookmarkCourse.objects.all().filter(obj_id=id)
     for i in users:
         students.append(User.objects.get(id=i.user_id))
-    return render(request, "course/students_list.html", {"item_id": id, "students": students})
+    return render(request, "course/students_list.html", {"item_id": id,
+                                                         "course": course,
+                                                         "students": students})
 
 
 class CourseAPIView(generics.ListAPIView):
@@ -217,11 +241,21 @@ def dialog(request, c_id):
         message.save()
         return render(request, "../../chat/templates/chat/dialogs.html", {"course_id": c_id,
                                                                           "chat": chat,
-                                                                            "chat_id": chat.id, "instructor": course.author})
+                                                                          "course": course,
+                                                                        "chat_id": chat.id,
+                                                                          "instructor": course.author})
     else:
         chat = Chat.objects.get(course_id=course.id)
         chat.members.add(request.user)
         chat.save()
         return render(request, "../../chat/templates/chat/dialogs.html", {"course_id": c_id,
-                                                            "chat": chat,
-                                                            "chat_id": chat.id, "instructor": course.author})
+                                                                        "chat": chat,
+                                                                        "course": course,
+                                                                        "chat_id": chat.id,
+                                                                        "instructor": course.author})
+
+
+# def progress(request, lesson_id):
+#
+#
+#     return None

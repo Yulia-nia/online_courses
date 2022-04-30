@@ -26,62 +26,96 @@
                       <svg class="bi me-2" width="30" height="24"></svg>
                       <span class="fs-5 fw-semibold">НАЗВАНИЕ</span>
                     </a>
-                    <ul class="list-unstyled ps-0">
 
-                        <li class="mb-1">
-                            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
-                          Настройки курса
+                    {% if user.id == course.author_id %}
+
+                        <ul class="list-unstyled ps-0">
+
+                            <li class="mb-1">
+                                <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true">
+                              Настройки курса
+                                </button>
+                                <div class="collapse show" id="home-collapse">
+                                  <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="{% url 'edit' course.id %}" class="link-dark rounded">Основное настройки</a></li>
+                                    <li><a href="{% url 'setting' course.id %}" class="link-dark rounded">Расширенные настройки</a></li>
+                                    <li><a href="{% url 'check_list' course.id %}" class="link-dark rounded">Чек-лист</a></li>
+                                  </ul>
+                                </div>
+                            </li>
+
+                            <li class="mb-1">
+                                <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+                                  Обучение
+                                </button>
+                                <div class="collapse show" id="orders-collapse">
+                                  <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                    <li><a href="{% url 'announcement_list' course.id %}" class="link-dark rounded">Объявления</a></li>
+                                    <li><a href="{% url 'list' course.id %}" class="link-dark rounded">Модули</a></li>
+                                  </ul>
+                                </div>
+                            </li>
+
+                            <li class="mb-1">
+                                <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+                                  Общение
+                                </button>
+                                <div class="collapse show" id="dashboard-collapse">
+                                    <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                         <a href="{% url 'dialogs' course.id %}" class="link-dark rounded">Чат</a>
+                                        <li><a href="{% url 'students_list' course.id %}" class="link-dark rounded">Учащиеся</a></li>
+                                        <li><a href="#" class="link-dark rounded">Рассылка</a></li>
+                                        <li><a href="#" class="link-dark rounded">Комментарии</a></li>
+                                    </ul>
+                                </div>
+                            </li>
+
+
+
+                          <li class="border-top my-3"></li>
+                          <li class="mb-1">
+                            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+                              Аналитика
                             </button>
-                            <div class="collapse show" id="home-collapse">
+                            <div class="collapse" id="account-collapse">
                               <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li><a href="{% url 'edit' item_id%}" class="link-dark rounded">Основное настройки</a></li>
-                                <li><a href="{% url 'setting' item_id%}" class="link-dark rounded">Расширенные настройки</a></li>
-                                <li><a href="{% url 'check_list' item_id%}" class="link-dark rounded">Чек-лист</a></li>
+                                <li><a href="#" class="link-dark rounded">New...</a></li>
+
                               </ul>
                             </div>
-                        </li>
+                          </li>
+                        </ul>
 
-                        <li class="mb-1">
-                            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-                              Обучение
-                            </button>
-                            <div class="collapse show" id="orders-collapse">
-                              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                <li><a href="{% url 'announcement_list' item_id%}" class="link-dark rounded">Объявления</a></li>
-                                <li><a href="{% url 'list' item_id%}" class="link-dark rounded">Модули</a></li>
-                              </ul>
-                            </div>
-                        </li>
+                    {% elif user.id != course.author_id %}
 
-                        <li class="mb-1">
-                            <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
-                              Общение
-                            </button>
-                            <div class="collapse show" id="dashboard-collapse">
-                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                    <li><a href="{% url 'students_list' item_id%}" class="link-dark rounded">Учащиеся</a></li>
-                                    <li><a href="#" class="link-dark rounded">Рассылка</a></li>
-                                    <li><a href="#" class="link-dark rounded">Комментарии</a></li>
-                                </ul>
-                            </div>
-                        </li>
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1">
+                            <li class="mb-1">
+                                <a href="{% url 'info' course.id %}" class="link-dark rounded">Описание</a>
+                            </li>
+                            <li class="mb-1">
+                                <a href="{% url 'list' course.id %}" class="link-dark rounded">Содержание</a>
+                            </li>
 
+                            <li class="mb-1">
+                                <a href="{% url 'announcement_list' course.id %}" class="link-dark rounded">Новости</a>
+                            </li>
 
+                            <li class="mb-1">
+                                <a href="#" class="link-dark rounded">Уведомления</a>
+                            </li>
 
-                      <li class="border-top my-3"></li>
-                      <li class="mb-1">
-                        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
-                          Аналитика
-                        </button>
-                        <div class="collapse" id="account-collapse">
-                          <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                            <li><a href="#" class="link-dark rounded">New...</a></li>
+                            <li class="mb-1">
+                                <a href="{% url 'dialogs' course.id %}" class="link-dark rounded">Чат</a>
+{#                                                                <a href="{% url 'chat' course.id %}" class="link-dark rounded">Чат</a>#}
 
-                          </ul>
-                        </div>
-                      </li>
-                    </ul>
+                            </li>
 
+                            <li class="mb-1">
+                                <a href="#" class="link-dark rounded">Комментарии</a>
+                            </li>
+                         </ul>
+
+                    {% endif %}
                 </div>
             </div>
 

@@ -2,7 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from course.models import Course
+import course.models
 
 
 class User(AbstractUser):
@@ -36,5 +36,5 @@ class BookmarkCourse(BookmarkBase):
     class Meta:
         db_table = "bookmark_course"
 
-    obj = models.ForeignKey(Course, verbose_name="Курс", on_delete=models.CASCADE)
+    obj = models.ForeignKey("course.Course", verbose_name="Курс", on_delete=models.CASCADE)
 

@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from django.urls import reverse
 # Create your views here.
-from course.models import Course
+from course.models import Course, РassingРrogress
 from module.forms import ModuleForm, AnnouncementForm, LessonEditForm
 from module.models import Module, Lesson, Announcement, File
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -23,14 +23,16 @@ def list_module(request, id):
 
 
     modules = Module.objects.filter(course_id=id)
-
     lessons = Lesson.objects.all().filter(module__course_id=id)
+
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
                                                        # "form_announcement": form_announcement,
                                                        # "announcements": announcements,
                                                        # "lesson": lesson,
 
-                                                       "course": course, "lessons": lessons, "item_id": id})
+                                                       "course": course,
+                                                       "lessons": lessons,
+                                                       "item_id": id})
 
 
 def get_lessons(id):
@@ -40,7 +42,6 @@ def get_lessons(id):
     env.globals.update({
         'lessons': arr,
     })
-
     return env
 
 
@@ -54,6 +55,8 @@ def create_module(request, id):
 
 
 def create_lesson(request, id):
+    module = Module.objects.get(id=id)
+    course = Course.objects.get(id=module.course_id)
     lesson = Lesson()
     if request.method == "POST":
         lesson.title = request.POST.get("title")
@@ -61,7 +64,9 @@ def create_lesson(request, id):
         lesson.description = request.POST.get("description")
         lesson.module_id = id
         lesson.save()
-    return render(request, "module/create_lesson.html", {"lesson": lesson, "item_id": id,
+    return render(request, "module/create_lesson.html", {"lesson": lesson,
+                                                         "course": course,
+                                                         "item_id": id,
                                                          })
 
 
@@ -69,6 +74,7 @@ def edit_lesson(request, id):
     try:
         lesson = Lesson.objects.get(id=id)
         module = Module.objects.get(id=lesson.module_id)
+        course = Course.objects.get(id=module.course_id)
         form = LessonEditForm(request.POST or None, request.FILES or None, initial=
                                     {'title': lesson.title,
                                      'description': lesson.description,
@@ -82,14 +88,35 @@ def edit_lesson(request, id):
             lesson.short_description = form['short_description'].value()
             lesson.is_published = form['is_published'].value()
             lesson.save()
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": module.course_id,
+            return render(request, "module/edit_lesson.html", {"lesson": lesson,
+                                                               "item_id": module.course_id,
                                                                "form": form,
+                                                               "course": course,
                                                                "files": files})
         else:
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": module.course_id,
+            return render(request, "module/edit_lesson.html", {"lesson": lesson,
+                                                               "item_id": module.course_id,
+                                                               "course": course,
                                                                "form": form, "files": files})
-    except Course.DoesNotExist:
+    except Lesson.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
+
+
+def view_lesson(request, id):
+    try:
+        lesson = Lesson.objects.get(id=id)
+        module = Module.objects.get(id=lesson.module_id)
+        course = Course.objects.get(id=module.course_id)
+        files = File.objects.all().filter(lesson_id=lesson.id)
+        progress_is = get_progress(course.id, lesson.id, request.user.id)
+        return render(request, "module/view_lesson.html", {"lesson": lesson,
+                                                           "module": module,
+                                                           "course": course,
+                                                            "files": files,
+                                                           "progress_is": progress_is})
+    except Lesson.DoesNotExist:
+        return HttpResponseNotFound("<h2>Lesson not found</h2>")
+
 
 
 def edit_module(request, id):
@@ -97,7 +124,10 @@ def edit_module(request, id):
         module = Module.objects.get(id=id)
         course = Course.objects.get(id=module.course_id)
         lessons = Lesson.objects.all().filter(module_id=id)
-        return render(request, "module/edit_module.html", {"module": module, "lessons": lessons, "module_id": id})
+        return render(request, "module/edit_module.html", {"module": module,
+                                                           "course": course,
+                                                           "lessons": lessons,
+                                                           "module_id": id})
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Module not found</h2>")
 
@@ -125,3 +155,35 @@ def delete_module(request, id):
         return HttpResponseRedirect(reverse('list', args=(id_course,)))
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Module not found</h2>")
+
+
+def get_progress(c_id, l_id, u_id):
+    progress_is, obj = РassingРrogress.objects.get_or_create(lesson_id=l_id,
+                                                             course_id=c_id,
+                                                             student_id=u_id)
+    return progress_is
+
+
+def progress(request, id):
+    lesson = Lesson.objects.get(id=id)
+    module = Module.objects.get(id=lesson.module_id)
+    files = File.objects.all().filter(lesson_id=lesson.id)
+    course = Course.objects.get(id=lesson.module.course_id)
+    progress_is = get_progress(course.id, lesson.id, request.user.id)
+    if progress_is.is_pass == 1:
+        progress_is.is_pass = 0
+    else:
+        progress_is.is_pass = 1
+    progress_is.save()
+    return HttpResponse()
+    #return request.META.get('view_lesson')
+    # return HttpResponse('view_lesson', args=(lesson, module,
+    #                                                  course,
+    #                                                          course.id,
+    #                                                     list(files),
+    #                                                     progress_is,))
+    # render(request, "module/view_lesson.html", {"lesson": lesson,
+    #                                                        "module": module,
+    #                                                        "course": course,
+    #                                                         "files": files,
+    #                                                        "progress_is": progress_is})

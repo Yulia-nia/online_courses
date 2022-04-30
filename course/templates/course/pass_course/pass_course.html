@@ -1,4 +1,4 @@
-{% extends "C:\Users\User\PycharmProjects\online_courses\templates\header.html" %}
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
 {% load static %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
@@ -6,7 +6,8 @@
 <link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
 
 
-{% block content1 %}
+{% block content %}
+
 <div class="container">
     <div class="py-3 text-center">
     <p>Теперь вы проходите данный курс</p>

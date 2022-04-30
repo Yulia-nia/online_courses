@@ -1,7 +1,9 @@
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 
+from module.models import Lesson
 from online_courses import settings
+from users.models import User
 
 
 class Course(models.Model):
@@ -48,3 +50,19 @@ class Settings(models.Model):
         db_table = 'settings'
         verbose_name = 'Основные настройки',
         verbose_name_plural = 'Основные настройки'
+
+
+class РassingРrogress(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_pass = models.BooleanField(null=True, default=False)
+    time_update = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'passing_progress'
+        verbose_name = 'Прогресс прохождения',
+        verbose_name_plural = 'Прогресс прохождения'
+
+    def __str__(self):
+        return self.student.email

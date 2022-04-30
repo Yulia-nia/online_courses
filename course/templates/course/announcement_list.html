@@ -13,8 +13,7 @@
             right: 15px;
             border: 3px solid #f1f1f1;
         }
- </STYLE>
-
+    </STYLE>
 
      <section class="py-3">
 
@@ -39,18 +38,29 @@
                 {% endfor %}
             </div>
         </section>
-        <section>
-            <p>Добавьте объявление ученикам</p>
-            <button class="btn btn-lg position-center btn-light w-30 mx-0"
-                    onclick="openForm_Announcement()">+ Добавить</button>
-        </section>
+
+        {% if user.id == course.author_id %}
+
+            <section>
+                <p>Добавьте объявление ученикам</p>
+                <button class="btn btn-lg position-center btn-light w-30 mx-0"
+                        onclick="openForm_Announcement()">+ Добавить</button>
+            </section>
+        {% endif %}
     {% else %}
-        <section>
-            {# right #}
-            <p>Добавьте объявление ученикам</p>
-            <button class="btn btn-lg position-center btn-light w-30 mx-0"
-                    onclick="openForm_Announcement()">+ Добавить первое объявление</button>
-        </section>
+
+        {% if user.id == course.author_id %}
+            <section>
+                <p>Добавьте объявление ученикам</p>
+                <button class="btn btn-lg position-center btn-light w-30 mx-0"
+                        onclick="openForm_Announcement()">+ Добавить первое объявление</button>
+            </section>
+        {% elif user.id != course.author_id %}
+            <section>
+                <p>Тут пока нет объявлений</p>
+            </section>
+        {% endif %}
+
     {% endif %}
 
 
@@ -94,9 +104,6 @@
             </div>
             </div>
         </div>
-
-
-
      </section>
 
 <script>

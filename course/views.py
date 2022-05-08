@@ -1,34 +1,59 @@
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response
+from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
+from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from rest_framework import generics
 # Create your views here.
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.core.files.storage import FileSystemStorage
 from rest_framework.response import Response
-
+from django.views import View
 from chat.models import Chat, Message
-from course.forms import CourseForm, SettingsForm
-from course.models import Course, Settings
+from course.forms import CourseForm, SettingsForm, NotificationForm
+from course.models import Course, Settings, Notifications
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement
 from users.models import User, BookmarkCourse
+from django.views.generic import TemplateView, ListView, DeleteView
 
 
-def index(request):
-    courseform = CourseForm()
-    user = User.objects.get(username=request.user.username)
-    courses = Course.objects.all().filter(author_id=user.id)
-    return render(request, "course/index.html", {"form": courseform, "courses": courses})
+@method_decorator(login_required, name='dispatch')
+class СoursesРarticularTeacher(ListView):
+    context_object_name = 'courses'
+    queryset = Course.objects.all()
+    template_name = 'course/index.html'
+
+    def get(self, request):
+        courses = Course.objects.all().filter(author_id=request.user.id)
+        return render(request, "course/index.html", {"courses": courses, 'form': CourseForm()})
+
+    def post(self, request):
+        courses = Course.objects.all().filter(author_id=request.user.id)
+        course = Course()
+        course.title = request.POST.get("title")
+        course.description = request.POST.get("description")
+        course.author = User.objects.get(username=request.user.username)
+        course.save()
+        return render(request, "course/index.html", {"courses": courses, 'form': CourseForm()})
 
 
-@login_required(login_url='/accounts/login/')
-def catalog_courses(request):
-    courses = Course.objects.all()
-    return render(request, "course/course_catalog.html", {"courses": courses})
+def delete_course(request, id):
+    try:
+        course = Course.objects.get(id=id)
+        course.delete()
+        return HttpResponseRedirect("/")
+    except Course.DoesNotExist:
+        return HttpResponseNotFound("<h2>Course not found</h2>")
+
+
+@method_decorator(login_required, name='dispatch')
+class CatalogCourses(View):
+    def get(self, request):
+        courses = Course.objects.all().filter(settings__is_published=True)
+        return render(request, "course/course_catalog.html", {"courses": courses})
 
 
 def view_course(request, id):
@@ -123,15 +148,6 @@ def settings_edit(request, id):
                                                              "item_id": id})
 
 
-def create_course(request):
-    if request.method == "POST":
-        course = Course()
-        course.title = request.POST.get("title")
-        course.description = request.POST.get("description")
-        course.author = User.objects.get(username=request.user.username)
-        course.save()
-    return HttpResponseRedirect("/")
-
 
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
@@ -147,15 +163,6 @@ def edit_course(request, id):
 
         course.save()
     return render(request, "course/edit_course.html", {"course": course, 'form': form, "item_id": id})
-
-
-def delete_course(request, id):
-    try:
-        course = Course.objects.get(id=id)
-        course.delete()
-        return HttpResponseRedirect("/")
-    except Course.DoesNotExist:
-        return HttpResponseNotFound("<h2>Course not found</h2>")
 
 
 def announcement_list(request, id):
@@ -259,3 +266,48 @@ def dialog(request, c_id):
 #
 #
 #     return None
+
+
+def notifications_list_course(request, id):
+    course = Course.objects.get(id=id)
+    notifications = Notifications.objects.all().filter(course_id=id)
+
+    students = []
+    users = BookmarkCourse.objects.all().filter(obj_id=id)
+    for i in users:
+        students.append(User.objects.get(id=i.user_id))
+
+    return render(request, "course/notifications/notifications_list.html", {"course": course,
+                                                         "students": students,
+                                                         "form": NotificationForm(),
+                                                         "notifications": notifications})
+
+
+def create_notification(request, id, s_id):
+    if request.method == "POST":
+        notification = Notifications()
+        notification.content = request.POST.get("content")
+        notification.course_id = id
+        notification.student_id = s_id
+        notification.save()
+        return HttpResponseRedirect(reverse('students_list', args=(id,)))
+    else:
+        return render(request, "course/notifications/create_notification.html",
+                  {"course": Course.objects.get(id=id),
+                   "form": NotificationForm(),
+                   })
+    #return HttpResponseRedirect(reverse('students_list', args=(id,)))
+    # return render(request, "course/students_list.html", {"course": Course.objects.get(id=id),
+    #                                                      "item_id": id,
+    #                                                      "form": NotificationForm(),
+    #                                                     })
+
+# course = Course.objects.get(id=id)
+#     students = []
+#     users = BookmarkCourse.objects.all().filter(obj_id=id)
+#     for i in users:
+#         students.append(User.objects.get(id=i.user_id))
+#     return render(request, "course/students_list.html", {"item_id": id,
+#                                                          "course": course,
+#                                                          "students": students})
+

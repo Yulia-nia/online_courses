@@ -9,6 +9,12 @@ class CourseForm(forms.Form):
                                   required=False)
 
 
+class NotificationForm(forms.Form):
+    content = forms.CharField(max_length=200, label='',
+                                  widget=forms.Textarea(attrs={'rows': 2}),
+                                  required=False)
+
+
 class SettingsForm(forms.Form):
     learning_format = forms.CharField(required=False, max_length=200, min_length=4, label='')
     will_learn = forms.CharField(required=False, label='',

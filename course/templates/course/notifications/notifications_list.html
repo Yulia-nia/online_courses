@@ -1,0 +1,35 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+
+{% block content %}
+    <div class="container py-3">
+        {% if notifications.count > 0 %}
+        <p>Уведомления, которые были отправлены</p>
+
+
+        {% for item in notifications %}
+        <div>
+            <p>{{ item.content }}</p>
+            <p>{{ item.student.email }}</p>
+            <p>{{ item.time_create }}</p>
+            <p>{{ item.course.title }}</p>
+        </div>
+            <hr>
+        {% endfor %}
+        {% else %}
+
+            <p>тут пока нет уведомлений</p>
+
+        {% endif %}
+
+
+     <div/>
+
+
+
+
+
+{% endblock %}
+

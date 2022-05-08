@@ -71,7 +71,8 @@
                         </table>
 
                             <div class="blog-button">
-                                <a href="delete/{{course.id}}" class="button7">Удалить</a>
+                                <a href="{% url 'delete' course.id %}" onclick="return confirm('Are you sure?');"
+                                   class="button7">Удалить</a>
 						    </div>
 					    </div>
                     <p> </p>
@@ -102,7 +103,7 @@
                     </div>
                     <div class="modal-body py-0">
 
-                        <form method="post" action="create_course/">
+                        <form method="post">
                              {% csrf_token %}
                              {% bootstrap_form form layout='gorizontal' %}
                              {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}

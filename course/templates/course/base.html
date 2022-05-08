@@ -66,6 +66,9 @@
                                         <li><a href="{% url 'students_list' course.id %}" class="link-dark rounded">Учащиеся</a></li>
                                         <li><a href="#" class="link-dark rounded">Рассылка</a></li>
                                         <li><a href="#" class="link-dark rounded">Комментарии</a></li>
+                                         <li class="mb-1">
+                                            <a href="{% url 'notifications_list' course.id %}" class="link-dark rounded">Уведомления</a>
+                                        </li>
                                     </ul>
                                 </div>
                             </li>
@@ -101,7 +104,7 @@
                             </li>
 
                             <li class="mb-1">
-                                <a href="#" class="link-dark rounded">Уведомления</a>
+                                <a href="{% url 'notifications_list' course.id %}" class="link-dark rounded">Уведомления</a>
                             </li>
 
                             <li class="mb-1">

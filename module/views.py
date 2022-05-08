@@ -21,15 +21,20 @@ def list_module(request, id):
     #count_list = zip(announcements, range(1, announcements.count()+1))
     # in case to filter by id
 
+    #pass_prog = РassingРrogress.objects.get(course_id=id, student_id=request.user.id)
 
     modules = Module.objects.filter(course_id=id)
     lessons = Lesson.objects.all().filter(module__course_id=id)
+
+    student_progress = РassingРrogress.objects.all().filter(course_id=id, student_id=request.user.id ,is_pass=1).count()
+    count_lessons = lessons.count()
 
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
                                                        # "form_announcement": form_announcement,
                                                        # "announcements": announcements,
                                                        # "lesson": lesson,
-
+                                                        "count_lessons":count_lessons,
+                                                       "student_progress":student_progress,
                                                        "course": course,
                                                        "lessons": lessons,
                                                        "item_id": id})

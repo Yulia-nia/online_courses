@@ -66,3 +66,19 @@ class РassingРrogress(models.Model):
 
     def __str__(self):
         return self.student.email
+
+
+class Notifications(models.Model):
+    content = models.TextField(null=True, blank=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    student = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    time_create = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'notifications'
+        verbose_name = 'Уведомление',
+        verbose_name_plural = 'Уведомления'
+
+    def __str__(self):
+        return self.content
+

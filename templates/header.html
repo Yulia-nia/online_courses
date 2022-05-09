@@ -36,17 +36,23 @@
           <ul class="nav col-12 col-md-auto me-md-auto mb-2 justify-content-center mb-md-0">
               <li><a href="{% url 'dashboard' %}" class="nav-link px-2 link-light">Главная</a></li>
               <li><a href="{% url 'catalog' %}" class="nav-link px-2 link-light">Каталог</a></li>
+                <li><a href="{% url 'notifications_students' %}" class="nav-link px-2 link-light">Уведомления</a></li>
 
               {% if user.is_authenticated %}
                   {% if request.user|has_group:"Преподаватель" %}
 
-                  <li><a href="{% url 'index' %}" class="nav-link px-2 link-light">Преподавание</a></li>
-
+                    <li><a href="{% url 'index' %}" class="nav-link px-2 link-light">Преподавание</a></li>
 
                   {% elif request.user|has_group:"Ученик" %}
-                  <li><a href="#" class="nav-link px-2 link-light">Обучение</a></li>
-                      {% elif request.user|has_group:"Модератор" %}
-                       <li><a href="#" class="nav-link px-2 link-light">Админка</a></li>
+
+                      <li><a href="#" class="nav-link px-2 link-light">Обучение</a></li>
+
+                      <li><a href="{% url 'notifications_students' %}" class="nav-link px-2 link-light">Уведомления</a></li>
+
+                  {% elif request.user|has_group:"Модератор" %}
+
+                      <li><a href="#" class="nav-link px-2 link-light">Админка</a></li>
+
                   {% endif %}
                 {% endif %}
         </ul>

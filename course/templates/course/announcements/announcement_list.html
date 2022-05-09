@@ -1,9 +1,12 @@
 {% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
 
 
 {% block content %}
+    <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <STYLE>
         /* Всплывающая форма-скрыта по умолчанию */
         .form-popup {
@@ -14,9 +17,7 @@
             border: 3px solid #f1f1f1;
         }
     </STYLE>
-
      <section class="py-3">
-
     {% if announcements.count > 0 %}
         <section>
             <div class="list-group container md-3 my-3">
@@ -30,6 +31,8 @@
                     <p class="mb-3 opacity-75">
                         {{ item.content | safe}}
                     </p>
+                      <a href="{% url 'announcements_edit' item.id %}" title="Редактировать объявление" class="btn"><i class="fa fa-edit"></i></a>
+                      <a href="{% url 'announcements_delete' item.id %}" title="Удалить объявление" class="btn"><i class="fa fa-trash"></i></a>
                   </div>
                   <small class="opacity-50 text-nowrap">{{ item.time_update }}</small>
                 </div>

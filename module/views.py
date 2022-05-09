@@ -1,10 +1,12 @@
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 # Create your views here.
+from django.views import View
+
 from course.models import Course, РassingРrogress
-from module.forms import ModuleForm, AnnouncementForm, LessonEditForm
-from module.models import Module, Lesson, Announcement, File
+from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm
+from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from jinja2 import Environment
@@ -59,20 +61,58 @@ def create_module(request, id):
     return HttpResponseRedirect(reverse('list', args=(id,)))
 
 
-def create_lesson(request, id):
-    module = Module.objects.get(id=id)
+def create_lesson(request, m_id, id):
+    module = Module.objects.get(id=m_id)
     course = Course.objects.get(id=module.course_id)
     lesson = Lesson()
     if request.method == "POST":
         lesson.title = request.POST.get("title")
         lesson.short_description = request.POST.get("short_description")
         lesson.description = request.POST.get("description")
-        lesson.module_id = id
+        lesson.module_id = m_id
         lesson.save()
     return render(request, "module/create_lesson.html", {"lesson": lesson,
                                                          "course": course,
-                                                         "item_id": id,
+                                                         "item_id": m_id,
                                                          })
+
+
+def create_task(request, id):
+    module = Module.objects.get(id=id)
+    course = Course.objects.get(id=module.course_id)
+    if request.method == "POST":
+        form = TaskForm(request.POST or None, request.FILES or None)
+        if form.is_valid():
+            task = Task()
+            task.title = form.cleaned_data['title']
+            task.description = form.cleaned_data["description"]
+            task.file = form.cleaned_data['file']
+            task.time_deadline = form.cleaned_data['time_deadline']
+            task.module_id = id
+            task.save()
+        return HttpResponseRedirect(reverse('list', args=(course.id,)))
+    else:
+        return render(request, "module/task/create.html",
+                      {"module": module,
+                       "course": course,
+                       "form": TaskForm()})
+
+
+def list_answers_tasks(request, id):
+    list_module = Module.objects.all().filter(course_id=id)
+    return render(request, "module/task/list_answer.html", {
+                                                            "list_module": list_module,
+                                                       "course": Course.objects.get(id=id),})
+
+
+def list_ans_from_task(request, id):
+    answers = StudentAnswer.objects.all().filter(task_id=id)
+    task = Task.objects.get(id=id)
+    module = Module.objects.get(id= task.module_id)
+    return render(request, "module/task/list_answer_from_task.html", {
+        "answers": answers,
+        "course": Course.objects.get(id=module.course_id) })
+
 
 
 def edit_lesson(request, id):
@@ -192,3 +232,126 @@ def progress(request, id):
     #                                                        "course": course,
     #                                                         "files": files,
     #                                                        "progress_is": progress_is})
+
+
+
+class TaskView(View):
+    def get(self, request, id):
+        try:
+            task = Task.objects.get(id=id)
+            course = Course.objects.get(id=task.module.course_id)
+            answer = StudentAnswer.objects.all().filter(student_id=request.user.id,
+                                                        task_id=id)
+            return render(
+            request,
+            "module/task/view_task.html", {"course": course, "task": task,
+                                           "answer": answer,
+                                           'form': AnswerTaskForm()
+                                           })
+        except Task.DoesNotExist:
+            task = None
+            course = None
+            answer = None
+        return render(
+            request,
+            "module/task/view_task.html", {"course": course, "task": task,
+                                           'answer': answer,
+                                           'form': AnswerTaskForm()
+                                           })
+
+    def post(self, request, id):
+        task = Task.objects.get(id=id)
+        course = Course.objects.get(id=task.module.course_id)
+
+        form = AnswerTaskForm(request.POST or None, request.FILES or None)
+
+        if form.is_valid():
+            answer = StudentAnswer()
+            answer.description = form.cleaned_data["description"]
+            answer.file = form.cleaned_data['file']
+            answer.task_id = id
+            answer.student_id = request.user.id
+            answer.save()
+        return render(request, "module/task/view_task.html", {'course': course,
+                                                      "form": AnswerTaskForm(),
+                                                      "task": task})
+
+
+class EstimateView(View):
+    def get(self, request, id):
+        try:
+            answer = StudentAnswer.objects.get(id=id)
+            task = answer.task
+            course = answer.task.module.course
+            return render(
+                request,
+                "module/task/estimate_answer.html", {"course": course, "task": task,
+                                                     "answer": answer,
+                                                     'form': MarkForm()
+                                                     })
+        except Task.DoesNotExist:
+            task = None
+            course = None
+            answer = None
+        return render(
+            request,
+            "module/task/estimate_answer.html", {"course": course, "task": task,
+                                           'answer': answer,
+                                           'form': MarkForm()
+                                           })
+
+    def post(self, request, id):
+        answer = StudentAnswer.objects.get(id=id)
+        task = answer.task
+        course = answer.task.module.course
+        form = MarkForm(request.POST or None)
+        if form.is_valid():
+            mark = Mark()
+            mark.mark = form.cleaned_data["mark"]
+            mark.answer_id = answer.id
+            mark.course_id = course.id
+            mark.student_id = answer.student_id
+            mark.save()
+        return render(request, "module/task/estimate_answer.html", {'course': course,
+                                                              "form": MarkForm(),
+                                                              "task": task,
+                                                              })
+
+
+def edit_task(request, id):
+    task = Task.objects.get(id=id)
+    form = TaskForm(request.POST or None, request.FILES or None, initial=
+                    {'title': task.title,
+                     'description': task.description,
+                     'time_deadline': task.time_deadline,
+                     'file': task.file,})
+    if form.is_valid():
+        task.title = form['title'].value()
+        task.description = form["description"].value()
+        task.time_deadline = form['time_deadline'].value()
+        task.file = form["file"].value()
+        task.module_id = task.module_id
+        task.save()
+    return render(request, "module/task/edit.html", {'course': task.module.course,
+                                                          "form": form,
+                                                          "task": task})
+
+
+def delete_task(request, id):
+    try:
+        task = Task.objects.get(id=id)
+        id_course = task.module.course.id
+        task.delete()
+        return HttpResponseRedirect(reverse('list', args=(id_course,)))
+    except Course.DoesNotExist:
+        return HttpResponseNotFound("<h2>task not found</h2>")
+
+
+def content_course(request, id):
+    course = Course.objects.get(id=id)
+    modules = Module.objects.all().filter(course_id=id)
+    return render(request, "module/content/base_nav.html", {'course': course,
+
+                                                          "modules": modules,
+                                                          })
+

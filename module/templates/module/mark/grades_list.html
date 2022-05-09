@@ -1,0 +1,35 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+
+    <table border="1">
+       <tr >
+           <th>Имя | </th>
+           {% for item in modules %}
+               {% for i in item.task_set.all %}
+                   <th>{{ i.title }} |</th>
+               {% endfor %}
+           {% endfor %}
+       </tr>
+
+        {% for mark in marks %}
+            <tr>
+                <td>
+                    {{ mark.student.email }}
+                </td>
+                {% for m in mark.student.mark_set.all %}
+
+                    <td>{{ m.mark }} |</td>
+
+                {% endfor %}
+
+            </tr>
+        {% endfor %}
+    </table>
+
+
+{% endblock %}

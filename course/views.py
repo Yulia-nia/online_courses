@@ -3,19 +3,16 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
 from django.utils.decorators import method_decorator
-from django.utils.timezone import now
 from rest_framework import generics
-# Create your views here.
 from django.urls import reverse, reverse_lazy
-from django.core.files.storage import FileSystemStorage
 from rest_framework.response import Response
 from django.views import View
 from chat.models import Chat, Message
 from course.forms import CourseForm, SettingsForm, NotificationForm
-from course.models import Course, Settings, Notifications
+from course.models import Course, Settings, Notifications, РassingРrogress
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
-from module.models import Announcement
+from module.models import Announcement, Lesson, Mark, Module
 from users.models import User, BookmarkCourse
 from django.views.generic import TemplateView, ListView, DeleteView
 
@@ -148,7 +145,6 @@ def settings_edit(request, id):
                                                              "item_id": id})
 
 
-
 def pageNotFound(request, exception):
     return HttpResponseNotFound('<h1>Страница не найдена</h1>')
 
@@ -170,7 +166,7 @@ def announcement_list(request, id):
     announcements = Announcement.objects.all().filter(course_id=id)
     count_list = zip(announcements, range(1, announcements.count()+1))
     course = Course.objects.get(id=id)
-    return render(request, "course/announcement_list.html", {"form_announcement": form_announcement,
+    return render(request, "course/announcements/announcement_list.html", {"form_announcement": form_announcement,
                                                              "announcements": announcements,
                                                              "course": course,
                                                              "count_list": count_list,
@@ -191,16 +187,26 @@ def check_list(request, id):
     return render(request, "course/check_list.html", {"item_id": id,
                                                       "course": course})
 
+def get_student_progress(c_id, s_id):
+    return РassingРrogress.objects.all().filter(course_id=c_id, student_id=s_id, is_pass=1).count()
+
 
 def students_list(request, id):
     course = Course.objects.get(id=id)
+    lesson = Lesson.objects.all().filter(module__course_id=id)
     students = []
+    progress = []
     users = BookmarkCourse.objects.all().filter(obj_id=id)
     for i in users:
         students.append(User.objects.get(id=i.user_id))
+        progress.append(get_student_progress(course.id, i.user_id))
+
+    count_lessons = lesson.count()
     return render(request, "course/students_list.html", {"item_id": id,
+                                                         "count_lessons": count_lessons,
+                                                         "list_item": zip(students, progress),
                                                          "course": course,
-                                                         "students": students})
+                                                         })
 
 
 class CourseAPIView(generics.ListAPIView):
@@ -296,18 +302,45 @@ def create_notification(request, id, s_id):
                   {"course": Course.objects.get(id=id),
                    "form": NotificationForm(),
                    })
-    #return HttpResponseRedirect(reverse('students_list', args=(id,)))
-    # return render(request, "course/students_list.html", {"course": Course.objects.get(id=id),
-    #                                                      "item_id": id,
-    #                                                      "form": NotificationForm(),
-    #                                                     })
 
-# course = Course.objects.get(id=id)
-#     students = []
-#     users = BookmarkCourse.objects.all().filter(obj_id=id)
-#     for i in users:
-#         students.append(User.objects.get(id=i.user_id))
-#     return render(request, "course/students_list.html", {"item_id": id,
-#                                                          "course": course,
-#                                                          "students": students})
 
+def grades_list(request, id):
+    course = Course.objects.get(id=id)
+    marks = Mark.objects.all().filter(course_id=id)
+    modules = Module.objects.all().filter(course_id=id)
+    return render(request, "module/mark/grades_list.html",
+                  {"course": course,
+                   "marks": marks,
+                   "modules": modules,
+                   })
+
+
+def edit_announcements(request, id):
+    ann = Announcement.objects.get(id=id)
+    form = AnnouncementForm(request.POST or None, initial=
+    {'content': ann.content})
+    if form.is_valid():
+        ann.content = form['content'].value()
+        ann.course_id = ann.course_id
+        ann.save()
+    return render(request, "course/announcements/edit_announcement.html", {'course': ann.course,
+                                                     "form": form,
+                                                     "task": ann})
+
+    return None
+
+
+def delete_announcements(request, id):
+    try:
+        ann = Announcement.objects.get(id=id)
+        id_course = ann.course_id
+        ann.delete()
+        return HttpResponseRedirect(reverse('announcement_list', args=(id_course,)))
+    except Course.DoesNotExist:
+        return HttpResponseNotFound("<h2>task not found</h2>")
+
+
+def student_notifications_list(request):
+    studnet = User.objects.get(id=request.user.id)
+    notifications = Notifications.objects.all().filter(student_id=studnet.id)
+    return render(request, "course/notifications/student_list.html", {'notifications': notifications,})

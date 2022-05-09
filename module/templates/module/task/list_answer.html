@@ -1,0 +1,24 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+
+    <p>Выберите задние для проверки</p>
+    {% for item in list_module %}
+
+        <p>{{ item.title }}</p>
+
+        {% for task in item.task_set.all %}
+
+            <p>{{ task.title }}</p>
+            <a href="{{ task.id}}/task/">Просмотр всех ответов по этому заданию</a>
+
+        {% endfor %}
+
+        <hr>
+    {% endfor %}
+
+{% endblock %}

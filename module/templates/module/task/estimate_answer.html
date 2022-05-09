@@ -1,0 +1,25 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+
+    {{ task.title }}
+     {{ task.description }}
+     {{ task.time_create }}
+     {{ task.time_deadline }}
+    {{ task.file }}
+
+
+    {% if answer.mark %}
+        <p>{{ answer.mark.mark }}</p>
+    {% else %}
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+            <button button_type="submit" class="btn btn-primary">Оценить</button>
+        </form>
+    {% endif %}
+{% endblock %}

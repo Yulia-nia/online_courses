@@ -2,6 +2,7 @@ from django import forms
 from django_summernote.widgets import SummernoteWidget
 
 
+
 class AnnouncementForm(forms.Form):
     content = forms.CharField(label='', widget=SummernoteWidget(attrs={
                                                                        'summernote': {
@@ -28,4 +29,24 @@ class LessonEditForm(forms.Form):
 class LessonForm(forms.Form):
     title = forms.CharField(max_length=200, min_length=4,
                             label="Название", help_text="Введите название")
+
+
+class TaskForm(forms.Form):
+    title = forms.CharField(max_length=200, min_length=4, label='')
+    description = forms.CharField(max_length=200, label='',
+                                  widget=forms.Textarea(attrs={'rows': 3}),
+                                  required=False)
+    file = forms.FileField(required=False, label='')
+    time_deadline = forms.DateTimeField( input_formats=['%Y-%m-%d %H:%M'],required=False)
+
+
+class AnswerTaskForm(forms.Form):
+    description = forms.CharField(max_length=200, label='',
+                                  widget=forms.Textarea(attrs={'rows': 3}),
+                                  required=False)
+    file = forms.FileField(required=False, label='')
+
+
+class MarkForm(forms.Form):
+    mark = forms.IntegerField(label='', required=False)
 

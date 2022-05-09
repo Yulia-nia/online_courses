@@ -1,0 +1,26 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+    {{ task.title }}
+     {{ task.description }}
+     {{ task.time_create }}
+     {{ task.time_deadline }}
+    {{ task.file }}
+    <hr>
+    <p>ваш ответ был</p>
+     {% for ans in answer %}
+         {{ ans.time_create }}
+    {% endfor %}
+    <hr>
+    <p>Отправка д.з.</p>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+{#        {% bootstrap_field form.description  class="custom-control-input" %}#}
+        <button button_type="submit" class="btn btn-primary">Отправить на проверку</button>
+    </form>
+{% endblock %}

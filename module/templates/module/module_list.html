@@ -66,10 +66,45 @@
                         </details>
                     {% endif %}
 
+                    {% if item.task_set.count == 0 %}
+                        <p>В этом модуле пока нет заданий :(</p>
+                    {% else %}
+                        <details open>
+                            <summary><h5>Содержимое модуля <small> (Кол-во заданий {{ item.task_set.count }})</small></h5> </summary>
+                            <div class="container p-3">
+                                <ul class="list4b">
+                                    {% for task in item.task_set.all %}
+                                        <ol>
+                                            <div class="d-flex top-0 h-30">
+                                                <div class="" style="padding: 8px">
+                                                     <p>{{ task.title }} </p>
+                                                    <p>{{ task.time_deadline }} </p>
+                                                </div>
+                                                {% if user.id == course.author_id %}
+                                                    <div class="" style="padding: 1px">
+                                                        <a href="edit_task/{{ task.id }}/" title="Редактировать задание" class="btn"><i class="fa fa-edit"></i></a>
+                                                    </div>
+                                                    <div class="" style="padding: 1px">
+                                                        <a href="delete_task/{{ task.id }}/" title="Удалить задание" class="btn"><i class="fa fa-trash"></i></a>
+                                                    </div>
+
+                                                {% else %}
+                                                    <a href="view_task/{{ task.id }}/">просмотреть задание</a>
+                                                {% endif %}
+
+                                            </div>
+
+                                        </ol>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </details>
+                    {% endif %}
+
                     {% if user.id == course.author_id %}
                     <p>Добавить</p>
                     <a href="{{item.id}}/lesson_create/"> Урок </a> |
-                    <a href="#" > Задание </a>
+                    <a href="{% url 'create_task' item.id %}" > Задание </a>
                     {% endif %}
 
                 </li>
@@ -108,29 +143,6 @@
         </div>
     </div>
     </section>
-{##}
-{#    FORM DELETE MODULE#}
-{##}
-{#    <div class="form-popup" id="myFormDeleteModule">#}
-{#        <div class="modal modal-alert position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalChoice">#}
-{#            <div class="modal-dialog" role="document">#}
-{#                <div class="modal-content rounded-4 shadow">#}
-{#                    <div class="modal-body p-4 text-center">#}
-{#                        <h5 class="mb-0">Удаление модуля навсегда</h5>#}
-{#                        <p class="mb-0">Вы можете навсегда удалить модуль.#}
-{#                                    <br>Восстановить его будет нельзя</p>#}
-{#                    </div>#}
-{##}
-{#                    <div class="modal-footer flex-nowrap p-0">#}
-{##}
-{#                        <a id='index' type="button" href="delete_module/{{ i_id }}" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0 border-right"><strong>Удалить навсегда</strong></a>#}
-{##}
-{#                            <button type="button" class="btn btn-lg btn-link fs-6 text-decoration-none col-6 m-0 rounded-0" onclick="closeFormDeleteModule()" data-bs-dismiss="modal">Отмена</button>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
 
     <script>
         function openForm() {

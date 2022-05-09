@@ -1,0 +1,13 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+
+{% block content %}
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+{#        {% bootstrap_field form.description  class="custom-control-input" %}#}
+        <button button_type="submit" class="btn btn-primary">Сохранить</button>
+    </form>
+{% endblock %}

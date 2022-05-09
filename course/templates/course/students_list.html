@@ -6,9 +6,9 @@
 {% block content %}
     <div class="container py-3">
         <p>students list</p>
-        {% for student in students %}
+        {% for student, progres in list_item %}
             <p>{{ student.email }}</p>
-
+            <p>{{ progres }} / {{ count_lessons }}</p>
             <a href="create_notification/{{ student.id}}/">Отправить уведомление</a>
         {% endfor %}
      </div>

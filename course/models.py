@@ -28,23 +28,19 @@ class Settings(models.Model):
     subject = models.CharField(max_length=200, null=True)
     language = models.CharField(max_length=200, null=True)
     course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True)
-    # logo
     image = models.FileField(upload_to='course_img/', null=True, blank=True)
     is_published = models.BooleanField(null=True, default=False)
-
     will_learn = models.TextField(null=True, blank=True)
     about_course = models.TextField(null=True, blank=True)
     necessary_training = models.TextField(null=True, blank=True)
     how_training = models.TextField(null=True, blank=True)
     what_you_get = models.TextField(null=True, blank=True)
-
     LEVEL_CHOICES = (
         ('1', "для начаниющих"),
         ('2', "для продолжающих"),
         ('3', "для продвинутых"),
     )
     level = models.CharField(max_length=1, verbose_name="уровень", choices=LEVEL_CHOICES, default='1')
-    # (?) video =
 
     class Meta:
         db_table = 'settings'

@@ -1,0 +1,20 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+
+    <p>Выберите ответ для проверки</p>
+
+    {% for item in answers %}
+
+        <p>{{ item.student.email }}</p>
+        <p>{{ item.time_create }}</p>
+        <p>{{ item.mark.mark }}</p>
+        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
+        <hr>
+    {% endfor %}
+
+{% endblock %}

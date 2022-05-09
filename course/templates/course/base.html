@@ -51,8 +51,8 @@
                                 <div class="collapse show" id="orders-collapse">
                                   <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                     <li><a href="{% url 'announcement_list' course.id %}" class="link-dark rounded">Объявления</a></li>
-                                    <li><a href="{% url 'list' course.id %}" class="link-dark rounded">Модули</a></li>
-                                      <li><a href="{% url 'list_answers' course.id %}" class="link-dark rounded">Задания</a></li>
+                                    <li><a href="{% url 'module:list' course.id %}" class="link-dark rounded">Модули</a></li>
+                                      <li><a href="{% url 'module:list_answers' course.id %}" class="link-dark rounded">Задания</a></li>
                                   </ul>
                                 </div>
                             </li>
@@ -97,7 +97,7 @@
                                 <a href="{% url 'info' course.id %}" class="link-dark rounded">Описание</a>
                             </li>
                             <li class="mb-1">
-                                <a href="{% url 'list' course.id %}" class="link-dark rounded">Содержание</a>
+                                <a href="{% url 'module:list' course.id %}" class="link-dark rounded">Содержание</a>
                             </li>
 
                             <li class="mb-1">
@@ -117,6 +117,11 @@
                             <li class="mb-1">
                                 <a href="#" class="link-dark rounded">Комментарии</a>
                             </li>
+
+                            <li class="mb-1">
+                                <a href="{% url 'module:student_progress_list' course.id %}" class="link-dark rounded">Успеваемость</a>
+                            </li>
+
                          </ul>
 
                     {% endif %}

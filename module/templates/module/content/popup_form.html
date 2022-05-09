@@ -1,0 +1,73 @@
+{% extends "module/content/base_nav.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+{% block content %}
+
+    <STYLE>
+        /* Всплывающая форма-скрыта по умолчанию */
+        .form-popup1 {
+            display: block;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 3px solid #f1f1f1;
+        }
+ </STYLE>
+
+    <div class="form-popup1" id="myForm">
+{#                <div class="modal <modal-to></modal-to>ur position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalTour">#}
+        <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content rounded-6 shadow">
+                    <div class="modal-body p-5">
+                        <h2 class="fw-bold mb-0">Что добавить в модуль {{ module.title }}</h2>
+                        <ul class="d-grid gap-4 my-5 list-unstyled">
+                            <li class="d-flex gap-4">
+                                <svg class="bi text-muted flex-shrink-0" width="48" height="48"></svg>
+                                <div>
+                                    <h5 class="mb-0">
+                                        <a href="{% url 'module:create_lesson' id=course.id m_id=module.id %}">Урок</a>
+                                    </h5>
+                                    Not into lists? Try the new grid view.
+                                </div>
+                            </li>
+                            <li class="d-flex gap-4">
+                                <svg class="bi text-warning flex-shrink-0" width="48" height="48"><use xlink:href="#bookmark-star"/></svg>
+                                <div>
+                                    <h5 class="mb-0">
+{#                                                                                {% url 'module:create_task' id=course.id m_id=module.id %}#}
+                                        <a href="{% url 'module:create_task' id=course.id m_id=module.id %}"> Задание </a>
+                                    </h5>
+                                    Save items you love for easy access later.
+                                </div>
+                            </li>
+                            <li class="d-flex gap-4">
+                                <svg class="bi text-primary flex-shrink-0" width="48" height="48"><use xlink:href="#film"/></svg>
+                                <div style="color: #0b0e1b">
+                                    <h5 class="mb-0">Тест</h5>
+                                    Share videos wherever you go.
+                                </div>
+                            </li>
+                        </ul>
+                        <button type="button" onclick="closeForm()" class="btn btn-lg btn-secondary mt-5 w-100" data-bs-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+       <script>
+        function openForm() {
+          document.getElementById("myForm").style.display = "block";
+        }
+        function closeForm() {
+          document.getElementById("myForm").style.display = "none";
+        }
+
+    </script>
+
+{% endblock %}

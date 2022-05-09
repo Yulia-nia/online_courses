@@ -17,16 +17,7 @@
 </head>
 <body>
 {% block content1 %}
-<STYLE>
-        /* Всплывающая форма-скрыта по умолчанию */
-        .form-popup1 {
-            display: none;
-            position: fixed;
-            bottom: 0;
-            right: 15px;
-            border: 3px solid #f1f1f1;
-        }
- </STYLE>
+
 
     <main class="container-fluid g-0">
 
@@ -40,73 +31,32 @@
                     </a>
                      <ul class="list-unstyled ps-0">
                          {% for module in modules %}
+
                              <li class="mb-1">
-                                 <button class="btn btn-toggle align-items-center rounded collapsed"
+                                    <button class="btn btn-toggle align-items-center rounded collapsed"
                                          data-bs-toggle="collapse" data-bs-target="#some{{ module.id}}" aria-expanded="true">
                                      {{ module.title }}
                                     </button>
-                                 <div class="collapse show" id="some{{ module.id }}">
-                                    {% for lesson in module.lesson_set.all %}
-                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><a href="#" class="link-dark rounded"> {{ lesson.title }}</a></li>
-                                        </ul>
-                                    {% endfor %}
-                                    {% for task in module.task_set.all %}
-                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
-                                        </ul>
-                                    {% endfor %}
-                                    {% if user.id == course.author_id %}
-                                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                            <li><a href="#" class="link-dark rounded" onclick="openForm()"> + Добавить </a></li>
-                                        </ul>
+                                    <div class="collapse show" id="some{{ module.id }}">
+                                        {% for lesson in module.lesson_set.all %}
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                <li><a href="{% url 'module:view_lesson' id=course.id l_id=lesson.id %}" class="link-dark rounded">
+                                                    {{ lesson.title }}</a></li>
+                                            </ul>
+                                        {% endfor %}
+                                        {% for task in module.task_set.all %}
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
+                                            </ul>
+                                        {% endfor %}
 
+                                         {% if user.id == course.author_id %}
+                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a></li>
+                                            </ul>
 
-                                         <div class="form-popup1" id="myForm">
-{#                <div class="modal modal-tour position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalTour">#}
-                 <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
-
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content rounded-6 shadow">
-                      <div class="modal-body p-5">
-                        <h2 class="fw-bold mb-0">Что добавить в модуль</h2>
-
-                        <ul class="d-grid gap-4 my-5 list-unstyled">
-                          <li class="d-flex gap-4">
-                            <svg class="bi text-muted flex-shrink-0" width="48" height="48"><use xlink:href="#grid-fill"/></svg>
-                            <div>
-                                <h5 class="mb-0">
-                                    <a href="{% url 'module:create_lesson' id=course.id m_id=module.id %}">Урок</a>
-                                </h5>
-                              Not into lists? Try the new grid view.
-                            </div>
-                          </li>
-                          <li class="d-flex gap-4">
-                            <svg class="bi text-warning flex-shrink-0" width="48" height="48"><use xlink:href="#bookmark-star"/></svg>
-                            <div>
-                                <h5 class="mb-0">
-                                    <a href="#"> Задание </a>
-                                </h5>
-                              Save items you love for easy access later.
-                            </div>
-                          </li>
-                          <li class="d-flex gap-4">
-                            <svg class="bi text-primary flex-shrink-0" width="48" height="48"><use xlink:href="#film"/></svg>
-                            <div style="color: #0b0e1b">
-                              <h5 class="mb-0">Тест</h5>
-                              Share videos wherever you go.
-                            </div>
-                          </li>
-                        </ul>
-                        <button type="button" onclick="closeForm()" class="btn btn-lg btn-secondary mt-5 w-100" data-bs-dismiss="modal">Отмена</button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-
-                                    {% endif %}
-                                 </div>
+                                        {% endif %}
+                                    </div>
                              </li>
                          {% endfor %}
                      </ul>
@@ -116,7 +66,6 @@
 
             <div class="col-md-10 gx-4">
                 <div class="container">
-                    {#{% include 'C:\Users\User\PycharmProjects\online_courses\templates\header.html' with item_id=item_id %}#}
 
                     {% block content %}
 
@@ -124,69 +73,8 @@
                     {% endblock %}
                 </div>
             </div>
-
-          {#  FORM ADD Items to module #}
-{#            <div class="form-popup1" id="myForm">#}
-{#                <div class="modal modal-tour position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalTour">#}
-{#                 <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">#}
-{##}
-{#                <div class="modal-dialog" role="document">#}
-{#                    <div class="modal-content rounded-6 shadow">#}
-{#                      <div class="modal-body p-5">#}
-{#                        <h2 class="fw-bold mb-0">Что добавить в модуль</h2>#}
-{##}
-{#                        <ul class="d-grid gap-4 my-5 list-unstyled">#}
-{#                          <li class="d-flex gap-4">#}
-{#                            <svg class="bi text-muted flex-shrink-0" width="48" height="48"><use xlink:href="#grid-fill"/></svg>#}
-{#                            <div>#}
-{#                                <h5 class="mb-0">#}
-{#                                    <a href="#">Урок</a>#}
-{#                                </h5>#}
-{#                              Not into lists? Try the new grid view.#}
-{#                            </div>#}
-{#                          </li>#}
-{#                          <li class="d-flex gap-4">#}
-{#                            <svg class="bi text-warning flex-shrink-0" width="48" height="48"><use xlink:href="#bookmark-star"/></svg>#}
-{#                            <div>#}
-{#                                <h5 class="mb-0">#}
-{#                                    <a href="#"> Задание </a>#}
-{#                                </h5>#}
-{#                              Save items you love for easy access later.#}
-{#                            </div>#}
-{#                          </li>#}
-{#                          <li class="d-flex gap-4">#}
-{#                            <svg class="bi text-primary flex-shrink-0" width="48" height="48"><use xlink:href="#film"/></svg>#}
-{#                            <div>#}
-{#                              <h5 class="mb-0">Тест</h5>#}
-{#                              Share videos wherever you go.#}
-{#                            </div>#}
-{#                          </li>#}
-{#                        </ul>#}
-{#                        <button type="button" onclick="closeForm()" class="btn btn-lg btn-secondary mt-5 w-100" data-bs-dismiss="modal">Отмена</button>#}
-{#                      </div>#}
-{#                    </div>#}
-{#                  </div>#}
-{#                </div>#}
-{#            </div>#}
-
         </div>
     </main>
-
-
-     <script>
-        function openForm() {
-          document.getElementById("myForm").style.display = "block";
-        }
-        function closeForm() {
-          document.getElementById("myForm").style.display = "none";
-        }
-
-        document.querySelector('myForm').addEventListener('submit', (e) => {
-            e.preventDefault()
-            alert('Форма отправлена')
-        })
-    </script>
-
 {% endblock %}
 </body>
 </html>

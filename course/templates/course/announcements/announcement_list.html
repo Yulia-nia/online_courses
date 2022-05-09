@@ -31,8 +31,11 @@
                     <p class="mb-3 opacity-75">
                         {{ item.content | safe}}
                     </p>
-                      <a href="{% url 'announcements_edit' item.id %}" title="Редактировать объявление" class="btn"><i class="fa fa-edit"></i></a>
-                      <a href="{% url 'announcements_delete' item.id %}" title="Удалить объявление" class="btn"><i class="fa fa-trash"></i></a>
+
+                      {% if user.id == course.author.id %}
+                        <a href="{% url 'announcements_edit' item.id %}" title="Редактировать объявление" class="btn"><i class="fa fa-edit"></i></a>
+                        <a href="{% url 'announcements_delete' item.id %}" title="Удалить объявление" class="btn"><i class="fa fa-trash"></i></a>
+                        {% endif %}
                   </div>
                   <small class="opacity-50 text-nowrap">{{ item.time_update }}</small>
                 </div>

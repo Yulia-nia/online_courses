@@ -56,13 +56,24 @@ class CatalogCourses(View):
 def view_course(request, id):
     course = Course.objects.get(id=id)
     user = auth.get_user(request)
-    bookmark, created = BookmarkCourse.objects.get_or_create(user=user, obj_id=id)
+
     # если не была создана новая закладка,
     # то считаем, что запрос был на удаление закладки
     chat = Chat.objects.all().filter(course_id=course.id)
+    user = auth.get_user(request)
+    created = BookmarkCourse.objects.all().filter(obj_id=id, user_id=user.id)
+    return render(request, "course/view_course.html", {"course": course, "created": created})
+
+
+def pass_course(request, id):
+    course = Course.objects.get(id=id)
+    user = auth.get_user(request)
+    bookmark, created = BookmarkCourse.objects.get_or_create(user=user, obj_id=id)
     if not created:
         bookmark.delete()
-    return render(request, "course/view_course.html", {"course": course})
+    return render(request, "course/pass_course/pass_course.html", {"course": course})
+
+
 
 
 def info_course(request, id):
@@ -72,11 +83,6 @@ def info_course(request, id):
     return render(request, "course/pass_course/info_course.html", {"course": course,
                                                                    "instructor": instructor,
                                                                    "setting": setting })
-
-
-def pass_course(request, id):
-    course = Course.objects.get(id=id)
-    return render(request, "course/pass_course/pass_course.html", {"course": course})
 
 
 def settings_edit(request, id):
@@ -283,10 +289,14 @@ def notifications_list_course(request, id):
     for i in users:
         students.append(User.objects.get(id=i.user_id))
 
+    user = auth.get_user(request)
+    s_notifications = Notifications.objects.all().filter(course_id=id, student_id=user.id)
+
     return render(request, "course/notifications/notifications_list.html", {"course": course,
                                                          "students": students,
                                                          "form": NotificationForm(),
-                                                         "notifications": notifications})
+                                                         "notifications": notifications,
+                                                        "s_notifications": s_notifications,})
 
 
 def create_notification(request, id, s_id):
@@ -344,3 +354,5 @@ def student_notifications_list(request):
     studnet = User.objects.get(id=request.user.id)
     notifications = Notifications.objects.all().filter(student_id=studnet.id)
     return render(request, "course/notifications/student_list.html", {'notifications': notifications,})
+
+

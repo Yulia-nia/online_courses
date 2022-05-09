@@ -1,4 +1,4 @@
-{% extends "course/base.html" %}
+{% extends "module/content/base_nav.html" %}
 {% load static %}
 
 {% load crispy_forms_tags %}
@@ -14,9 +14,9 @@
 
     {% if user.id != course.author_id %}
         {% if progress_is.is_pass %}
-            <a id="button_progress" href="{% url 'progress' lesson.id %}">Пройдено</a>
+            <a id="button_progress" href="{% url 'module:progress' lesson.id %}">Пройдено</a>
         {% else %}
-            <a id="button_progress" href="{% url 'progress' lesson.id %}">Отметить как пройденное</a>
+            <a id="button_progress" href="{% url 'module:progress' lesson.id %}">Отметить как пройденное</a>
         {% endif %}
     {% endif %}
 

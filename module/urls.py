@@ -12,7 +12,7 @@ urlpatterns = [
     path('delete_module/<int:id>/', views.delete_module),
 
     # task
-    path('create_task/', views.create_task, name='create_task'),
+    path('<int:m_id>/create_task/', views.create_task, name='create_task'),
     path('edit_task/<int:id>/', views.edit_task, name='edit_task'),
     path('delete_task/<int:id>/', views.delete_task, name='delete_task'),
 
@@ -25,7 +25,9 @@ urlpatterns = [
     # lesson
     path('<int:m_id>/lesson_create/', views.create_lesson, name='create_lesson'),
     path('edit_lesson/<int:id>/', views.edit_lesson, name='edit_lesson'),
-    path('view_lesson/<int:id>/', views.view_lesson, name='view_lesson'),
+
+
+    path('view_lesson/<int:l_id>/', views.view_lesson, name='view_lesson'),
 
     path('progress/', views.progress, name='progress'),
 
@@ -33,6 +35,11 @@ urlpatterns = [
 
 
     path('content/', views.content_course, name='content_course'),
+    path('popup/', views.popup_form, name='popup_form'),
+
+    # progress student
+    path('progress_list/', views.student_progress_list, name='student_progress_list'),
+
     path('', views.list_module, name='list'),
     #path('delete/<int:id>/', views.delete_module),
 ]

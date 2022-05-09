@@ -1,0 +1,25 @@
+{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+{% block content %}
+
+    {% for task, mar in list_items %}
+          <p>{{ task.title }} | {% if mar == 0 %} - {% else %} {{ mar }} {% endif %}</p>
+    {% endfor %}
+    <p>Итог: {{ res }}</p>
+
+    <hr/>
+
+    {% for p in progress %}
+        <p>{{ p.lesson.title }} |
+            {% if p.is_pass %}
+                Пройден
+                 | {{ p.time_update }}
+            {% else %}
+                Не пройден
+            {% endif %}
+    {% endfor %}
+{% endblock %}

@@ -104,7 +104,7 @@
                     {% if user.id == course.author_id %}
                     <p>Добавить</p>
                     <a href="{{item.id}}/lesson_create/"> Урок </a> |
-                    <a href="{% url 'create_task' item.id %}" > Задание </a>
+                    <a href="{% url 'module:create_task' id=course.id m_id=item.id %}" > Задание </a>
                     {% endif %}
 
                 </li>

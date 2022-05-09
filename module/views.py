@@ -10,6 +10,7 @@ from module.models import Module, Lesson, Announcement, File, Task, StudentAnswe
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from jinja2 import Environment
+from django.contrib import auth
 
 
 def list_module(request, id):
@@ -58,12 +59,12 @@ def create_module(request, id):
         module.title = request.POST.get("title")
         module.course_id = id
         module.save()
-    return HttpResponseRedirect(reverse('list', args=(id,)))
+    return HttpResponseRedirect(reverse('module:list', args=(id,)))
 
 
 def create_lesson(request, m_id, id):
     module = Module.objects.get(id=m_id)
-    course = Course.objects.get(id=module.course_id)
+    course = Course.objects.get(id=id)
     lesson = Lesson()
     if request.method == "POST":
         lesson.title = request.POST.get("title")
@@ -77,8 +78,8 @@ def create_lesson(request, m_id, id):
                                                          })
 
 
-def create_task(request, id):
-    module = Module.objects.get(id=id)
+def create_task(request, id, m_id):
+    module = Module.objects.get(id=m_id)
     course = Course.objects.get(id=module.course_id)
     if request.method == "POST":
         form = TaskForm(request.POST or None, request.FILES or None)
@@ -88,9 +89,9 @@ def create_task(request, id):
             task.description = form.cleaned_data["description"]
             task.file = form.cleaned_data['file']
             task.time_deadline = form.cleaned_data['time_deadline']
-            task.module_id = id
+            task.module_id = m_id
             task.save()
-        return HttpResponseRedirect(reverse('list', args=(course.id,)))
+        return HttpResponseRedirect(reverse('module:list', args=(course.id,)))
     else:
         return render(request, "module/task/create.html",
                       {"module": module,
@@ -134,12 +135,14 @@ def edit_lesson(request, id):
             lesson.is_published = form['is_published'].value()
             lesson.save()
             return render(request, "module/edit_lesson.html", {"lesson": lesson,
+                                                               "module": module,
                                                                "item_id": module.course_id,
                                                                "form": form,
                                                                "course": course,
                                                                "files": files})
         else:
             return render(request, "module/edit_lesson.html", {"lesson": lesson,
+                                                               "module": module,
                                                                "item_id": module.course_id,
                                                                "course": course,
                                                                "form": form, "files": files})
@@ -147,15 +150,17 @@ def edit_lesson(request, id):
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 
 
-def view_lesson(request, id):
+def view_lesson(request, id, l_id):
     try:
-        lesson = Lesson.objects.get(id=id)
+        lesson = Lesson.objects.get(id=l_id)
         module = Module.objects.get(id=lesson.module_id)
-        course = Course.objects.get(id=module.course_id)
+        modules = Module.objects.all().filter(course_id=id)
+        course = Course.objects.get(id=id)
         files = File.objects.all().filter(lesson_id=lesson.id)
         progress_is = get_progress(course.id, lesson.id, request.user.id)
         return render(request, "module/view_lesson.html", {"lesson": lesson,
                                                            "module": module,
+                                                           "modules": modules,
                                                            "course": course,
                                                             "files": files,
                                                            "progress_is": progress_is})
@@ -197,7 +202,7 @@ def delete_module(request, id):
         module = Module.objects.get(id=id)
         id_course = module.course_id
         module.delete()
-        return HttpResponseRedirect(reverse('list', args=(id_course,)))
+        return HttpResponseRedirect(reverse('module:list', args=(id_course,)))
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Module not found</h2>")
 
@@ -220,19 +225,7 @@ def progress(request, id):
     else:
         progress_is.is_pass = 1
     progress_is.save()
-    return HttpResponse()
-    #return request.META.get('view_lesson')
-    # return HttpResponse('view_lesson', args=(lesson, module,
-    #                                                  course,
-    #                                                          course.id,
-    #                                                     list(files),
-    #                                                     progress_is,))
-    # render(request, "module/view_lesson.html", {"lesson": lesson,
-    #                                                        "module": module,
-    #                                                        "course": course,
-    #                                                         "files": files,
-    #                                                        "progress_is": progress_is})
-
+    return HttpResponseRedirect(reverse('module:view_lesson', args=(course.id, lesson.id, )))
 
 
 class TaskView(View):
@@ -342,7 +335,7 @@ def delete_task(request, id):
         task = Task.objects.get(id=id)
         id_course = task.module.course.id
         task.delete()
-        return HttpResponseRedirect(reverse('list', args=(id_course,)))
+        return HttpResponseRedirect(reverse('module:list', args=(id_course,)))
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>task not found</h2>")
 
@@ -351,7 +344,39 @@ def content_course(request, id):
     course = Course.objects.get(id=id)
     modules = Module.objects.all().filter(course_id=id)
     return render(request, "module/content/base_nav.html", {'course': course,
-
                                                           "modules": modules,
                                                           })
 
+
+def popup_form(request, id):
+    # course = Course.objects.get(id=id)
+    module = Module.objects.get(id=id)
+    course = Course.objects.get(module=module)
+    return render(request, "module/content/popup_form.html",
+                  {'course': course,
+                   'modules': course.module_set.all,
+                   "module": module,
+                   })
+
+
+def student_progress_list(request, id):
+    course = Course.objects.get(id=id)
+    user = auth.get_user(request)
+    marks = Mark.objects.all().filter(student_id=user.id, course_id=course.id)
+    tasks = Task.objects.all().filter(module__course_id=id)
+    mar = [i.mark for i in marks]
+    if marks.count() != tasks.count():
+        mar.append(0)
+    z = zip(tasks, mar)
+    r = [i for i in mar if i >= 1]
+    res = sum(r)/len(r)
+
+    progress = РassingРrogress.objects.all().filter(course_id=id, student_id=user.id)
+
+    return render(request, "module/student_progress/student_progress_list.html",
+                  {'course': course,
+                   'list_items': z,
+                   'tasks': tasks,
+                   'progress': progress,
+                   'marks': marks,
+                   'res': res})

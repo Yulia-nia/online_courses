@@ -25,7 +25,12 @@
         </div>
 
         <a href="{% url 'dialog' course.id %}">Чат с инструктором</a>
-       <a class="button" href="{% url 'pass_course' course.id%}">Начать обучение</a>
+
+        {% if not created %}
+            <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>
+        {% else %}
+            <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>
+        {% endif %}
 {##}
 {#        <a href="http://vk.com/share.php?url=https://127.0.0.1:8000/courses/view_course/{{ course.get_absolute_url }}"#}
 {#       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"#}

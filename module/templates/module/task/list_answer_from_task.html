@@ -6,15 +6,54 @@
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
 
-    <p>Выберите ответ для проверки</p>
+    <section class="container py-3">
+        <div class="bd-example">
+            <nav>
+                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-mark-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-mark" type="button" role="tab" aria-controls="nav-mark"
+                            aria-selected="true">Ждут проверки {{ unverified_answers.count }}</button>
+                    <button class="nav-link" id="nav-progress-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-progress" type="button" role="tab" aria-controls="nav-progress"
+                            aria-selected="false">Проверенные {{ verified_answers.count }}</button>
+              </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
 
-    {% for item in answers %}
+                    {% for item in unverified_answers %}
 
-        <p>{{ item.student.email }}</p>
-        <p>{{ item.time_create }}</p>
-        <p>{{ item.mark.mark }}</p>
-        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
-        <hr>
-    {% endfor %}
+                        <p>{{ item.student.email }}</p>
+                        <p>{{ item.time_create }}</p>
+                        <p>{{ item.mark.mark }}</p>
+                        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
+                        <hr>
+                    {% endfor %}
+
+                </div>
+                <div class="tab-pane fade" id="nav-progress" role="tabpanel" aria-labelledby="nav-progress-tab">
+
+                    {% for item in verified_answers %}
+                        <p>{{ item.student.email }}</p>
+                        <p>{{ item.time_create }}</p>
+                        <p>{{ item.mark.mark }}</p>
+                        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
+                        <hr>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+{##}
+{#    <p>Выберите ответ для проверки</p>#}
+{##}
+{#    {% for item in answers %}#}
+{##}
+{#        <p>{{ item.student.email }}</p>#}
+{#        <p>{{ item.time_create }}</p>#}
+{#        <p>{{ item.mark.mark }}</p>#}
+{#        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>#}
+{#        <hr>#}
+{#    {% endfor %}#}
 
 {% endblock %}

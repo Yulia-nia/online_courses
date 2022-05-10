@@ -212,6 +212,7 @@ def students_list(request, id):
                                                          "count_lessons": count_lessons,
                                                          "list_item": zip(students, progress),
                                                          "course": course,
+
                                                          })
 
 

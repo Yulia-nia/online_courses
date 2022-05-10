@@ -43,10 +43,12 @@ INSTALLED_APPS = [
     'module.apps.ModuleConfig',
     'users.apps.UserConfig',
     'chat.apps.ChatConfig',
+
     # 'module.apps.UserConfig',
     'rest_framework',
     'crispy_forms',
     'django_summernote',
+    'course_test'
 ]
 
 SUMMERNOTE_THEME = 'bs4'

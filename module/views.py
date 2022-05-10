@@ -31,6 +31,10 @@ def list_module(request, id):
 
     student_progress = РassingРrogress.objects.all().filter(course_id=id, student_id=request.user.id ,is_pass=1).count()
     count_lessons = lessons.count()
+    if student_progress == 0:
+        s_p = 0
+    else:
+        s_p = student_progress * 100 // count_lessons
 
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
                                                        # "form_announcement": form_announcement,
@@ -39,6 +43,7 @@ def list_module(request, id):
                                                         "count_lessons":count_lessons,
                                                        "student_progress":student_progress,
                                                        "course": course,
+                                                       "s_p": s_p,
                                                        "lessons": lessons,
                                                        "item_id": id})
 
@@ -72,10 +77,10 @@ def create_lesson(request, m_id, id):
         lesson.description = request.POST.get("description")
         lesson.module_id = m_id
         lesson.save()
-    return render(request, "module/create_lesson.html", {"lesson": lesson,
+    return render(request, "module/lesson/create_lesson.html", {"lesson": lesson,
                                                          "course": course,
                                                          "item_id": m_id,
-                                                         })
+                                                                })
 
 
 def create_task(request, id, m_id):
@@ -110,8 +115,25 @@ def list_ans_from_task(request, id):
     answers = StudentAnswer.objects.all().filter(task_id=id)
     task = Task.objects.get(id=id)
     module = Module.objects.get(id= task.module_id)
+
+
+    #verified_answers = []
+    #unverified_answers = []
+
+    # mark = Mark.objects.all().filter(course_id=module.course_id, mark)
+    #
+    # for item in answers:
+    #     if  item.mark is not None:
+    #         verified_answers.append(item)
+    #     else:
+    #         unverified_answers.append(item)
+
+    verified_answers = StudentAnswer.objects.all().filter(task_id=id, mark__isnull=False).order_by('-mark__time_create')
+    unverified_answers = StudentAnswer.objects.all().filter(task_id=id, mark__isnull=True).order_by('-time_update')
     return render(request, "module/task/list_answer_from_task.html", {
         "answers": answers,
+        "verified_answers": verified_answers,
+        "unverified_answers": unverified_answers,
         "course": Course.objects.get(id=module.course_id) })
 
 
@@ -134,14 +156,14 @@ def edit_lesson(request, id):
             lesson.short_description = form['short_description'].value()
             lesson.is_published = form['is_published'].value()
             lesson.save()
-            return render(request, "module/edit_lesson.html", {"lesson": lesson,
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
                                                                "module": module,
                                                                "item_id": module.course_id,
                                                                "form": form,
                                                                "course": course,
                                                                "files": files})
         else:
-            return render(request, "module/edit_lesson.html", {"lesson": lesson,
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
                                                                "module": module,
                                                                "item_id": module.course_id,
                                                                "course": course,
@@ -158,7 +180,7 @@ def view_lesson(request, id, l_id):
         course = Course.objects.get(id=id)
         files = File.objects.all().filter(lesson_id=lesson.id)
         progress_is = get_progress(course.id, lesson.id, request.user.id)
-        return render(request, "module/view_lesson.html", {"lesson": lesson,
+        return render(request, "module/lesson/view_lesson.html", {"lesson": lesson,
                                                            "module": module,
                                                            "modules": modules,
                                                            "course": course,
@@ -190,9 +212,9 @@ def edit_lesson_from_module(request, module_id, id):
             lesson.short_description = request.POST.get("short_description")
             lesson.description = request.POST.get("description")
             lesson.save()
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": id})
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson, "item_id": id})
         else:
-            return render(request, "module/edit_lesson.html", {"lesson": lesson, "item_id": id})
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson, "item_id": id})
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 
@@ -371,11 +393,14 @@ def student_progress_list(request, id):
     r = [i for i in mar if i >= 1]
     res = sum(r)/len(r)
 
+    student_answers = StudentAnswer.objects.all().filter(student_id=user.id, task__module__course_id=course.id)
+
     progress = РassingРrogress.objects.all().filter(course_id=id, student_id=user.id)
 
     return render(request, "module/student_progress/student_progress_list.html",
                   {'course': course,
                    'list_items': z,
+                   'student_answers': student_answers,
                    'tasks': tasks,
                    'progress': progress,
                    'marks': marks,

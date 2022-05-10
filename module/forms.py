@@ -50,3 +50,8 @@ class AnswerTaskForm(forms.Form):
 class MarkForm(forms.Form):
     mark = forms.IntegerField(label='', required=False)
 
+
+class TextLessonForm(forms.Form):
+    content = forms.CharField(required=False, label='',  widget=SummernoteWidget(attrs={'rows': 4,
+                                    'summernote': {'width': '100%'}}
+                                   ))

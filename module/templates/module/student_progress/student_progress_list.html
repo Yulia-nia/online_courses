@@ -6,20 +6,55 @@
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
 
-    {% for task, mar in list_items %}
-          <p>{{ task.title }} | {% if mar == 0 %} - {% else %} {{ mar }} {% endif %}</p>
-    {% endfor %}
-    <p>Итог: {{ res }}</p>
+    <section class="container py-3">
+        <div class="bd-example">
+            <nav>
+                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-mark-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-mark" type="button" role="tab" aria-controls="nav-mark"
+                            aria-selected="true">Оценки</button>
+                    <button class="nav-link" id="nav-progress-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-progress" type="button" role="tab" aria-controls="nav-progress"
+                            aria-selected="false">Прогресс прохожения</button>
+                    <button class="nav-link" id="nav-task-tab" data-bs-toggle="tab"
+                            data-bs-target="#nav-task" type="button" role="tab" aria-controls="nav-task"
+                            aria-selected="false">Отправленные задания</button>
+              </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
 
-    <hr/>
+                    {% for task, mar in list_items %}
+                        <p>{{ task.title }} | {% if mar == 0 %} - {% else %} {{ mar }} {% endif %}</p>
+                    {% endfor %}
+                    <p>Итог: {{ res }}</p>
 
-    {% for p in progress %}
-        <p>{{ p.lesson.title }} |
-            {% if p.is_pass %}
-                Пройден
-                 | {{ p.time_update }}
-            {% else %}
-                Не пройден
-            {% endif %}
-    {% endfor %}
+                </div>
+                <div class="tab-pane fade" id="nav-progress" role="tabpanel" aria-labelledby="nav-progress-tab">
+
+                    {% for p in progress %}
+                        <p>{{ p.lesson.title }} |
+                        {% if p.is_pass %}
+                            Пройден
+                            | {{ p.time_update }}
+                        {% else %}
+                            Не пройден
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="tab-pane fade" id="nav-task" role="tabpanel" aria-labelledby="nav-task-tab">
+
+                    {% for answer in student_answers %}
+                        <p>{{ answer.time_create }} | {{ answer.task.title }} |
+                            {% if answer.mark.mark %}
+                                {{ answer.mark.mark }}
+                            {% else %}
+                                Не оценено
+                            {% endif %}
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
 {% endblock %}

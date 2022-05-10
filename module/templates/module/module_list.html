@@ -21,8 +21,14 @@
  <section class="container py-3">
 
     <p>Прогресс</p>
-    <p>{{ student_progress }} .. {{ count_lessons }}</p>
-
+    <div>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped text-dark bg-info progress-bar-animated"
+                     role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="4"
+                     style="width: {{ s_p }}%">{{ s_p }}%</div>
+        </div>
+    </div>
+    <p>{{ student_progress }} из {{ count_lessons }} уроков</p>
      {% if modules.count > 0 %}
         <ol class="list1b">
             {% for item in modules %}

@@ -9,38 +9,94 @@
 
 {% block content %}
 
+    <div class="container">
+        <div class="py-3 text-center">
+            <form method="post" enctype=multipart/form-data>
+                {% csrf_token %}
 
-<form method="post">
-         {% csrf_token %}
+{#                title#}
+                <div>
+                    <h4 class="text-start">Название</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь название урока.<br>
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form_lesson.title class="custom-control-input"%}
+                    </div>
+                </div>
 
-          <div class="form-group">
+            {#                short_description#}
+                <div>
+                    <h4 class="text-start">Краткое описание</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь краткое описание.<br>
+                              Оно будет отображаться в содержании курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form_lesson.short_description class="custom-control-input"%}
+                    </div>
+                </div>
 
-            <label for="exampleInputEmail1">Название</label>
-            <input type="text" class="form-control" name="title" id="titlecourse"  value="{{lesson.title}}">
-          </div>
+            {# description#}
+                <div>
+                    <h4 class="text-start">Подробное описание</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Укажите здесь подробное описание.<br>
+                              Контент курса.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form_lesson.description class="custom-control-input"%}
+                    </div>
+                </div>
 
-          <div class="form-group">
-            <label for="exampleInputPassword1">Описание</label>
-            <input type="text" class="form-control" name="short_description" id="descourse" value="{{lesson.short_description}}">
-          </div>
+            {# is published #}
+                <div>
+                    <h4 class="text-start">Публикация урока</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Пока ваш урок находится в статусе "не опубликован", никто не сможет получить к нему доступ.
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="custom-control custom-checkbox">
+                        {%  bootstrap_field form_lesson.is_published class="custom-control-input"%}
+                    </div>
+                </div>
 
-     {% if lesson.description is None %}
+                <button button_type="submit" class="btn btn-primary" name="but">Сохранить</button>
 
-      <div class="form-group">
-            <label for="exampleInputPassword1">Описание</label>
-            <input type="text" class="form-control" name="description" id="descosurse">
-          </div>
+            </form>
+        </div>
+    </div>
 
-         {% else %}
-
-          <div class="form-group">
-            <label for="exampleInputPassword1">Описание</label>
-            <input type="text" class="form-control" name="description" id="descosurse" value="{{lesson.description}}">
-          </div>
-
-     {% endif %}
-
-         <button button_type="submit" class="btn btn-primary">Submit</button>
-     </form>
 
 {% endblock %}

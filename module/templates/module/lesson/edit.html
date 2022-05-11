@@ -1,0 +1,30 @@
+{% extends "module/content/base_nav.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+
+
+{% block content %}
+    <section class="container py-3">
+        <div class="bd-example">
+            <nav>
+                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
+                    <a href="{% url 'module:edit_lesson_settings' id=course.id l_id=lesson.id %}" >Урок</a>
+                    <a href="{% url 'module:list_blocks' l_id=lesson.id id=course.id %}" >Блок</a>
+              </div>
+            </nav>
+                <div class="tab-content" id="nav-tabContent">
+
+                    {% block lesson_content %}
+
+                    {% endblock %}
+
+                </div>
+        </div>
+    </section>
+
+
+{% endblock %}

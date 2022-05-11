@@ -57,7 +57,7 @@
                                                 </div>
                                                 {% if user.id == course.author_id %}
                                                 <div class="" style="padding: 1px">
-                                                    <a href="edit_lesson/{{ lesson.id }}/" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
+                                                    <a href="{% url 'module:edit_lesson_settings' id=item_id l_id=lesson.id %}" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
                                                 </div>
                                                 {% else %}
                                                     <a href="view_lesson/{{ lesson.id }}/">Просмотреть урок</a>

@@ -23,8 +23,21 @@ urlpatterns = [
     path(r'estimate/<int:id>/', views.EstimateView.as_view(), name='estimate'),
 
     # lesson
-    path('<int:m_id>/lesson_create/', views.create_lesson, name='create_lesson'),
-    path('edit_lesson/<int:id>/', views.edit_lesson, name='edit_lesson'),
+    path('<int:m_id>/lesson_create/', views.CreateLesson.as_view(), name='create_lesson'),
+    #path('<int:m_id>/lesson_create/', views.create_lesson, name='create_lesson'),
+
+    path('edit_lesson_all/<int:l_id>/', views.edit_lesson, name='edit_lesson'),
+    path('<int:l_id>/edit_lesson/', views.edit_lesson_settings, name='edit_lesson_settings'),
+
+
+
+    path('<int:l_id>/list_blocks/', views.list_blocks, name='list_blocks'),
+
+
+    path('<int:l_id>/block_create/', views.CreateBlockAll.as_view(), name='block_create'),
+
+
+    path('<int:block_id>/add_text/', views.TextAddView.as_view(), name="add_text"),
 
 
     path('view_lesson/<int:l_id>/', views.view_lesson, name='view_lesson'),

@@ -1,12 +1,18 @@
+from datetime import datetime
+from time import strftime, gmtime
+
+from django.forms import formset_factory, modelformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
 from django.urls import reverse
 # Create your views here.
 from django.views import View
+from django.views.generic import TemplateView
 
 from course.models import Course, РassingРrogress
-from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm
-from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark
+from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm, \
+    LessonCreateForm, BlockCreateForm, BlockForm, BlockInlineFormset
+from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block, Text
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from jinja2 import Environment
@@ -67,20 +73,48 @@ def create_module(request, id):
     return HttpResponseRedirect(reverse('module:list', args=(id,)))
 
 
-def create_lesson(request, m_id, id):
-    module = Module.objects.get(id=m_id)
+class CreateLesson(View):
+    model = Lesson
+
+    def get(self, request, m_id, id):
+        module = Module.objects.get(id=m_id)
+        course = Course.objects.get(id=id)
+        return render(request, "module/lesson/create_lesson.html", {'form_lesson': LessonCreateForm(),
+                                        'module': module,
+                                        'course': course,
+                                                                   })
+
+    def post(self, request, m_id, id):
+        module = Module.objects.get(id=m_id)
+        course = Course.objects.get(id=id)
+        form = LessonCreateForm(request.POST or None)
+        if form.is_valid():
+            lesson = Lesson()
+            lesson.title = form.cleaned_data['title']
+            lesson.description = form.cleaned_data["description"]
+            lesson.short_description = form.cleaned_data['short_description']
+            lesson.is_published = form.cleaned_data["is_published"]
+            lesson.module_id = m_id
+            lesson.save()
+        return HttpResponseRedirect(reverse('module:list', args=(course.id,)))
+
+
+def create_block(request, l_id, id):
+    lesson = Lesson.objects.get(id=l_id)
     course = Course.objects.get(id=id)
-    lesson = Lesson()
+    blocks = Block.objects.all().filter(lesson_id=l_id)
     if request.method == "POST":
-        lesson.title = request.POST.get("title")
-        lesson.short_description = request.POST.get("short_description")
-        lesson.description = request.POST.get("description")
-        lesson.module_id = m_id
-        lesson.save()
-    return render(request, "module/lesson/create_lesson.html", {"lesson": lesson,
-                                                         "course": course,
-                                                         "item_id": m_id,
-                                                                })
+        form = BlockCreateForm(request.POST or None)
+        if form.is_valid():
+            block = Block()
+            block.title = form.cleaned_data['title']
+            block.lesson_id = l_id
+            block.save()
+    return render(request, "module/lesson/block/block_create.html",
+                  {"lesson": lesson,
+                   "course": course,
+                   'blocks': blocks,
+                   "form": BlockCreateForm})
 
 
 def create_task(request, id, m_id):
@@ -111,23 +145,86 @@ def list_answers_tasks(request, id):
                                                        "course": Course.objects.get(id=id),})
 
 
+def list_blocks(request, l_id, id):
+    lesson = Lesson.objects.get(id=l_id)
+    course = Course.objects.get(id=id)
+    blocks = Block.objects.all().filter(lesson_id=l_id)
+    return render(request, "module/lesson/block/list.html",
+                  {"lesson": lesson,
+                   "course": course,
+                   'blocks': blocks,})
+
+
+class CreateBlockAll(TemplateView):
+    form_class = BlockForm
+    template_name = "module/lesson/block/block_create.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateBlockAll, self).get_context_data(**kwargs)
+        context['product_meta_formset'] = BlockInlineFormset()
+        return context
+
+    def post(self, request, l_id, id):
+        self.object = None
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        product_meta_formset = BlockInlineFormset(self.request.POST)
+        if form.is_valid() and product_meta_formset.is_valid():
+            return self.form_valid(form, product_meta_formset, l_id, id)
+        else:
+            return self.form_invalid(form, product_meta_formset, l_id, id)
+
+    def form_valid(self, form, product_meta_formset,  l_id, id):
+        self.object = form.save(commit=False)
+        self.object.save()
+        # saving ProductMeta Instances
+        product_metas = product_meta_formset.save(commit=False)
+        for meta in product_metas:
+            meta.product = self.object
+            meta.save()
+        return redirect(reverse("module:list_blocks", args=(Course.objects.get(id=id),)))
+
+    def form_invalid(self, form, product_meta_formset,  l_id, id):
+        return self.render_to_response(
+            self.get_context_data(form=form,
+                                  product_meta_formset=product_meta_formset,
+                                  course=Course.objects.get(id=id)
+                                  )
+        )
+
+    def get_form_class(self):
+        pass
+
+    def get_form(self, form_class):
+        pass
+
+
+class TextAddView(TemplateView):
+    template_name = "module/lesson/block/add_text.html"
+
+    def get(self, request, id, block_id):
+        formset = TextFormSet(queryset=Text.objects.none())
+        return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+
+    # Define method to handle POST request
+    def post(self, request, id, block_id):
+        formset = TextFormSet(data=self.request.POST)
+        # Check if submitted forms are valid
+        if formset.is_valid():
+            formset.f
+            #formset.block = Block.objects.get(id=block_id)
+            formset.save()
+            return redirect(reverse_lazy("module:block_create"))
+
+        return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+
+
+
+
 def list_ans_from_task(request, id):
     answers = StudentAnswer.objects.all().filter(task_id=id)
     task = Task.objects.get(id=id)
     module = Module.objects.get(id= task.module_id)
-
-
-    #verified_answers = []
-    #unverified_answers = []
-
-    # mark = Mark.objects.all().filter(course_id=module.course_id, mark)
-    #
-    # for item in answers:
-    #     if  item.mark is not None:
-    #         verified_answers.append(item)
-    #     else:
-    #         unverified_answers.append(item)
-
     verified_answers = StudentAnswer.objects.all().filter(task_id=id, mark__isnull=False).order_by('-mark__time_create')
     unverified_answers = StudentAnswer.objects.all().filter(task_id=id, mark__isnull=True).order_by('-time_update')
     return render(request, "module/task/list_answer_from_task.html", {
@@ -137,19 +234,25 @@ def list_ans_from_task(request, id):
         "course": Course.objects.get(id=module.course_id) })
 
 
+def edit_lesson(request, l_id, id):
+    return render(request, "module/lesson/edit.html", {"lesson": Lesson.objects.get(id=l_id),
+                                                       'course': Course.objects.get(id=id),
+                                                              })
 
-def edit_lesson(request, id):
+
+def edit_lesson_settings(request, l_id, id, ):
     try:
-        lesson = Lesson.objects.get(id=id)
+        lesson = Lesson.objects.get(id=l_id)
         module = Module.objects.get(id=lesson.module_id)
-        course = Course.objects.get(id=module.course_id)
+        course = Course.objects.get(id=id)
         form = LessonEditForm(request.POST or None, request.FILES or None, initial=
                                     {'title': lesson.title,
                                      'description': lesson.description,
                                      'short_description': lesson.short_description,
                                      'is_published': lesson.is_published,
                                      })
-        files = File.objects.all().filter(lesson_id=lesson.id)
+
+        blocks = Block.objects.all().filter(lesson_id=lesson.id)
         if form.is_valid():
             lesson.title = form['title'].value()
             lesson.description = form["description"].value()
@@ -161,13 +264,13 @@ def edit_lesson(request, id):
                                                                "item_id": module.course_id,
                                                                "form": form,
                                                                "course": course,
-                                                               "files": files})
+                                                               "blocks": blocks})
         else:
             return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
                                                                "module": module,
                                                                "item_id": module.course_id,
                                                                "course": course,
-                                                               "form": form, "files": files})
+                                                               "form": form, "blocks": blocks})
     except Lesson.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 

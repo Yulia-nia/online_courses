@@ -30,6 +30,12 @@ class Settings(models.Model):
     course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True)
     image = models.FileField(upload_to='course_img/', null=True, blank=True)
     is_published = models.BooleanField(null=True, default=False)
+
+    is_active = models.BooleanField(null=True, default=False)  # start or end
+    start_date = models.DateTimeField(null=True)
+    end_date = models.DateTimeField(null=True)
+    # recruitment_start_date = models.DateTimeField(null=True)
+
     will_learn = models.TextField(null=True, blank=True)
     about_course = models.TextField(null=True, blank=True)
     necessary_training = models.TextField(null=True, blank=True)
@@ -40,6 +46,14 @@ class Settings(models.Model):
         ('2', "для продолжающих"),
         ('3', "для продвинутых"),
     )
+
+    COURSE_CHOICES = (
+        ('0', "идет разработка курса"),
+        ('1', "идет набор на курс"),
+        ('2', "курс начался"),
+        ('3', "курс закончился"),
+    )
+    active_level = models.CharField(max_length=1, verbose_name="статус курса", choices=COURSE_CHOICES, default='0')
     level = models.CharField(max_length=1, verbose_name="уровень", choices=LEVEL_CHOICES, default='1')
 
     class Meta:
@@ -78,3 +92,14 @@ class Notifications(models.Model):
     def __str__(self):
         return self.content
 
+
+class CoursEnrollment(models.Model):
+    course = models.OneToOneField(Course, on_delete=models.CASCADE, primary_key=True)
+    students = models.ManyToManyField(User)
+    time_create = models.DateTimeField(auto_now_add=True)
+    time_end = models.DateTimeField(null=True)
+
+    class Meta:
+        db_table = ' course_enrollment'
+        verbose_name = 'Набор на курс',
+        verbose_name_plural = 'Набор на курс'

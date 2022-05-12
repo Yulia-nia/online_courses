@@ -1,0 +1,31 @@
+{% extends "course/base.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
+
+
+{% block content %}
+
+
+        <form method="post">
+            {% csrf_token %}
+            {% bootstrap_field form.time_end class="custom-control-input" %}
+            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+        </form>
+
+
+
+    {{ enrollments.time_end }}
+    <hr>
+    {% if enrollments.students.count == 0 %}
+        <p>Никто еще не поступил</p>
+    {% else %}
+        {% for item in enrollments.students.all %}
+            <p> {{ item.email }} </p>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

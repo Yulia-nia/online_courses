@@ -24,34 +24,23 @@ from jinja2 import Environment
 from django.contrib import auth
 
 
-
-
-
-
-
 def list_module(request, id):
     course = Course.objects.get(id=id)
     form = ModuleForm()
     modules = Module.objects.all()
     #form_announcement = AnnouncementForm()
-
     #announcements = Announcement.objects.all().filter(course_id=id)
-
     #count_list = zip(announcements, range(1, announcements.count()+1))
     # in case to filter by id
-
     #pass_prog = РassingРrogress.objects.get(course_id=id, student_id=request.user.id)
-
     modules = Module.objects.filter(course_id=id)
     lessons = Lesson.objects.all().filter(module__course_id=id)
-
     student_progress = РassingРrogress.objects.all().filter(course_id=id, student_id=request.user.id ,is_pass=1).count()
     count_lessons = lessons.count()
     if student_progress == 0:
         s_p = 0
     else:
         s_p = student_progress * 100 // count_lessons
-
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
                                                        # "form_announcement": form_announcement,
                                                        # "announcements": announcements,
@@ -109,22 +98,22 @@ class CreateLesson(View):
         return HttpResponseRedirect(reverse('module:list', args=(course.id,)))
 
 
-def create_block(request, l_id, id):
-    lesson = Lesson.objects.get(id=l_id)
-    course = Course.objects.get(id=id)
-    blocks = Block.objects.all().filter(lesson_id=l_id)
-    if request.method == "POST":
-        form = BlockCreateForm(request.POST or None)
-        if form.is_valid():
-            block = Block()
-            block.title = form.cleaned_data['title']
-            block.lesson_id = l_id
-            block.save()
-    return render(request, "module/lesson/block/block_create.html",
-                  {"lesson": lesson,
-                   "course": course,
-                   'blocks': blocks,
-                   "form": BlockCreateForm})
+# def create_block(request, l_id, id):
+#     lesson = Lesson.objects.get(id=l_id)
+#     course = Course.objects.get(id=id)
+#     blocks = Block.objects.all().filter(lesson_id=l_id)
+#     if request.method == "POST":
+#         form = BlockCreateForm(request.POST or None)
+#         if form.is_valid():
+#             block = Block()
+#             block.title = form.cleaned_data['title']
+#             block.lesson_id = l_id
+#             block.save()
+#     return render(request, "module/lesson/block/block_create.html",
+#                   {"lesson": lesson,
+#                    "course": course,
+#                    'blocks': blocks,
+#                    "form": BlockCreateForm})
 
 
 def create_task(request, id, m_id):
@@ -169,28 +158,19 @@ def list_blocks(request, l_id, id):
 @login_required
 def text_block_settings(request, l_id, id):
     user = request.user
-
     # Create the formset, specifying the form and formset we want to use.
     FileFormSet = formset_factory(FileForm, formset=BaseFileFormSet, extra=3)
     LinkFormSet = formset_factory(UrlLinkForm, formset=BaseLinkFormSet, extra=3)
-
     # Get our existing link data for this user.  This is used as initial data.
     lesson_ = Lesson.objects.get(id=l_id)
     # block = Block.objects.create(lesson_id=l_id)
-    #
-    #
     # files = File.objects.filter(block_id=block.id).order_by('id')
     # urls = UrlLink.objects.filter(block_id=block.id).order_by('id')
-    #
-    # files_data = [{'title': f.title, 'file': f.file, }
-    #                 for f in files]
-    #
-    # urls_data = [{'title_u': u.title, 'url': u.url, }
-    #                 for u in files]
+    # files_data = [{'title': f.title, 'file': f.file, } for f in files]
+    # urls_data = [{'title_u': u.title, 'url': u.url, } for u in files]
     block = Block(lesson_id=l_id)
     files_data = []
     urls_data = []
-
     if request.method == 'POST':
         block_form = BlockForm(request.POST)
         file_formset = FileFormSet(request.POST or None, request.FILES or None)
@@ -201,52 +181,39 @@ def text_block_settings(request, l_id, id):
             block.title = block_form.cleaned_data.get('title')
             block.text_content = block_form.cleaned_data.get('text_content')
             block.save()
-
             # Now save the data for each form in the formset
             new_files = []
-
             for file_form in file_formset:
                 title = file_form.cleaned_data.get('title')
                 file = file_form.cleaned_data.get('file')
-
                 if title and file:
                     new_files.append(File(block_id=block.id, title=title, file=file))
-
             new_links = []
-
             for url_form in url_formset:
                 title = url_form.cleaned_data.get('title_u')
                 url = url_form.cleaned_data.get('url')
-
                 if title and url:
                     new_links.append(UrlLink(block_id=block.id, title=title, url=url))
-
             try:
                 with transaction.atomic():
                     # Replace the old with the new
                     # Text.objects.filter(block_id=block.id).delete()
                     File.objects.bulk_create(new_files)
                     UrlLink.objects.bulk_create(new_links)
-
                     # And notify our users that it worked
                     messages.success(request, 'You have updated your profile.')
                     # return redirect(reverse('module:list_blocks', args=(id, lesson_.id,)))
-
             except IntegrityError:  # If the transaction failed
                 messages.error(request, 'There was an error saving your profile.')
-
     else:
         block_form = BlockForm()
         file_formset = FileFormSet(initial=files_data)
         url_formset = LinkFormSet(initial=urls_data)
-
-
     return render(request, "module/lesson/block/block_create.html", {
         'block_form': block_form,
         'file_formset': file_formset,
         'url_formset': url_formset,
     })
-
 
 
 #class CreateBlockAll(FormView):
@@ -379,7 +346,6 @@ def view_lesson(request, id, l_id):
                                                            "progress_is": progress_is})
     except Lesson.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
-
 
 
 def edit_module(request, id):

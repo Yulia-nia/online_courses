@@ -1,15 +1,18 @@
+import datetime
+
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from rest_framework import generics
 from django.urls import reverse, reverse_lazy
 from rest_framework.response import Response
 from django.views import View
 from chat.models import Chat, Message
-from course.forms import CourseForm, SettingsForm, NotificationForm
-from course.models import Course, Settings, Notifications, РassingРrogress
+from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnrollmentForm
+from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement, Lesson, Mark, Module
@@ -53,16 +56,50 @@ class CatalogCourses(View):
         return render(request, "course/course_catalog.html", {"courses": courses})
 
 
+from datetime import date
+
 def view_course(request, id):
     course = Course.objects.get(id=id)
-    user = auth.get_user(request)
+    #user = auth.get_user(request)
 
     # если не была создана новая закладка,
     # то считаем, что запрос был на удаление закладки
     chat = Chat.objects.all().filter(course_id=course.id)
     user = auth.get_user(request)
     created = BookmarkCourse.objects.all().filter(obj_id=id, user_id=user.id)
-    return render(request, "course/view_course.html", {"course": course, "created": created})
+    if timezone.now() > course.settings.start_date:
+            #course.settings.start_date.time() >= datetime.datetime.today().time():
+        course.settings.is_active = True
+        course.settings.save()
+    else:
+        course.settings.is_active = False
+        course.settings.save()
+    is_enrollements = False
+    if timezone.now() < course.coursenrollment.time_end:
+        is_enrollements = True
+
+    is_student_in_enrollement = False
+    if course.coursenrollment.students.all().filter(id=user.id).first():
+        is_student_in_enrollement = True
+
+    return render(request, "course/view_course.html", {"course": course, "created": created,
+                                                       'is_student_in_enrollement': is_student_in_enrollement,
+                                                       'is_enrollements': is_enrollements})
+
+
+def add_student_in_enrollment(request, id):
+    enrollment = Course.objects.get(id=id).coursenrollment
+    enrollment.students.add(request.user)
+    enrollment.save()
+    return HttpResponseRedirect(reverse('view_course', args=(id,)))
+
+
+def delete_student_in_enrollment(request, id):
+    enrollment = Course.objects.get(id=id).coursenrollment
+    user = auth.get_user(request)
+    enrollment.students.remove(user)
+    enrollment.save()
+    return HttpResponseRedirect(reverse('view_course', args=(id,)))
 
 
 def pass_course(request, id):
@@ -72,8 +109,6 @@ def pass_course(request, id):
     if not created:
         bookmark.delete()
     return render(request, "course/pass_course/pass_course.html", {"course": course})
-
-
 
 
 def info_course(request, id):
@@ -192,6 +227,7 @@ def check_list(request, id):
     course = Course.objects.get(id=id)
     return render(request, "course/check_list.html", {"item_id": id,
                                                       "course": course})
+
 
 def get_student_progress(c_id, s_id):
     return РassingРrogress.objects.all().filter(course_id=c_id, student_id=s_id, is_pass=1).count()
@@ -338,8 +374,6 @@ def edit_announcements(request, id):
                                                      "form": form,
                                                      "task": ann})
 
-    return None
-
 
 def delete_announcements(request, id):
     try:
@@ -356,4 +390,37 @@ def student_notifications_list(request):
     notifications = Notifications.objects.all().filter(student_id=studnet.id)
     return render(request, "course/notifications/student_list.html", {'notifications': notifications,})
 
+
+class EnrollmentView(View):
+    model = CoursEnrollment
+
+    def get(self, request, id):
+        course = Course.objects.get(id=id)
+        enrollments = CoursEnrollment.objects.all().filter(course_id=id).first()
+        form = CoursEnrollmentForm()
+        return render(request, "course/enrollments/list.html", {"course": course,
+                                                                'enrollments': enrollments if enrollments else None,
+                                                                'form': form})
+
+    def post(self, request, id):
+        course = Course.objects.get(id=id)
+        enrollment_edit = CoursEnrollment.objects.all().filter(course_id=id)
+        if enrollment_edit.count() == 1:
+            enrollment_edit = enrollment_edit.first()
+            form = CoursEnrollmentForm(request.POST or None, initial={'time_end': enrollment_edit.time_end})
+            if form.is_valid():
+                enrollment_edit.time_end = form['time_end'].value()
+                enrollment_edit.course_id = id
+                enrollment_edit.save()
+        else:
+            enrollment = CoursEnrollment()
+            form = CoursEnrollmentForm(request.POST)
+            if form.is_valid():
+                enrollment.time_end = form.cleaned_data['time_end']
+                enrollment.course_id = id
+                enrollment.save()
+        enrollments = CoursEnrollment.objects.get(course_id=id)
+        return render(request, "course/enrollments/list.html", {"course": course,
+                                                                'enrollments': enrollments,
+                                                                'form': form})
 

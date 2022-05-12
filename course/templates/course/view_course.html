@@ -9,28 +9,56 @@
 {% block content1 %}
 <div class="container">
     <div class="py-3 text-center">
+
         <p>{{ course.title }}</p>
-    <p>{{ course.author_id }}</p>
-        <p>{{ course.settings.about_course | safe }}</p>
+
+        <p>Инстуктор: {{ course.author.username }}</p>
+
+        <p>О курсе: {{ course.settings.about_course | safe }}</p>
+
         {% for module in course.module_set.values %}
             <p>{{ module.title }}</p>
         {%endfor %}
 
 
-        <p></p>
+{#        <p></p>#}
 
-        <div data-id="{{ like_obj.id }}" data-type="article" data-action="bookmark" title="Избранное">
-            <span class="glyphicon glyphicon-star"></span>
-            <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>
-        </div>
+{#        <div data-id="{{ like_obj.id }}" data-type="article" data-action="bookmark" title="Избранное">#}
+{#            <span class="glyphicon glyphicon-star"></span>#}
+{#            <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>#}
+{#        </div>#}
 
-        <a href="{% url 'dialog' course.id %}">Чат с инструктором</a>
+{#        <a href="{% url 'dialog' course.id %}">Чат с инструктором</a>#}
 
-        {% if not created %}
-            <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>
+        <hr>
+
+        {% if course.settings.is_active %}
+            {% if not created %}
+                <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>
+            {% else %}
+                <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>
+            {% endif %}
         {% else %}
-            <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>
+            <p>Курс начинается {{ course.settings.start_date }}</p>
+            <p>Поступить на курс возможно до {{ course.coursenrollment.time_end }}</p>
+
+            {% if is_enrollements %}
+                {% if is_student_in_enrollement %}
+                    <p>Вы записаны на курс</p>
+                    <a href="{% url 'delete_student_in_enrollment' course.id %}">Отменить запись</a>
+                    {% else %}
+                        <a href="{% url 'add_student_in_enrollment' course.id %}">Поступить на курс</a>
+                {% endif %}
+            {% else %}
+                <a href="#">Запись на курс окночена</a>
+            {% endif %}
         {% endif %}
+
+{#        {% if not created %}#}
+{#            <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>#}
+{#        {% else %}#}
+{#            <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>#}
+{#        {% endif %}#}
 {##}
 {#        <a href="http://vk.com/share.php?url=https://127.0.0.1:8000/courses/view_course/{{ course.get_absolute_url }}"#}
 {#       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"#}

@@ -14,6 +14,7 @@ urlpatterns = [
     path(r'instructor_courses/edit_course/<int:id>/', views.edit_course, name='edit'),
     path('delete/<int:id>/', views.delete_course, name='delete'),
     path('view_course/<int:id>/', views.view_course, name='view_course'),
+
     path('<int:c_id>/chat/dialog/', views.dialog, name='dialog'),
 
     path('<int:id>/chat/', include('chat.urls'), name='chat'),
@@ -37,6 +38,13 @@ urlpatterns = [
 
     # announcements
     path('<int:id>/announcement_list/', views.announcement_list, name='announcement_list'),
+
+    path('<int:id>/enrollments/', views.EnrollmentView.as_view(), name='enrollments'),
+
+    path('<int:id>/add_studnet_enrollments/', views.add_student_in_enrollment, name='add_student_in_enrollment'),
+    path('<int:id>/delete_student_in_enrollment/', views.delete_student_in_enrollment, name='delete_student_in_enrollment'),
+
+
     path('<int:id>/announcement_list/create_announcement/', views.create_announcement, name='create_announcement'),
     path('edit_announcements/<int:id>/', views.edit_announcements, name='announcements_edit'),
     path('delete_announcements/<int:id>/', views.delete_announcements, name='announcements_delete'),

@@ -47,3 +47,5 @@ class SettingsForm(forms.Form):
 
 
 
+class CoursEnrollmentForm(forms.Form):
+    time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='')

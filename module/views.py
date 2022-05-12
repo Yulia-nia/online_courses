@@ -16,8 +16,8 @@ from django.views.generic import TemplateView
 
 from course.models import Course, РassingРrogress
 from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm, \
-    LessonCreateForm, BlockCreateForm, BlockForm, BaseLinkFormSet, FileForm
-from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block
+    LessonCreateForm, BlockCreateForm, BlockForm, BaseLinkFormSet, FileForm, UrlLinkForm, BaseFileFormSet
+from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block, UrlLink
 from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
 from jinja2 import Environment
@@ -165,27 +165,38 @@ def list_blocks(request, l_id, id):
                    'blocks': blocks,})
 
 
+
 @login_required
 def text_block_settings(request, l_id, id):
     user = request.user
 
     # Create the formset, specifying the form and formset we want to use.
-    LinkFormSet = formset_factory(FileForm, formset=BaseLinkFormSet)
+    FileFormSet = formset_factory(FileForm, formset=BaseFileFormSet, extra=3)
+    LinkFormSet = formset_factory(UrlLinkForm, formset=BaseLinkFormSet, extra=3)
+
     # Get our existing link data for this user.  This is used as initial data.
     lesson_ = Lesson.objects.get(id=l_id)
-    block = Block.objects.create(lesson_id=l_id)
-
-
-    files = File.objects.filter(block_id=block.id).order_by('id')
-
-    files_data = [{'title':l.title, 'file': l.file, }
-                    for l in files]
+    # block = Block.objects.create(lesson_id=l_id)
+    #
+    #
+    # files = File.objects.filter(block_id=block.id).order_by('id')
+    # urls = UrlLink.objects.filter(block_id=block.id).order_by('id')
+    #
+    # files_data = [{'title': f.title, 'file': f.file, }
+    #                 for f in files]
+    #
+    # urls_data = [{'title_u': u.title, 'url': u.url, }
+    #                 for u in files]
+    block = Block(lesson_id=l_id)
+    files_data = []
+    urls_data = []
 
     if request.method == 'POST':
         block_form = BlockForm(request.POST)
-        file_formset = LinkFormSet(request.POST or None, request.FILES or None)
+        file_formset = FileFormSet(request.POST or None, request.FILES or None)
+        url_formset = LinkFormSet(request.POST or None)
 
-        if block_form.is_valid() and file_formset.is_valid():
+        if block_form.is_valid() and file_formset.is_valid() and url_formset.is_valid():
             # Save user info
             block.title = block_form.cleaned_data.get('title')
             block.text_content = block_form.cleaned_data.get('text_content')
@@ -201,27 +212,39 @@ def text_block_settings(request, l_id, id):
                 if title and file:
                     new_files.append(File(block_id=block.id, title=title, file=file))
 
+            new_links = []
+
+            for url_form in url_formset:
+                title = url_form.cleaned_data.get('title_u')
+                url = url_form.cleaned_data.get('url')
+
+                if title and url:
+                    new_links.append(UrlLink(block_id=block.id, title=title, url=url))
+
             try:
                 with transaction.atomic():
                     # Replace the old with the new
                     # Text.objects.filter(block_id=block.id).delete()
                     File.objects.bulk_create(new_files)
+                    UrlLink.objects.bulk_create(new_links)
 
                     # And notify our users that it worked
                     messages.success(request, 'You have updated your profile.')
-                    return redirect(reverse('module:list_blocks', args=(id, lesson_.id,)))
+                    # return redirect(reverse('module:list_blocks', args=(id, lesson_.id,)))
 
             except IntegrityError:  # If the transaction failed
                 messages.error(request, 'There was an error saving your profile.')
 
     else:
         block_form = BlockForm()
-        file_formset = LinkFormSet(initial=files_data)
+        file_formset = FileFormSet(initial=files_data)
+        url_formset = LinkFormSet(initial=urls_data)
 
 
     return render(request, "module/lesson/block/block_create.html", {
         'block_form': block_form,
         'file_formset': file_formset,
+        'url_formset': url_formset,
     })
 
 

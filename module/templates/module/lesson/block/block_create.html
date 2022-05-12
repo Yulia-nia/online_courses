@@ -47,24 +47,20 @@
     {{ file_formset.management_form }}
 
     {% for file_form in file_formset %}
-        <p>dd</p>
         <div class="text-formset1">
-        <p>aja</p>
 {#            <textarea name="content">text#}
 {#            </textarea>#}
 
             {% bootstrap_field file_form.title %}
-{#            {{ text_form.content }}#}
 
-
-            {% if file_form.content.errors %}
+            {% if file_form.title.errors %}
                 {% for error in file_form.title.errors %}
                     {{ error|escape }}
                 {% endfor %}
             {% endif %}
 
 
-            {{ file_form.file }}
+            {% bootstrap_field file_form.file %}
             {% if file_form.file.errors %}
                 {% for error in file_form.file.errors %}
                     {{ error|escape }}
@@ -73,13 +69,48 @@
         </div>
     {% endfor %}
 
-    {% if file_formset.non_form_errors %}
+     {% if file_formset.non_form_errors %}
         {% for error in file_formset.non_form_errors %}
             {{ error|escape }}
         {% endfor %}
     {% endif %}
 
-    <input type="submit" value="Update Profile" class="button"/>
+
+    {{ url_formset.management_form }}
+
+    {% for url_form in url_formset %}
+        <div class="text-formset2">
+{#            <textarea name="content">text#}
+{#            </textarea>#}
+
+            {% bootstrap_field url_form.title_u %}
+{#            {{ text_form.content }}#}
+
+
+            {% if url_form.title_u.errors %}
+                {% for error in url_form.title_u.errors %}
+                    {{ error|escape }}
+                {% endfor %}
+            {% endif %}
+
+
+             {% bootstrap_field url_form.url %}
+            {% if url_form.url.errors %}
+                {% for error in url_form.url.errors %}
+                    {{ error|escape }}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endfor %}
+
+
+    {% if url_formset.non_form_errors %}
+        {% for error in url_formset.non_form_errors %}
+            {{ error|escape }}
+        {% endfor %}
+    {% endif %}
+
+    <input type="submit" value="Create Block" class="button"/>
 </form>
 
 
@@ -92,11 +123,17 @@
 <script type="text/javascript">
 
     $('.text-formset1').formset({
-        addText: 'add text',
+        addText: 'add file',
+        deleteText: 'remove'
+    });
+
+    $('.text-formset2').formset({
+        addText: 'add url',
         deleteText: 'remove'
     });
 
 </script>
+
 
 {##}
 {# <form method="post" enctype=multipart/form-data>#}

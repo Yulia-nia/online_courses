@@ -93,6 +93,23 @@ class File(models.Model):
         return self.title
 
 
+class UrlLink(models.Model):
+    block = models.ForeignKey(Block, on_delete=models.CASCADE)
+    title = models.CharField(max_length=250, null=True)
+    url = models.URLField(max_length=200)
+    time_update = models.DateTimeField(auto_now=True)
+    time_create = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('id',)
+        db_table = 'url'
+        verbose_name = 'Ссылка',
+        verbose_name_plural = 'Ссылки'
+
+    def __str__(self):
+        return self.title
+
+
 class Task(models.Model):
     module = models.ForeignKey(Module, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)

@@ -109,18 +109,11 @@ class FileForm(forms.Form):
     title = forms.CharField(required=False, max_length=250, min_length=4)
     file = forms.FileField(required=False, label='')
 
-    # class Media:
-    #     js = ('/static/js/tinymce/tinymce.min.js',)
-    # class Meta:
-    #     model = Text
-    #     fields = ('content', )
-    #
 
+class UrlLinkForm(forms.Form):
+    title_u = forms.CharField(required=False, max_length=250, min_length=4)
+    url = forms.URLField(widget=forms.URLInput(),required=False)
 
-    # content = forms.CharField(required=False, label='',
-    #                           widget=SummernoteWidget(attrs={'rows': 4,
-    #                                'summernote': {'width': '50%'}})
-    #                             )
 
 class BaseLinkFormSet(BaseFormSet):
     def clean(self):
@@ -128,7 +121,54 @@ class BaseLinkFormSet(BaseFormSet):
             return
 
         titles = []
+        urls = []
+
+        duplicates = False
+
+        for form in self.forms:
+            if form.cleaned_data:
+                title = form.cleaned_data['title_u']
+                url = form.cleaned_data['url']
+
+                # Check that no two links have the same anchor or URL
+                if title and url:
+                    if title in titles:
+                        duplicates = True
+                    titles.append(title)
+
+                    if url in urls:
+                        duplicates = True
+                    urls.append(url)
+
+                if duplicates:
+                    raise forms.ValidationError(
+                        'Links must have unique anchors and URLs.',
+                        code='duplicate_links'
+                    )
+
+                # Check that all links have both an anchor and URL
+                if url and not title:
+                    raise forms.ValidationError(
+                        'All links must have an title.',
+                        code='missing_title'
+                    )
+                elif title and not url:
+                    raise forms.ValidationError(
+                        'All links must have a url.',
+                        code='missing_url'
+                    )
+
+
+
+
+class BaseFileFormSet(BaseFormSet):
+    def clean(self):
+        if any(self.errors):
+            return
+
+        titles = []
         files = []
+
         duplicates = False
 
         for form in self.forms:
@@ -148,7 +188,7 @@ class BaseLinkFormSet(BaseFormSet):
 
                 if duplicates:
                     raise forms.ValidationError(
-                        'Links must have unique anchors and URLs.',
+                        'Links must have unique titles and files.',
                         code='duplicate_links'
                     )
 

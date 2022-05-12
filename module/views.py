@@ -1,6 +1,11 @@
+
+from django.contrib import messages
+from django.db import IntegrityError, transaction
+
 from datetime import datetime
 from time import strftime, gmtime
 
+from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory, modelformset_factory
 from django.http import HttpResponseRedirect, HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect
@@ -11,12 +16,17 @@ from django.views.generic import TemplateView
 
 from course.models import Course, РassingРrogress
 from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm, \
-    LessonCreateForm, BlockCreateForm, BlockForm, BlockInlineFormset
-from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block, Text
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
+    LessonCreateForm, BlockCreateForm, BlockForm, BaseLinkFormSet, FileForm
+from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block
+from django.views.generic.edit import CreateView, UpdateView, DeleteView, FormView
 from django.urls import reverse_lazy
 from jinja2 import Environment
 from django.contrib import auth
+
+
+
+
+
 
 
 def list_module(request, id):
@@ -155,69 +165,124 @@ def list_blocks(request, l_id, id):
                    'blocks': blocks,})
 
 
-class CreateBlockAll(TemplateView):
-    form_class = BlockForm
-    template_name = "module/lesson/block/block_create.html"
+@login_required
+def text_block_settings(request, l_id, id):
+    user = request.user
 
-    def get_context_data(self, **kwargs):
-        context = super(CreateBlockAll, self).get_context_data(**kwargs)
-        context['product_meta_formset'] = BlockInlineFormset()
-        return context
-
-    def post(self, request, l_id, id):
-        self.object = None
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        product_meta_formset = BlockInlineFormset(self.request.POST)
-        if form.is_valid() and product_meta_formset.is_valid():
-            return self.form_valid(form, product_meta_formset, l_id, id)
-        else:
-            return self.form_invalid(form, product_meta_formset, l_id, id)
-
-    def form_valid(self, form, product_meta_formset,  l_id, id):
-        self.object = form.save(commit=False)
-        self.object.save()
-        # saving ProductMeta Instances
-        product_metas = product_meta_formset.save(commit=False)
-        for meta in product_metas:
-            meta.product = self.object
-            meta.save()
-        return redirect(reverse("module:list_blocks", args=(Course.objects.get(id=id),)))
-
-    def form_invalid(self, form, product_meta_formset,  l_id, id):
-        return self.render_to_response(
-            self.get_context_data(form=form,
-                                  product_meta_formset=product_meta_formset,
-                                  course=Course.objects.get(id=id)
-                                  )
-        )
-
-    def get_form_class(self):
-        pass
-
-    def get_form(self, form_class):
-        pass
+    # Create the formset, specifying the form and formset we want to use.
+    LinkFormSet = formset_factory(FileForm, formset=BaseLinkFormSet)
+    # Get our existing link data for this user.  This is used as initial data.
+    lesson_ = Lesson.objects.get(id=l_id)
+    block = Block.objects.create(lesson_id=l_id)
 
 
-class TextAddView(TemplateView):
-    template_name = "module/lesson/block/add_text.html"
+    files = File.objects.filter(block_id=block.id).order_by('id')
 
-    def get(self, request, id, block_id):
-        formset = TextFormSet(queryset=Text.objects.none())
-        return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+    files_data = [{'title':l.title, 'file': l.file, }
+                    for l in files]
 
-    # Define method to handle POST request
-    def post(self, request, id, block_id):
-        formset = TextFormSet(data=self.request.POST)
-        # Check if submitted forms are valid
-        if formset.is_valid():
-            formset.f
-            #formset.block = Block.objects.get(id=block_id)
-            formset.save()
-            return redirect(reverse_lazy("module:block_create"))
+    if request.method == 'POST':
+        block_form = BlockForm(request.POST)
+        file_formset = LinkFormSet(request.POST or None, request.FILES or None)
 
-        return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+        if block_form.is_valid() and file_formset.is_valid():
+            # Save user info
+            block.title = block_form.cleaned_data.get('title')
+            block.text_content = block_form.cleaned_data.get('text_content')
+            block.save()
 
+            # Now save the data for each form in the formset
+            new_files = []
+
+            for file_form in file_formset:
+                title = file_form.cleaned_data.get('title')
+                file = file_form.cleaned_data.get('file')
+
+                if title and file:
+                    new_files.append(File(block_id=block.id, title=title, file=file))
+
+            try:
+                with transaction.atomic():
+                    # Replace the old with the new
+                    # Text.objects.filter(block_id=block.id).delete()
+                    File.objects.bulk_create(new_files)
+
+                    # And notify our users that it worked
+                    messages.success(request, 'You have updated your profile.')
+                    return redirect(reverse('module:list_blocks', args=(id, lesson_.id,)))
+
+            except IntegrityError:  # If the transaction failed
+                messages.error(request, 'There was an error saving your profile.')
+
+    else:
+        block_form = BlockForm()
+        file_formset = LinkFormSet(initial=files_data)
+
+
+    return render(request, "module/lesson/block/block_create.html", {
+        'block_form': block_form,
+        'file_formset': file_formset,
+    })
+
+
+
+#class CreateBlockAll(FormView):
+    # form_class = BlockForm
+    # template_name = "module/lesson/block/block_create.html"
+    #
+    # def get_context_data(self, **kwargs):
+    #     context = super(CreateBlockAll, self).get_context_data(**kwargs)
+    #     context['product_meta_formset'] = BlockInlineFormset()
+    #     return context
+    #
+    # def post(self, l_id, id):
+    #     self.object = None
+    #     form_class = self.get_form_class()
+    #     form = self.get_form(form_class)
+    #     product_meta_formset = BlockInlineFormset(self.request.POST)
+    #     if form.is_valid() and product_meta_formset.is_valid():
+    #         return self.form_valid(form, product_meta_formset, l_id, id)
+    #     else:
+    #         return self.form_invalid(form, product_meta_formset, l_id, id)
+    #
+    # def form_valid(self, form, product_meta_formset,  l_id, id):
+    #     self.object = form.save(commit=False)
+    #     self.object.save()
+    #     # saving ProductMeta Instances
+    #     product_metas = product_meta_formset.save(commit=False)
+    #     for meta in product_metas:
+    #
+    #         meta.save()
+    #     return redirect(reverse("module:list_blocks", args=(Course.objects.get(id=id),)))
+    #
+    # def form_invalid(self, form, product_meta_formset,  l_id, id):
+    #     return self.render_to_response(
+    #         self.get_context_data(form=form,
+    #                               product_meta_formset=product_meta_formset,
+    #                               course=Course.objects.get(id=id)
+    #                               )
+    #     )
+
+
+#
+# class TextAddView(TemplateView):
+#     template_name = "module/lesson/block/add_text.html"
+#
+#     def get(self, request, id, block_id):
+#         formset = TextFormSet(queryset=Text.objects.none())
+#         return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+#
+#     # Define method to handle POST request
+#     def post(self, request, id, block_id):
+#         formset = TextFormSet(data=self.request.POST)
+#         # Check if submitted forms are valid
+#         if formset.is_valid():
+#             #formset.block = Block.objects.get(id=block_id)
+#             formset.save()
+#             return redirect(reverse_lazy("module:block_create"))
+#
+#         return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
+#
 
 
 

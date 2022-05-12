@@ -1,8 +1,10 @@
 from django import forms
 from django.forms import modelformset_factory, inlineformset_factory
-from django_summernote.widgets import SummernoteWidget
-
-from module.models import Block, Text
+from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
+from django.forms.formsets import BaseFormSet
+from module.models import Block, File
+from django_summernote.fields import SummernoteTextFormField, SummernoteTextField
+from tinymce.widgets import TinyMCE
 
 
 class AnnouncementForm(forms.Form):
@@ -79,21 +81,86 @@ class MarkForm(forms.Form):
 #       model = Text
 #       fields = [content]
 
+#
+# class TextForm(forms.ModelForm):
+#     class Meta:
+#         model = Text
+#         fields = ('content',)
+#
+#
+# BlockInlineFormset = inlineformset_factory(Block,
+#                                            Text,
+#                                            form=TextForm,
+#                                            extra=5,)
 
-class BlockForm(forms.ModelForm):
-    class Meta:
-        model = Block
-        fields = ('title',)
+
+class BlockForm(forms.Form):
+    title = forms.CharField(required=False, max_length=200, min_length=4)
+    text_content = forms.CharField(required=False, label='',
+                              widget=SummernoteWidget(attrs={'rows': 4,
+                                   'summernote': {'width': '50%'}})
+                                )
+    # class Meta:
+    #     model = Block
+    #     fields = ('title',)
 
 
-class TextForm(forms.ModelForm):
-    class Meta:
-        model = Text
-        fields = ('content',)
+class FileForm(forms.Form):
+    title = forms.CharField(required=False, max_length=250, min_length=4)
+    file = forms.FileField(required=False, label='')
+
+    # class Media:
+    #     js = ('/static/js/tinymce/tinymce.min.js',)
+    # class Meta:
+    #     model = Text
+    #     fields = ('content', )
+    #
 
 
-BlockInlineFormset = inlineformset_factory(Block,
-                                           Text,
-                                           form=TextForm,
-                                           extra=5,)
+    # content = forms.CharField(required=False, label='',
+    #                           widget=SummernoteWidget(attrs={'rows': 4,
+    #                                'summernote': {'width': '50%'}})
+    #                             )
+
+class BaseLinkFormSet(BaseFormSet):
+    def clean(self):
+        if any(self.errors):
+            return
+
+        titles = []
+        files = []
+        duplicates = False
+
+        for form in self.forms:
+            if form.cleaned_data:
+                title = form.cleaned_data['title']
+                file = form.cleaned_data['file']
+
+                # Check that no two links have the same anchor or URL
+                if title and file:
+                    if title in titles:
+                        duplicates = True
+                    titles.append(title)
+
+                    if file in files:
+                        duplicates = True
+                    files.append(file)
+
+                if duplicates:
+                    raise forms.ValidationError(
+                        'Links must have unique anchors and URLs.',
+                        code='duplicate_links'
+                    )
+
+                # Check that all links have both an anchor and URL
+                if file and not title:
+                    raise forms.ValidationError(
+                        'All links must have an title.',
+                        code='missing_title'
+                    )
+                elif title and not file:
+                    raise forms.ValidationError(
+                        'All links must have a file.',
+                        code='missing_file'
+                    )
 

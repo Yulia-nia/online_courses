@@ -43,16 +43,17 @@ INSTALLED_APPS = [
     'module.apps.ModuleConfig',
     'users.apps.UserConfig',
     'chat.apps.ChatConfig',
-
+    'tinymce',
     # 'module.apps.UserConfig',
     'rest_framework',
     'crispy_forms',
     'django_summernote',
-    'course_test'
+    'course_test',
+
 ]
 
-SUMMERNOTE_THEME = 'bs4'
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+SUMMERNOTE_THEME = 'bs5'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 USE_THOUSAND_SEPARATOR = True
 
@@ -133,10 +134,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
-]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -164,3 +162,49 @@ EMAIL_HOST_USER = "postmaster@sandboxda837e888697430282a9ed73f13ebbb2.mailgun.or
 EMAIL_HOST_PASSWORD = "192d346f63b57c86f59b15b8efaee62c-7fba8a4e-77933c8b"
 EMAIL_USE_TLS = True
 
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'collected_static')
+
+# TINYMCE_JS_URL = os.path.join(STATIC_URL, "path/to/tinymce/tinymce.min.js")
+# TINYMCE_COMPRESSOR = False
+
+
+TINYMCE_JS_URL = os.path.join(STATIC_URL, "js/tinymce/tinymce.min.js")
+
+
+
+#TINYMCE_JS_ROOT = os.path.join(STATIC_ROOT, "tinymce")
+TINYMCE_SPELLCHECKER = False
+#
+# TINYMCE_DEFAULT_CONFIG = {
+#
+#    'height': 360,
+#    'width': 750,
+#    'cleanup_on_startup': True,
+#    'custom_undo_redo_levels': 20,
+#    'selector': 'textarea',
+#    'theme': 'modern',
+#    'plugins': '''
+#    textcolor save link image media preview codesample contextmenu
+#    table code lists fullscreen insertdatetime nonbreaking
+#    contextmenu directionality searchreplace wordcount visualblocks
+#    visualchars code fullscreen autolink lists charmap print hr
+#    anchor pagebreak
+#    ''',
+#    'toolbar1': '''
+#    fullscreen preview bold italic underline | fontselect,
+#    fontsizeselect | forecolor backcolor | alignleft alignright |
+#    aligncenter alignjustify | indent outdent | bullist numlist table |
+#    | link image media | codesample |
+#    ''',
+#    'toolbar2': '''
+#    visualblocks visualchars |
+#    charmap hr pagebreak nonbreaking anchor | code |
+#    ''',
+#    'contextmenu': 'formats | link image',
+#    'menubar': True,
+#    'statusbar': True,
+#    }

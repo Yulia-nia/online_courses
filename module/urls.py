@@ -1,6 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
-
+from django.conf import settings
+from django.conf.urls.static import static
 
 app_name = 'module'
 
@@ -34,10 +35,10 @@ urlpatterns = [
     path('<int:l_id>/list_blocks/', views.list_blocks, name='list_blocks'),
 
 
-    path('<int:l_id>/block_create/', views.CreateBlockAll.as_view(), name='block_create'),
+    path('<int:l_id>/block_create/', views.text_block_settings, name='block_create'),
 
 
-    path('<int:block_id>/add_text/', views.TextAddView.as_view(), name="add_text"),
+    #path('<int:block_id>/add_text/', views.TextAddView.as_view(), name="add_text"),
 
 
     path('view_lesson/<int:l_id>/', views.view_lesson, name='view_lesson'),
@@ -54,6 +55,12 @@ urlpatterns = [
     path('progress_list/', views.student_progress_list, name='student_progress_list'),
 
     path('', views.list_module, name='list'),
+    path('summernote/', include('django_summernote.urls')),
     #path('delete/<int:id>/', views.delete_module),
+path('tinymce/', include('tinymce.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

@@ -1,11 +1,11 @@
 from django.contrib import admin
 # Register your models here.
-from .models import Module, Lesson, Announcement, File, Text, Task, StudentAnswer, Mark, Block
+from .models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block
 
 
 admin.site.register(Module)
 admin.site.register(Lesson)
-admin.site.register(Text)
+# admin.site.register(Text)
 admin.site.register(Task)
 admin.site.register(StudentAnswer)
 admin.site.register(Mark)

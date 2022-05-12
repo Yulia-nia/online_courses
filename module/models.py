@@ -1,6 +1,8 @@
 from django.db import models
 
 # Create your models here.
+from tinymce.models import HTMLField
+
 import course.models
 from users.models import User
 
@@ -43,6 +45,7 @@ class Lesson(models.Model):
 
 class Block(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    text_content = models.TextField(null=True, blank=True)
     title = models.CharField(max_length=200, null=True)
     update = models.DateTimeField(auto_now=True)
     create = models.DateTimeField(auto_now_add=True)
@@ -57,20 +60,20 @@ class Block(models.Model):
         return self.title
 
 
-class Text(models.Model):
-    content = models.TextField(null=True, blank=True)
-    time_update = models.DateTimeField(auto_now=True)
-    time_create = models.DateTimeField(auto_now_add=True)
-    block = models.ForeignKey(Block, on_delete=models.CASCADE)
-
-    class Meta:
-        ordering = ('id',)
-        db_table = 'text'
-        verbose_name = 'Текс',
-        verbose_name_plural = 'Текста'
-
-    def __str__(self):
-        return self.content
+# class Text(models.Model):
+#     content = models.TextField(null=True, blank=True)
+#     time_update = models.DateTimeField(auto_now=True)
+#     time_create = models.DateTimeField(auto_now_add=True)
+#     # block = models.ForeignKey(Block, on_delete=models.CASCADE)
+#
+#     class Meta:
+#         ordering = ('id',)
+#         db_table = 'text'
+#         verbose_name = 'Текс',
+#         verbose_name_plural = 'Текста'
+#
+#     def __str__(self):
+#         return self.content
 
 
 class File(models.Model):

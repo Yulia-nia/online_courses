@@ -14,6 +14,24 @@
                 {% csrf_token %}
 
 
+                        {# level #}
+                <div>
+                    <h4 class="text-start">Статус курса</h4>
+                    <div class="d-flex align-items-center p-3 rounded"
+                      style="border-left-color: #0d6efd; border-left-style: solid;
+                      background-color: #cff4fc;
+                      border-left-width: 7px;
+                      padding-left: 10px;" >
+                        <div class="text-sm-start">
+                          <h5 class="h6 text-black-50 ">
+                              Статус курса.<br>
+                          </h5>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        {% bootstrap_field form.active_level class="custom-control-input"%}
+                    </div>
+
                 {# learning format#}
                 <div>
                     <h4 class="text-start">Формат обучения</h4>
@@ -55,6 +73,7 @@
                     <div class="mt-3">
                         {% bootstrap_field form.level class="custom-control-input"%}
                     </div>
+
                 </div>
 
 

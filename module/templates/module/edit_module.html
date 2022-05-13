@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Module edit</title>
-</head>
-<body>
+{% extends "module/content/base_nav.html" %}
+
+{% block content %}
 <section class="container">
     <p>Название модуля {{ module.title }} </p>
 
@@ -16,5 +12,4 @@
         <HR/>
     {% endfor %}
 </section>
-</body>
-</html>
+{% endblock %}

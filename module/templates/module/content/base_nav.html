@@ -21,47 +21,93 @@
 
     <main class="container-fluid g-0">
 
-
         <div class="row g-0 h-100">
-            <div class="col-md-2 bg-dark " >
-                <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
-                    <a href="{% url 'module:list' course.id %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-                      <svg class="bi me-2" width="30" height="24"></svg>
-                      <span class="fs-5 fw-semibold">Назад</span>
-                    </a>
-                     <ul class="list-unstyled ps-0">
-                         {% for module in modules %}
+            {% if user.id == course.author.id %}
+                <div class="col-md-2 bg-dark " >
+                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
+                        <a href="{% url 'module:list' course.id %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                          <svg class="bi me-2" width="30" height="24"></svg>
+                          <span class="fs-5 fw-semibold">Назад</span>
+                        </a>
+                         <ul class="list-unstyled ps-0">
+                             {% for module in modules %}
 
-                             <li class="mb-1">
-                                    <button class="btn btn-toggle align-items-center rounded collapsed"
-                                         data-bs-toggle="collapse" data-bs-target="#some{{ module.id}}" aria-expanded="true">
-                                     {{ module.title }}
-                                    </button>
-                                    <div class="collapse show" id="some{{ module.id }}">
-                                        {% for lesson in module.lesson_set.all %}
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                <li><a href="{% url 'module:view_lesson' id=course.id l_id=lesson.id %}" class="link-dark rounded">
-                                                    {{ lesson.title }}</a></li>
-                                            </ul>
-                                        {% endfor %}
-                                        {% for task in module.task_set.all %}
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
-                                            </ul>
-                                        {% endfor %}
+                                 <li class="mb-1">
+                                        <button class="btn btn-toggle align-items-center rounded collapsed"
+                                             data-bs-toggle="collapse" data-bs-target="#some{{ module.id}}" aria-expanded="true">
+                                         {{ module.title }}
+                                        </button>
+                                        <div class="collapse show" id="some{{ module.id }}">
+                                            {% for lesson in module.lesson_set.all %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="{% url 'module:edit_lesson_settings' id=course.id l_id=lesson.id %}" class="link-dark rounded">
+                                                        {{ lesson.title }}</a></li>
+                                                </ul>
+                                            {% endfor %}
+                                            {% for task in module.task_set.all %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
+                                                </ul>
+                                            {% endfor %}
 
-                                         {% if user.id == course.author_id %}
-                                            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a></li>
-                                            </ul>
+                                             {% if user.id == course.author_id %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a>
 
-                                        {% endif %}
-                                    </div>
-                             </li>
-                         {% endfor %}
-                     </ul>
+                                                    </li>
+
+                                                </ul>
+
+                                            {% endif %}
+                                        </div>
+                                 </li>
+                             {% endfor %}
+                         </ul>
+                    </div>
                 </div>
-            </div>
+            {% elif user.id != course.author.id %}
+                <div class="col-md-2 bg-dark " >
+                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
+                        <a href="{% url 'module:list' course.id %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
+                          <svg class="bi me-2" width="30" height="24"></svg>
+                          <span class="fs-5 fw-semibold">Назад</span>
+                        </a>
+                         <ul class="list-unstyled ps-0">
+                             {% for module in modules %}
+
+                                 <li class="mb-1">
+                                        <button class="btn btn-toggle align-items-center rounded collapsed"
+                                             data-bs-toggle="collapse" data-bs-target="#some{{ module.id}}" aria-expanded="true">
+                                         {{ module.title }}
+                                        </button>
+                                        <div class="collapse show" id="some{{ module.id }}">
+                                            {% for lesson in module.lesson_set.all %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="{% url 'module:view_lesson' id=course.id l_id=lesson.id %}" class="link-dark rounded">
+                                                        {{ lesson.title }}</a></li>
+                                                </ul>
+                                            {% endfor %}
+                                            {% for task in module.task_set.all %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
+                                                </ul>
+                                            {% endfor %}
+
+                                             {% if user.id == course.author_id %}
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                                                    <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a></li>
+                                                </ul>
+
+                                            {% endif %}
+                                        </div>
+                                 </li>
+                             {% endfor %}
+                         </ul>
+                    </div>
+                </div>
+
+
+            {% endif %}
 
 
             <div class="col-md-10 gx-4">

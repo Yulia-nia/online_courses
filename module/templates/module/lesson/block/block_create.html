@@ -1,4 +1,4 @@
-
+{% extends "module/content/base_nav.html" %}
 {% load static %}
 
 {#{% extends "module/lesson/edit.html" %}#}
@@ -9,7 +9,7 @@
     {% load django_bootstrap5 %}
 {##}
 {#{% block lesson_content %}#}
-
+{% block content %}
 
 
 {#    <script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>#}
@@ -133,6 +133,7 @@
     });
 
 </script>
+{% endblock %}
 
 
 {##}

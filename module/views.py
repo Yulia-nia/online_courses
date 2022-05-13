@@ -79,23 +79,26 @@ class CreateLesson(View):
         module = Module.objects.get(id=m_id)
         course = Course.objects.get(id=id)
         return render(request, "module/lesson/create_lesson.html", {'form_lesson': LessonCreateForm(),
-                                        'module': module,
-                                        'course': course,
+                                                                    'module': module,
+                                                                    "modules": course.module_set.all(),
+                                                                    'course': course,
                                                                    })
 
     def post(self, request, m_id, id):
         module = Module.objects.get(id=m_id)
         course = Course.objects.get(id=id)
         form = LessonCreateForm(request.POST or None)
+        id_l = []
         if form.is_valid():
             lesson = Lesson()
+            id_l.append(lesson.id)
             lesson.title = form.cleaned_data['title']
             lesson.description = form.cleaned_data["description"]
             lesson.short_description = form.cleaned_data['short_description']
             lesson.is_published = form.cleaned_data["is_published"]
             lesson.module_id = m_id
             lesson.save()
-        return HttpResponseRedirect(reverse('module:list', args=(course.id,)))
+            return HttpResponseRedirect(reverse('module:edit_lesson_settings', args=(course.id, lesson.id)))
 
 
 # def create_block(request, l_id, id):
@@ -133,6 +136,7 @@ def create_task(request, id, m_id):
     else:
         return render(request, "module/task/create.html",
                       {"module": module,
+                       "modules": course.module_set.all(),
                        "course": course,
                        "form": TaskForm()})
 
@@ -150,6 +154,7 @@ def list_blocks(request, l_id, id):
     blocks = Block.objects.all().filter(lesson_id=l_id)
     return render(request, "module/lesson/block/list.html",
                   {"lesson": lesson,
+                   "modules": course.module_set.all(),
                    "course": course,
                    'blocks': blocks,})
 
@@ -157,6 +162,7 @@ def list_blocks(request, l_id, id):
 
 @login_required
 def text_block_settings(request, l_id, id):
+    course = Course.objects.get(id=id)
     user = request.user
     # Create the formset, specifying the form and formset we want to use.
     FileFormSet = formset_factory(FileForm, formset=BaseFileFormSet, extra=3)
@@ -211,6 +217,8 @@ def text_block_settings(request, l_id, id):
         url_formset = LinkFormSet(initial=urls_data)
     return render(request, "module/lesson/block/block_create.html", {
         'block_form': block_form,
+        'course': course,
+        "modules": course.module_set.all(),
         'file_formset': file_formset,
         'url_formset': url_formset,
     })
@@ -292,7 +300,8 @@ def list_ans_from_task(request, id):
 def edit_lesson(request, l_id, id):
     return render(request, "module/lesson/edit.html", {"lesson": Lesson.objects.get(id=l_id),
                                                        'course': Course.objects.get(id=id),
-                                                              })
+                                                       'modules': Course.objects.get(id=id).module_set.all(),
+                                                        })
 
 
 def edit_lesson_settings(request, l_id, id, ):
@@ -316,13 +325,15 @@ def edit_lesson_settings(request, l_id, id, ):
             lesson.save()
             return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
                                                                "module": module,
+                                                                      "modules": course.module_set.all(),
                                                                "item_id": module.course_id,
                                                                "form": form,
                                                                "course": course,
                                                                "blocks": blocks})
         else:
             return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
-                                                               "module": module,
+                                                                    "module": module,
+                                                                      "modules": course.module_set.all(),
                                                                "item_id": module.course_id,
                                                                "course": course,
                                                                "form": form, "blocks": blocks})
@@ -336,26 +347,29 @@ def view_lesson(request, id, l_id):
         module = Module.objects.get(id=lesson.module_id)
         modules = Module.objects.all().filter(course_id=id)
         course = Course.objects.get(id=id)
-        files = File.objects.all().filter(lesson_id=lesson.id)
+        blocks = Block.objects.all().filter(lesson_id=lesson.id)
         progress_is = get_progress(course.id, lesson.id, request.user.id)
         return render(request, "module/lesson/view_lesson.html", {"lesson": lesson,
                                                            "module": module,
                                                            "modules": modules,
                                                            "course": course,
-                                                            "files": files,
+                                                            "blocks": blocks,
                                                            "progress_is": progress_is})
     except Lesson.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 
 
-def edit_module(request, id):
+def edit_module(request, id, m_id):
     try:
-        module = Module.objects.get(id=id)
-        course = Course.objects.get(id=module.course_id)
+        module = Module.objects.get(id=m_id)
+        course = Course.objects.get(id=id)
         lessons = Lesson.objects.all().filter(module_id=id)
+        tasks = Task.objects.all().filter(module_id=id)
         return render(request, "module/edit_module.html", {"module": module,
                                                            "course": course,
+                                                           "modules": course.module_set.all(),
                                                            "lessons": lessons,
+                                                           "tasks": tasks,
                                                            "module_id": id})
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Module not found</h2>")
@@ -363,15 +377,20 @@ def edit_module(request, id):
 
 def edit_lesson_from_module(request, module_id, id):
     try:
+        course = Course.objects.get(id=id)
         lesson = Lesson.objects.get(id=id)
         if request.method == "POST":
             lesson.title = request.POST.get("title")
             lesson.short_description = request.POST.get("short_description")
             lesson.description = request.POST.get("description")
             lesson.save()
-            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson, "item_id": id})
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
+                                                                      "modules": course.module_set.all(),
+                                                                      "item_id": id})
         else:
-            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson, "item_id": id})
+            return render(request, "module/lesson/edit_lesson.html", {"lesson": lesson,
+                                                                      "modules": course.module_set.all(),
+                                                                      "item_id": id})
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
 
@@ -445,8 +464,9 @@ class TaskView(View):
             answer.student_id = request.user.id
             answer.save()
         return render(request, "module/task/view_task.html", {'course': course,
-                                                      "form": AnswerTaskForm(),
-                                                      "task": task})
+                                                              "form": AnswerTaskForm(),
+                                                              "modules": course.module_set.all(),
+                                                              "task": task})
 
 
 class EstimateView(View):
@@ -459,6 +479,7 @@ class EstimateView(View):
                 request,
                 "module/task/estimate_answer.html", {"course": course, "task": task,
                                                      "answer": answer,
+                                                     "modules": course.module_set.all(),
                                                      'form': MarkForm()
                                                      })
         except Task.DoesNotExist:
@@ -469,6 +490,7 @@ class EstimateView(View):
             request,
             "module/task/estimate_answer.html", {"course": course, "task": task,
                                            'answer': answer,
+                                                 #"modules": course.module_set.all(),
                                            'form': MarkForm()
                                            })
 
@@ -486,12 +508,14 @@ class EstimateView(View):
             mark.save()
         return render(request, "module/task/estimate_answer.html", {'course': course,
                                                               "form": MarkForm(),
+                                                                    "modules": course.module_set.all(),
                                                               "task": task,
                                                               })
 
 
 def edit_task(request, id):
     task = Task.objects.get(id=id)
+    #course = Course.objects.get(id=id)
     form = TaskForm(request.POST or None, request.FILES or None, initial=
                     {'title': task.title,
                      'description': task.description,
@@ -505,6 +529,7 @@ def edit_task(request, id):
         task.module_id = task.module_id
         task.save()
     return render(request, "module/task/edit.html", {'course': task.module.course,
+                                                     #"modules": course.module_set.all(),
                                                           "form": form,
                                                           "task": task})
 

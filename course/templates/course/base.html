@@ -67,7 +67,7 @@
                                          <a href="{% url 'dialogs' course.id %}" class="link-dark rounded">Чат</a>
                                         <li><a href="{% url 'students_list' course.id %}" class="link-dark rounded">Учащиеся</a></li>
                                         <li><a href="#" class="link-dark rounded">Рассылка</a></li>
-                                        <li><a href="#" class="link-dark rounded">Комментарии</a></li>
+                                        <li><a href="{% url 'comments_list' course.id %}" class="link-dark rounded">Комментарии</a></li>
                                          <li class="mb-1">
                                             <a href="{% url 'notifications_list' course.id %}" class="link-dark rounded">Уведомления</a>
                                         </li>
@@ -116,7 +116,7 @@
                             </li>
 
                             <li class="mb-1">
-                                <a href="#" class="link-dark rounded">Комментарии</a>
+                                <a href="{% url 'comments_list' course.id %}" class="link-dark rounded">Комментарии</a>
                             </li>
 
                             <li class="mb-1">
@@ -139,6 +139,7 @@
                     {% endblock %}
 
             </div>
+        </div>
         </div>
     </main>
 

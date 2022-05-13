@@ -9,7 +9,7 @@ urlpatterns = [
 
     # module
     path('create_module/', views.create_module, name='create'),
-    path('edit_module/<int:id>/', views.edit_module, name='edit_module'),
+
     path('delete_module/<int:id>/', views.delete_module),
 
     # task
@@ -30,8 +30,6 @@ urlpatterns = [
     path('edit_lesson_all/<int:l_id>/', views.edit_lesson, name='edit_lesson'),
     path('<int:l_id>/edit_lesson/', views.edit_lesson_settings, name='edit_lesson_settings'),
 
-
-
     path('<int:l_id>/list_blocks/', views.list_blocks, name='list_blocks'),
 
 
@@ -50,13 +48,14 @@ urlpatterns = [
 
     path('content/', views.content_course, name='content_course'),
     path('popup/', views.popup_form, name='popup_form'),
-
     # progress student
     path('progress_list/', views.student_progress_list, name='student_progress_list'),
-
+    path('edit_module/<int:m_id>/', views.edit_module, name='edit_module'),
     path('', views.list_module, name='list'),
     path('summernote/', include('django_summernote.urls')),
     #path('delete/<int:id>/', views.delete_module),
+
+
 path('tinymce/', include('tinymce.urls')),
 ]
 

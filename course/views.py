@@ -2,17 +2,19 @@ import datetime
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
 from django.utils import timezone
 from django.utils.decorators import method_decorator
+from django.views.decorators.http import require_http_methods
 from rest_framework import generics
 from django.urls import reverse, reverse_lazy
 from rest_framework.response import Response
 from django.views import View
 from chat.models import Chat, Message
-from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnrollmentForm
-from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment
+from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnrollmentForm, CommentForm
+from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment, Comment
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement, Lesson, Mark, Module
@@ -56,19 +58,12 @@ class CatalogCourses(View):
         return render(request, "course/course_catalog.html", {"courses": courses})
 
 
-from datetime import date
-
 def view_course(request, id):
     course = Course.objects.get(id=id)
-    #user = auth.get_user(request)
-
-    # если не была создана новая закладка,
-    # то считаем, что запрос был на удаление закладки
     chat = Chat.objects.all().filter(course_id=course.id)
     user = auth.get_user(request)
     created = BookmarkCourse.objects.all().filter(obj_id=id, user_id=user.id)
-    if timezone.now() > course.settings.start_date:
-            #course.settings.start_date.time() >= datetime.datetime.today().time():
+    if course.settings.start_date < timezone.now() < course.settings.end_date:
         course.settings.is_active = True
         course.settings.save()
     else:
@@ -94,14 +89,6 @@ def add_student_in_enrollment(request, id):
     return HttpResponseRedirect(reverse('view_course', args=(id,)))
 
 
-def delete_student_in_enrollment(request, id):
-    enrollment = Course.objects.get(id=id).coursenrollment
-    user = auth.get_user(request)
-    enrollment.students.remove(user)
-    enrollment.save()
-    return HttpResponseRedirect(reverse('view_course', args=(id,)))
-
-
 def pass_course(request, id):
     course = Course.objects.get(id=id)
     user = auth.get_user(request)
@@ -120,6 +107,23 @@ def info_course(request, id):
                                                                    "setting": setting })
 
 
+def get_set_with_value(value):
+    if value == '0' or value == '3':
+        return False, False
+    elif value == '1':
+        return True, False
+    elif value == '2':
+        return True, True
+
+
+def delete_student_in_enrollment(request, id):
+    enrollment = Course.objects.get(id=id).coursenrollment
+    user = auth.get_user(request)
+    enrollment.students.remove(user)
+    enrollment.save()
+    return HttpResponseRedirect(reverse('view_course', args=(id,)))
+
+
 def settings_edit(request, id):
     course = Course.objects.get(id=id)
     setting = Settings.objects.all()
@@ -128,6 +132,7 @@ def settings_edit(request, id):
         form = SettingsForm(request.POST or None, request.FILES or None)
         if form.is_valid():
             setting = Settings()
+            setting.active_level = form.cleaned_data['active_level']
             setting.learning_format = form.cleaned_data['learning_format']
             setting.subject = form.cleaned_data["subject"]
             setting.language = form.cleaned_data['language']
@@ -141,6 +146,7 @@ def settings_edit(request, id):
             setting.what_you_get = form.cleaned_data["what_you_get"]
             setting.level = form.cleaned_data["level"]
 
+            setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
             setting.course_id = id
             setting.save()
         return render(request, "course/main_settings.html", {"form": form,
@@ -150,7 +156,8 @@ def settings_edit(request, id):
     else:
         setting = Settings.objects.get(course_id=id)
         form = SettingsForm(request.POST or None, request.FILES or None, initial=
-                            { 'learning_format': setting.learning_format,
+                            { 'active_level': setting.active_level,
+                                'learning_format': setting.learning_format,
                               'subject': setting.subject,
                                       'language': setting.language,
                                       'image': setting.image,
@@ -165,6 +172,7 @@ def settings_edit(request, id):
                               }
                             )
         if form.is_valid():
+            setting.active_level = form['active_level'].value()
             setting.learning_format = form['learning_format'].value()
             setting.subject = form["subject"].value()
             setting.language = form['language'].value()
@@ -178,6 +186,7 @@ def settings_edit(request, id):
             setting.what_you_get = form["what_you_get"].value()
             setting.level = form["level"].value()
 
+            setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
             setting.course_id = id
             setting.save()
         return render(request, "course/main_settings.html", {"form": form,
@@ -235,20 +244,20 @@ def get_student_progress(c_id, s_id):
 
 def students_list(request, id):
     course = Course.objects.get(id=id)
+
     lesson = Lesson.objects.all().filter(module__course_id=id)
     students = []
     progress = []
-    users = BookmarkCourse.objects.all().filter(obj_id=id)
-    for i in users:
-        students.append(User.objects.get(id=i.user_id))
-        progress.append(get_student_progress(course.id, i.user_id))
+    for i in course.coursenrollment.students.all():
+        students.append(i)
+        progress.append(get_student_progress(course.id, i.id))
 
     count_lessons = lesson.count()
     return render(request, "course/students_list.html", {"item_id": id,
                                                          "count_lessons": count_lessons,
                                                          "list_item": zip(students, progress),
                                                          "course": course,
-
+                                                            "form": NotificationForm(),
                                                          })
 
 
@@ -259,26 +268,6 @@ class CourseAPIView(generics.ListAPIView):
     def get(self, request):
         course = Course.objects.all()
         return Response({'courses': CourseSerializer(course, many=True).data})
-
-    # def post(self, request):
-    #     serializer = CourseSerializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response({'course': serializer.data})
-    #
-    # # update
-    # def put(self, request, *args, **kwargs):
-    #     pk = kwargs.get("pk", None)
-    #     if not pk:
-    #         return Response({"error": "Method PUT not allowed"})
-    #     try:
-    #         instance = Course.objects.get(pk=pk)
-    #     except:
-    #         return Response({"error": "Object does not exists"})
-    #     serializer = CourseSerializer(data=request.data, instance=instance)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #     return Response({"course": serializer.data})
 
 
 def dialog(request, c_id):
@@ -309,12 +298,6 @@ def dialog(request, c_id):
                                                                         "course": course,
                                                                         "chat_id": chat.id,
                                                                         "instructor": course.author})
-
-
-# def progress(request, lesson_id):
-#
-#
-#     return None
 
 
 def notifications_list_course(request, id):
@@ -424,3 +407,44 @@ class EnrollmentView(View):
                                                                 'enrollments': enrollments,
                                                                 'form': form})
 
+
+from django.template.context_processors import csrf
+
+
+class CommentView(View):
+    template_name = 'course/comment/list_comments.html'
+    comment_form = CommentForm
+
+    def get(self, request, id):
+        course = get_object_or_404(Course, id=id)
+        context = {}
+        context.update(csrf(request))
+        user = auth.get_user(request)
+        commnets = course.comment_set.all().order_by('-id')
+        # Будем добавлять форму только в том случае, если пользователь авторизован
+        if user.is_authenticated:
+            form = self.comment_form
+            return render(request, "course/comment/list_comments.html", {"course": course,
+                                                                         'commnets': Course.objects.get(id=id).comment_set.all().filter(parent_id=None),
+                                                                         'form': form})
+
+        return render(request, "course/comment/list_comments.html", {"course": course,
+                                                                     'commnets': Course.objects.get(id=id).comment_set.all().filter(parent_id=None),
+                                                                     'form': self.comment_form,
+                                                                     })
+
+    def post(self, request, id):
+        if request.method == 'POST':
+            form = CommentForm(request.POST)
+            course = get_object_or_404(Course, id=id)
+            if form.is_valid():
+                form = form.save(commit=False)
+                if request.POST.get("parent", None):
+                    form.parent_id = int(request.POST.get("parent"))
+                form.course = course
+                form.author = auth.get_user(request)
+                form.save()
+            return render(request, "course/comment/list_comments.html", {"course": Course.objects.get(id=id),
+                                                                  'commnets': Course.objects.get(id=id).comment_set.all().filter(parent_id=None),
+                                                                  'form': form
+                                                                 })

@@ -8,11 +8,10 @@ from tinymce.widgets import TinyMCE
 
 
 class AnnouncementForm(forms.Form):
-    content = forms.CharField(label='', widget=SummernoteWidget(attrs={
-                                                                       'summernote': {
-                                                                           'width': '100%',
-                                                                           'height': '280px'
-                                                                           }}))
+    content = forms.CharField(required=False, label='',
+                                  widget=SummernoteWidget(attrs={'rows': 3,
+                                                                 'summernote': {'width': '100%'}}))
+
 
 
 class ModuleForm(forms.Form):
@@ -71,38 +70,12 @@ class MarkForm(forms.Form):
     mark = forms.IntegerField(label='', required=False)
 
 
-# class TextLessonForm(forms.Form):
-#     content = forms.CharField(required=False, label='',  widget=SummernoteWidget(attrs={'rows': 4,
-#                                     'summernote': {'width': '100%'}}
-#                                    ))
-
-# class TextLessonForm(forms.ModelForm):
-#     class Meta:
-#       model = Text
-#       fields = [content]
-
-#
-# class TextForm(forms.ModelForm):
-#     class Meta:
-#         model = Text
-#         fields = ('content',)
-#
-#
-# BlockInlineFormset = inlineformset_factory(Block,
-#                                            Text,
-#                                            form=TextForm,
-#                                            extra=5,)
-
-
 class BlockForm(forms.Form):
     title = forms.CharField(required=False, max_length=200, min_length=4)
     text_content = forms.CharField(required=False, label='',
                               widget=SummernoteWidget(attrs={'rows': 4,
                                    'summernote': {'width': '50%'}})
                                 )
-    # class Meta:
-    #     model = Block
-    #     fields = ('title',)
 
 
 class FileForm(forms.Form):

@@ -165,7 +165,7 @@ class Mark(models.Model):
 
 class Announcement(models.Model):
     course = models.ForeignKey("course.Course", on_delete=models.CASCADE)
-    content = models.CharField(max_length=250)
+    content = models.TextField(blank=True)
     # description = models.TextField(null=True, blank=True)  # empty values
     time_update = models.DateTimeField(auto_now=True)
     time_create = models.DateTimeField(auto_now_add=True)

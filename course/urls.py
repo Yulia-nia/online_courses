@@ -49,7 +49,8 @@ urlpatterns = [
     path('edit_announcements/<int:id>/', views.edit_announcements, name='announcements_edit'),
     path('delete_announcements/<int:id>/', views.delete_announcements, name='announcements_delete'),
 
-
+    path('<int:id>/comments_list/', views.CommentView.as_view(), name='comments_list'),
+    #path('comment/<int:id>/', views.add_comment, name='add_comment'),
 
     path('api/v1/courselist/', CourseAPIView.as_view()),
     #path('module/<int:id>/', views.module_course, name='module'),

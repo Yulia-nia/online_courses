@@ -4,13 +4,78 @@
 
 
 {% block content %}
+
+    <STYLE>
+        /* Всплывающая форма-скрыта по умолчанию */
+        .form-popup1 {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            right: 15px;
+            border: 3px solid #f1f1f1;
+        }
+    </STYLE>
+
+
     <div class="container py-3">
-        <p>students list</p>
-        {% for student, progres in list_item %}
-            <p>{{ student.email }}</p>
-            <p>{{ progres }} / {{ count_lessons }}</p>
-            <p>{{ student.mark_set.count }}</p>
-            <a href="create_notification/{{ student.id}}/">Отправить уведомление</a>
-        {% endfor %}
+        <p>Список студентов</p>
+
+        <table class="table">
+            <tr class="table-active bg-info">
+                <th> Имя пользователя </th>
+{#                <th> ФИО </th>#}
+                <th> e-mail </th>
+                <th> Дата последнего входа </th>
+                <th> Прогресс / уроки </th>
+                <th> Уведомление </th>
+            </tr>
+{#            <form method="post" action="{% url 'create_notification' %}">#}
+{#                {% csrf_token %}#}
+                    {% for student, progres in list_item %}
+                    <tr>
+                        <td> {{ student.username }} </td>
+                        <td> {{ student.email }} </td>
+                        <td> {{ student.last_login }} </td>
+                        <td> {{ progres }} / {{ count_lessons }} </td>
+                        <td>
+                            <button id="myBtn"
+                                    class="btn btn-sm position-center btn-light w-30 mx-0" onclick="openForm()">
+                                Отправить</button>
+                        </td>
+                    </tr>
+
+                        <div class="form-popup1" id="myForm">
+                             <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content rounded-6 shadow">
+                                        <div class="modal-header border-bottom-0">
+                                            <h5 class="modal-title">Создание уведомления для {{ student.username }}</h5>
+                                            <button type="button" class="btn-close" onclick="closeForm()" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body py-0">
+                                            <form method="post" action={% url 'create_notification' id=course.id s_id=student.id %}>
+                                                 {% csrf_token %}
+                                                 {% bootstrap_form form layout='gorizontal' %}
+                                                 {% bootstrap_button "Отправить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+                                            </form>
+                                            <p></p>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+
+                    {% endfor %}
+        </table>
      </div>
+
+
+    <script>
+        function openForm() {
+          document.getElementById("myForm").style.display = "block";
+        }
+        function closeForm() {
+          document.getElementById("myForm").style.display = "none";
+        }
+    </script>
 {% endblock %}

@@ -13,14 +13,16 @@
             display: block;
             position: fixed;
             bottom: 0;
-            right: 15px;
+            overflow: hidden;
+            {#right: 15px;#}
             border: 3px solid #f1f1f1;
         }
- </STYLE>
 
+ </STYLE>
+    <div>
     <div class="form-popup1" id="myForm">
 {#                <div class="modal <modal-to></modal-to>ur position-static d-block bg-secondary py-5" tabindex="-1" role="dialog" id="modalTour">#}
-        <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+        <div class="modal modal-sheet position-fixed d-block bg-body py-lg-4" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-6 shadow">
                     <div class="modal-body p-5">
@@ -53,11 +55,16 @@
                                 </div>
                             </li>
                         </ul>
-                        <button type="button" onclick="closeForm()" class="btn btn-lg btn-secondary mt-5 w-100" data-bs-dismiss="modal">Отмена</button>
+                        <a
+{#                                type="button"#}
+                                href="{% url 'module:edit_module' id=course.id m_id=module.id %}"
+{#                                onclick="closeForm()" data-bs-dismiss="modal"#}
+                                class="btn btn-lg btn-secondary mt-5 w-100" >Отмена</a>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
     </div>
 
        <script>

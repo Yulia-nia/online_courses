@@ -1,3 +1,4 @@
+from django.contrib.postgres.fields import ArrayField
 from django.core.files.storage import FileSystemStorage
 from django.db import models
 
@@ -103,3 +104,33 @@ class CoursEnrollment(models.Model):
         db_table = ' course_enrollment'
         verbose_name = 'Набор на курс',
         verbose_name_plural = 'Набор на курс'
+
+
+class Comment(models.Model):
+    # path = ArrayField(models.IntegerField())
+    parent = models.ForeignKey('self', verbose_name="Родитель", on_delete=models.SET_NULL, blank=True, null=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE,)
+    author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    content = models.TextField('Комментарий', blank=True)
+    pub_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "comments"
+        verbose_name = 'Комментарий',
+        verbose_name_plural = 'Комментарии'
+
+    def  __str__(self):
+        return self.content[0:200]
+
+    # def get_offset(self):
+    #     level = len(self.path) - 1
+    #     if level > 5:
+    #         level = 5
+    #     return level
+    #
+    # def get_col(self):
+    #     level = len(self.path) - 1
+    #     if level > 5:
+    #         level = 5
+    #     return 12 - level
+

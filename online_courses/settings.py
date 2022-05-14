@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_summernote',
     'course_test',
-
+    'mathfilters',
 ]
 
 SUMMERNOTE_THEME = 'bs5'

@@ -17,7 +17,7 @@ from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnroll
 from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment, Comment, RatingScore
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
-from module.models import Announcement, Lesson, Mark, Module
+from module.models import Announcement, Lesson, Mark, Module, Task
 from users.models import User, BookmarkCourse
 from django.views.generic import TemplateView, ListView, DeleteView
 
@@ -343,14 +343,26 @@ def create_notification(request, id, s_id):
 
 def grades_list(request, id):
     course = Course.objects.get(id=id)
+
+    students_list = User.objects.all().filter(ratingscore__course_id=id)
+
+
+
     marks = Mark.objects.all().filter(course_id=id)
+
     rating = RatingScore.objects.all().filter(course_id=id)
     modules = Module.objects.all().filter(course_id=id)
+
+    count_all = Task.objects.all().filter(module__course_id=id).count()
+
     return render(request, "module/mark/grades_list.html",
                   {"course": course,
+                   'students': students_list,
                    "rating": rating,
                    "marks": marks,
+                   "count_all": count_all,
                    "modules": modules,
+                   "sr_mark": 6,
                    })
 
 

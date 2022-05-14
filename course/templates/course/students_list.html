@@ -27,6 +27,7 @@
                 <th> e-mail </th>
                 <th> Дата последнего входа </th>
                 <th> Прогресс / уроки </th>
+                <th> Оценка </th>
                 <th> Уведомление </th>
             </tr>
 {#            <form method="post" action="{% url 'create_notification' %}">#}
@@ -37,6 +38,7 @@
                         <td> {{ student.email }} </td>
                         <td> {{ student.last_login }} </td>
                         <td> {{ progres }} / {{ count_lessons }} </td>
+                        <td> {{ student.ratingscore.mark }} </td>
                         <td>
                             <button id="myBtn"
                                     class="btn btn-sm position-center btn-light w-30 mx-0" onclick="openForm()">

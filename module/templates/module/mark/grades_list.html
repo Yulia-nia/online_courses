@@ -1,39 +1,56 @@
 {% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
 {% load static %}
+{% load mathfilters %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-
-    <table border="1">
-       <tr >
-           <th>Имя | </th>
-           {% for item in modules %}
-               {% for i in item.task_set.all %}
-                   <th>{{ i.title }} |</th>
-               {% endfor %}
-           {% endfor %}
-            <th> | ИТОГ | </th>
-       </tr>
-
-        {% for mark in marks %}
-            <tr>
-                <td>
-                    {{ mark.student.email }}
-                </td>
-                {% for m in mark.student.mark_set.all %}
-
-                    <td>{{ m.mark }} |</td>
-
-                {% endfor %}
-
-                <td>
-                    {{ mark.student.ratingscore.mark }}
-                </td>
-            </tr>
-        {% endfor %}
-    </table>
-
+    <div>
+        <div class="table-responsive">
+{#        table-sm#}
+            <table class="table table-bordered table-hover" >
+                <tbody>
+                    <tr>
+                        <td>
+                            Имя пользователя
+                        </td>
+                        {% for item in modules %}
+                            {% for i in item.task_set.all %}
+                                <th>{{ i.title }} </th>
+                            {% endfor %}
+                        {% endfor %}
+                        <td>
+                            Итог
+                        </td>
+                    </tr >
+                    {% for student in students %}
+                    <tr class="p-5">
+                        <td>
+                            {{ student.username }}
+                        </td>
+                        {% for m in student.mark_set.all %}
+                            {% if m.mark < sr_mark %}
+                                <td class="bg-danger">
+                                    {{ m.mark }}
+                                </td>
+                            {% else %}
+                                <td class="bg-success">
+                                    {{ m.mark }}
+                                </td>
+                            {% endif %}
+                        {% endfor %}
+                        {% if student.mark_set.all.count != count_all %}
+                            <td colspan="{{ count_all|sub:student.mark_set.all.count }}"> </td>
+                        {% endif %}
+                        <td>
+                            {{ student.ratingscore.mark }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
 {% endblock %}

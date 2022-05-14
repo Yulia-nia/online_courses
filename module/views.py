@@ -14,7 +14,7 @@ from django.urls import reverse
 from django.views import View
 from django.views.generic import TemplateView
 
-from course.models import Course, РassingРrogress
+from course.models import Course, РassingРrogress, RatingScore
 from module.forms import ModuleForm, AnnouncementForm, LessonEditForm, TaskForm, AnswerTaskForm, MarkForm, \
     LessonCreateForm, BlockCreateForm, BlockForm, BaseLinkFormSet, FileForm, UrlLinkForm, BaseFileFormSet
 from module.models import Module, Lesson, Announcement, File, Task, StudentAnswer, Mark, Block, UrlLink
@@ -470,9 +470,9 @@ class TaskView(View):
 
 
 class EstimateView(View):
-    def get(self, request, id):
+    def get(self, request, id, a_id):
         try:
-            answer = StudentAnswer.objects.get(id=id)
+            answer = StudentAnswer.objects.get(id=a_id)
             task = answer.task
             course = answer.task.module.course
             return render(
@@ -494,8 +494,8 @@ class EstimateView(View):
                                            'form': MarkForm()
                                            })
 
-    def post(self, request, id):
-        answer = StudentAnswer.objects.get(id=id)
+    def post(self, request, id, a_id):
+        answer = StudentAnswer.objects.get(id=a_id)
         task = answer.task
         course = answer.task.module.course
         form = MarkForm(request.POST or None)
@@ -506,6 +506,19 @@ class EstimateView(View):
             mark.course_id = course.id
             mark.student_id = answer.student_id
             mark.save()
+
+        marks = Mark.objects.all().filter(course_id=id, student_id=answer.student_id)
+
+        m_list = []
+        for item in marks:
+            m_list.append(item.mark)
+        if len(m_list) != 0:
+            m = sum(m_list)//len(m_list)
+        obj, created = RatingScore.objects.update_or_create(course_id=course.id,
+                                                                student_id=answer.student_id,
+                                                            defaults={'mark': m}
+                                                            )
+
         return render(request, "module/task/estimate_answer.html", {'course': course,
                                                               "form": MarkForm(),
                                                                     "modules": course.module_set.all(),

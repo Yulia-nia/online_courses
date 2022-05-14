@@ -14,6 +14,7 @@
                    <th>{{ i.title }} |</th>
                {% endfor %}
            {% endfor %}
+            <th> | ИТОГ | </th>
        </tr>
 
         {% for mark in marks %}
@@ -27,6 +28,9 @@
 
                 {% endfor %}
 
+                <td>
+                    {{ mark.student.ratingscore.mark }}
+                </td>
             </tr>
         {% endfor %}
     </table>

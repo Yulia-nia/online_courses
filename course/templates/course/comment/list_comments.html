@@ -6,7 +6,48 @@
 
 
 {% block content %}
-    <h2>Комментарии</h2>
+
+    <style>
+        .container_comment {
+          border: 2px solid #ffdb00;
+          background-color: #faebd4;
+          border-radius: 5px;
+          padding: 16px;
+          margin: 16px 0
+        }
+
+        .container_comment::after {
+          content: "";
+          clear: both;
+          display: table;
+        }
+
+        .container_comment img {
+          float: left;
+          margin-right: 20px;
+          border-radius: 50%;
+        }
+
+        .container_comment span {
+          font-size: 20px;
+          margin-right: 15px;
+        }
+
+        @media (max-width: 500px) {
+          .container_comment {
+              text-align: center;
+          }
+          .container_comment img {
+              margin: auto;
+              float: none;
+              display: block;
+          }
+        }
+    </style>
+
+
+
+    <h2>Комментарии для курса «{{ course.title }}»</h2>
 {#    {% for comment in comments %}#}
 {#        <a name="comment-{{ comment.id }}"></a>#}
 {#        <div class="row" id="{{ comment.id }}">#}
@@ -55,7 +96,7 @@
                 <!-- contact form grid -->
                 <div class="contact-single">
                     <h3 class="editContent">
-                        <span class="sub-tittle editContent">{{ commnets.count }} </span>
+                        <span class="sub-tittle editContent">{{ course.comment_set.count }} </span>
                         оставить комментарий</h3>
                     <form method="post" class="mt-4" id="formReview">
                         {% csrf_token %}
@@ -76,30 +117,74 @@
                 <!--  //contact form grid ends here -->
             </div>
         </div>
-        {% for comment in commnets %}
-            <div class="media py-5">
+        <div class="media py-5">
                <div class="media-body mt-4">
-                    <h5 class="mt-0 editContent">
-                        {{ comment.author.email }}
-                    </h5>
-                    <p class="mt-2 editContent">
-                        {{ comment.content }}
-                    </p>
-                    <a href="#formReview"
-                       onclick="addReview('{{ comment.author.email }}', '{{ comment.id }}')">Ответить</a>
-
-                    {% for com in comment.comment_set.all %}
-                        <div class="media mt-5 editContent">
-                            <div class="media-body">
-                                <h5 class="mt-0 editContent">{{ com.author.email }}</h5>
-                                <p class="mt-2 editContent">{{ com.content }}</p>
-                            </div>
+                   {% for comment in commnets %}
+                        <div class="container_comment">
+                            <img src="{{ comment.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+                            <p><h6 class="mt-0 editContent"><strong>
+                            {{ comment.author.email }}</strong>
+                            </h6></p>
+                            <p class="mt-2 editContent">
+                                {{ comment.content }}
+                            </p>
+                            <a href="#formReview"
+                               onclick="addReview('{{ comment.author.email }}', '{{ comment.id }}')">Ответить</a>
                         </div>
-                    {% endfor %}
 
-                </div>
-            </div>
-        {% endfor %}
+                       <div class="px-4">
+                            {% for com in comment.comment_set.all %}
+                                <div class="media mt-5 editContent">
+                                    <div class="media-body container_comment bg-light">
+                                        <img src="{{ com.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+                                        <p>
+                                            <h6 class="mt-0 editContent"><strong>
+                                                {{ comment.author.email }}</strong>
+                                            </h6>
+                                        </p>
+                                        <p class="mt-2 editContent">{{ com.content }}</p>
+                                        <a href="#formReview"
+                                           onclick="addReview('{{ comment.author.email }}', '{{ com.id }}')">Ответить</a>
+                                    </div>
+
+                                    <div class="px-4">
+                                        {% for item in com.comment_set.all %}
+                                            <div class="media mt-5 editContent">
+                                                <div class="media-body container_comment bg-light">
+                                                    <img src="{{ item.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+                                                    <p>
+                                                        <h6 class="mt-0 editContent"><strong>
+                                                            {{ item.author.email }}</strong>
+                                                        </h6>
+                                                    </p>
+                                                    <p class="mt-2 editContent">{{ item.content }}</p>
+                                                    <a href="#formReview"
+                                                       onclick="addReview('{{ item.author.email }}', '{{ item.id }}')">Ответить</a>
+                                                </div>
+                                                <div class="px-4">
+                                                    {% for val in item.comment_set.all %}
+                                                        <div class="media mt-5 editContent">
+                                                            <div class="media-body container_comment bg-light">
+                                                                <img src="{{ val.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+                                                                <p>
+                                                                    <h6 class="mt-0 editContent"><strong>
+                                                                        {{ val.author.email }}</strong>
+                                                                    </h6>
+                                                                </p>
+                                                                <p class="mt-2 editContent">{{ val.content }}</p>
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                           {% endfor %}
+                       </div>
+                   {% endfor %}
+               </div>
+        </div>
     </div>
 
 

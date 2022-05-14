@@ -122,15 +122,16 @@ class Comment(models.Model):
     def  __str__(self):
         return self.content[0:200]
 
-    # def get_offset(self):
-    #     level = len(self.path) - 1
-    #     if level > 5:
-    #         level = 5
-    #     return level
-    #
-    # def get_col(self):
-    #     level = len(self.path) - 1
-    #     if level > 5:
-    #         level = 5
-    #     return 12 - level
 
+class RatingScore(models.Model):
+    student = models.OneToOneField(User, on_delete=models.SET_NULL, null=True)
+    course = models.ForeignKey("course.Course", on_delete=models.CASCADE)
+    mark = models.IntegerField(null=True)
+
+    class Meta:
+        db_table = 'rating_score'
+        verbose_name = 'Рейтинговая оценка',
+        verbose_name_plural = 'Рейтинговые оценки'
+
+    def __str__(self):
+        return self.mark

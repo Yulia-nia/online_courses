@@ -21,7 +21,7 @@ urlpatterns = [
 
     path('ansewers_students/', views.list_answers_tasks, name='list_answers'),
     path('ansewers_students/<int:id>/task/', views.list_ans_from_task, name='list_ans_from_task'),
-    path(r'estimate/<int:id>/', views.EstimateView.as_view(), name='estimate'),
+    path(r'estimate/<int:a_id>/', views.EstimateView.as_view(), name='estimate'),
 
     # lesson
     path('<int:m_id>/lesson_create/', views.CreateLesson.as_view(), name='create_lesson'),

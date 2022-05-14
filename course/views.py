@@ -14,7 +14,7 @@ from rest_framework.response import Response
 from django.views import View
 from chat.models import Chat, Message
 from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnrollmentForm, CommentForm
-from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment, Comment
+from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment, Comment, RatingScore
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
 from module.models import Announcement, Lesson, Mark, Module
@@ -234,7 +234,14 @@ def create_announcement(request, id):
 
 def check_list(request, id):
     course = Course.objects.get(id=id)
+    desc = course.description.__len__()
+    desc_true = True if desc > 100 else False
+
+
+
     return render(request, "course/check_list.html", {"item_id": id,
+                                                      'settings': desc,
+                                                      'desc_is': desc_true,
                                                       "course": course})
 
 
@@ -337,9 +344,11 @@ def create_notification(request, id, s_id):
 def grades_list(request, id):
     course = Course.objects.get(id=id)
     marks = Mark.objects.all().filter(course_id=id)
+    rating = RatingScore.objects.all().filter(course_id=id)
     modules = Module.objects.all().filter(course_id=id)
     return render(request, "module/mark/grades_list.html",
                   {"course": course,
+                   "rating": rating,
                    "marks": marks,
                    "modules": modules,
                    })
@@ -431,6 +440,7 @@ class CommentView(View):
         return render(request, "course/comment/list_comments.html", {"course": course,
                                                                      'commnets': Course.objects.get(id=id).comment_set.all().filter(parent_id=None),
                                                                      'form': self.comment_form,
+
                                                                      })
 
     def post(self, request, id):

@@ -37,7 +37,7 @@
                         <p>{{ item.student.email }}</p>
                         <p>{{ item.time_create }}</p>
                         <p>{{ item.mark.mark }}</p>
-                        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
+                        <a href="{% url 'module:estimate' id=course.id a_id=item.id %}">Проверить и оценить</a>
                         <hr>
                     {% endfor %}
                 </div>

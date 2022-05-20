@@ -4,7 +4,8 @@
 
 
 {% block content %}
-
+    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script data-require="chart.js@0.2.0" data-semver="0.2.0" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.js"></script>
     <STYLE>
         /* Всплывающая форма-скрыта по умолчанию */
         .form-popup1 {
@@ -26,54 +27,160 @@
 {#                <th> ФИО </th>#}
                 <th> e-mail </th>
                 <th> Дата последнего входа </th>
-                <th> Прогресс / уроки </th>
+                <th> Пройденные уроки </th>
+                <th> Проверенные задания </th>
                 <th> Оценка </th>
                 <th> Уведомление </th>
             </tr>
 {#            <form method="post" action="{% url 'create_notification' %}">#}
 {#                {% csrf_token %}#}
-                    {% for student, progres in list_item %}
+                    {% for student, progres, answer in list_item %}
                     <tr>
-                        <td> {{ student.username }} </td>
+                        <td> <a href="{% url 'module:student_progress_list' s_id=student.id id=course.id %}" >{{ student.username }} </a></td>
                         <td> {{ student.email }} </td>
                         <td> {{ student.last_login }} </td>
                         <td> {{ progres }} / {{ count_lessons }} </td>
+                        <td>{{ answer }} / {{ count_task }}</td>
                         <td> {{ student.ratingscore.mark }} </td>
                         <td>
                             <button id="myBtn"
-                                    class="btn btn-sm position-center btn-light w-30 mx-0" onclick="openForm()">
+                                    class="btn btn-sm position-center btn-light w-30 mx-0" onclick="openForm('{{ student.username }}', '{{ student.id }}')">
                                 Отправить</button>
+
                         </td>
                     </tr>
-
-                        <div class="form-popup1" id="myForm">
-                             <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
-                                <div class="modal-dialog" role="document">
-                                    <div class="modal-content rounded-6 shadow">
-                                        <div class="modal-header border-bottom-0">
-                                            <h5 class="modal-title">Создание уведомления для {{ student.username }}</h5>
-                                            <button type="button" class="btn-close" onclick="closeForm()" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body py-0">
-                                            <form method="post" action={% url 'create_notification' id=course.id s_id=student.id %}>
-                                                 {% csrf_token %}
-                                                 {% bootstrap_form form layout='gorizontal' %}
-                                                 {% bootstrap_button "Отправить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
-                                            </form>
-                                            <p></p>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div>
-                        </div>
-
                     {% endfor %}
         </table>
+
+
+        <div style="width:100%">
+            <h2>Sale Per Hour</h2>
+			<div>
+				<canvas id="canvas" height="250" width="800"></canvas>
+			</div>
+              Весь прогресс <input type='checkbox' value='0'/>
+			  Задания <input type='checkbox'value='1'/>
+			  Уроки <input type='checkbox' value='2'/>
+
+		</div>
+
+
+
+        <div class="form-popup1" id="myForm">
+            <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content rounded-6 shadow">
+                        <div class="modal-header border-bottom-0">
+                            <h5 class="modal-title">Создание уведомления для {{ student.username }}</h5>
+                            <button type="button" class="btn-close" onclick="closeForm()" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body py-0">
+                            <form method="post" >
+                                {% csrf_token %}
+                                <input type="hidden" name="student_id" id="contactparent" value="">
+
+                                <div class="form-group editContent">
+                                    <textarea class="form-control border" rows="5" name="content"
+                                      id="contactcomment" required="">
+                                    </textarea>
+                                </div>
+                                <p></p>
+{#                                {% bootstrap_form form layout='gorizontal' %}#}
+                                {% bootstrap_button "Отправить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+                            </form>
+                            <p></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
      </div>
 
 
     <script>
-        function openForm() {
+
+    var randomScalingFactor = function(){
+        return Math.round(Math.random()*256)
+    };
+
+    var chartData = [
+      {
+					label: "1",
+					fillColor : "rgba(151,187,205,0.2)",
+					strokeColor : "rgba(151,187,205,1)",
+					pointColor : "rgba(151,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : {{ data_pie_all|safe }}
+				},
+            {
+					label: "2",
+					fillColor : "rgba(200,187,205,0.2)",
+					strokeColor : "rgba(200,187,205,1)",
+					pointColor : "rgba(200,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : {{ data_pie_task|safe }}
+				},
+        {
+					label: "3",
+					fillColor : "rgba(151,187,105,0.2)",
+					strokeColor : "rgba(151,187,105,1)",
+					pointColor : "rgba(151,187,105,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : {{ data_pie_lesson|safe }}
+				},
+      ]
+
+
+        var subject_list={{ date_pie|safe }};
+
+        var lineChartData = {
+			labels : {{ date_pie|safe }},
+			datasets : [
+				{
+					label: "Hourly dataset",
+					fillColor : "rgba(200,187,205,0.2)",
+					strokeColor : "rgba(200,187,205,1)",
+					pointColor : "rgba(200,187,205,1)",
+					pointStrokeColor : "#fff",
+					pointHighlightFill : "#fff",
+					pointHighlightStroke : "rgba(151,187,205,1)",
+					data : {{ data_pie_all|safe }}
+				}
+			]
+
+		};
+	window.onload = function(){
+		var ctx = document.getElementById("canvas").getContext("2d");
+		window.myLine = new Chart(ctx);
+		myLine.Line(lineChartData, {
+			responsive: true
+		});
+
+	}
+	$(document).ready(function(){
+	  $('input[type=checkbox]').click(function(){
+	    console.log($(this).val())
+	    lineChartData.datasets = [];
+	    $('input:checked').each(function(){
+	      lineChartData.datasets.push(chartData[$(this).val()]);
+	    });
+
+	    myLine.Line(lineChartData, {
+			  responsive: true
+		  });
+
+	  })
+	});
+        function openForm(username, student_id) {
+            document.getElementById("contactparent").value = student_id;
+            document.getElementById("contactcomment").innerText = `${username }, `;
           document.getElementById("myForm").style.display = "block";
         }
         function closeForm() {

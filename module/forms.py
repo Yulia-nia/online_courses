@@ -74,8 +74,7 @@ class BlockForm(forms.Form):
     title = forms.CharField(required=False, max_length=200, min_length=4)
     text_content = forms.CharField(required=False, label='',
                               widget=SummernoteWidget(attrs={'rows': 4,
-                                   'summernote': {'width': '50%'}})
-                                )
+                                   'summernote': {'width': '50%'}}))
 
 
 class FileForm(forms.Form):

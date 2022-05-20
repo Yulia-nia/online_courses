@@ -1,7 +1,7 @@
 from django import forms
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
-from course.models import Comment
+from course.models import Comment, Notifications
 
 
 class CourseForm(forms.Form):
@@ -15,6 +15,23 @@ class NotificationForm(forms.Form):
     content = forms.CharField(max_length=200, label='',
                                   widget=forms.Textarea(attrs={'rows': 2}),
                                   required=False)
+
+
+class NotificationFormCreate1(forms.Form):
+    student_id = forms.IntegerField(
+        widget=forms.HiddenInput,
+        required=False
+    )
+    content = forms.CharField(
+        label="",
+        widget=forms.Textarea(attrs={'rows': 3})
+    )
+
+class NotificationFormCreate(forms.ModelForm):
+    class Meta:
+        model = Notifications
+        fields = ("content",)
+
 
 
 class SettingsForm(forms.Form):
@@ -56,9 +73,9 @@ class SettingsForm(forms.Form):
     active_level = forms.ChoiceField(label='', choices=COURSE_CHOICES, required=False)
 
 
-
 class CoursEnrollmentForm(forms.Form):
-    time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='')
+    time_create = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата начала набора')
+    time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата окончания набора')
 
 
 class CommentForm1(forms.Form):

@@ -23,6 +23,8 @@ from django.urls import reverse_lazy
 from jinja2 import Environment
 from django.contrib import auth
 
+from users.models import User
+
 
 def list_module(request, id):
     course = Course.objects.get(id=id)
@@ -415,7 +417,7 @@ def get_progress(c_id, l_id, u_id):
 def progress(request, id):
     lesson = Lesson.objects.get(id=id)
     module = Module.objects.get(id=lesson.module_id)
-    files = File.objects.all().filter(lesson_id=lesson.id)
+    blocks = Block.objects.all().filter(lesson_id=lesson.id)
     course = Course.objects.get(id=lesson.module.course_id)
     progress_is = get_progress(course.id, lesson.id, request.user.id)
     if progress_is.is_pass == 1:
@@ -453,9 +455,7 @@ class TaskView(View):
     def post(self, request, id):
         task = Task.objects.get(id=id)
         course = Course.objects.get(id=task.module.course_id)
-
         form = AnswerTaskForm(request.POST or None, request.FILES or None)
-
         if form.is_valid():
             answer = StudentAnswer()
             answer.description = form.cleaned_data["description"]
@@ -576,9 +576,10 @@ def popup_form(request, id):
                    })
 
 
-def student_progress_list(request, id):
+def student_progress_list(request, id, s_id):
     course = Course.objects.get(id=id)
-    user = auth.get_user(request)
+    user = User.objects.get(id=s_id)
+    #user = auth.get_user(request)
     marks = Mark.objects.all().filter(student_id=user.id, course_id=course.id)
     tasks = Task.objects.all().filter(module__course_id=id)
     mar = [i.mark for i in marks]

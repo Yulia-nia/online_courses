@@ -20,21 +20,23 @@
  </STYLE>
  <section class="container py-3">
 
-    <p>Прогресс</p>
-    <div>
-        <div class="progress">
-            <div class="progress-bar progress-bar-striped text-dark bg-info progress-bar-animated"
-                     role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="4"
-                     style="width: {{ s_p }}%">{{ s_p }}%</div>
+     {% if user.id != course.author_id %}
+        <p>Прогресс прохождения курса</p>
+        <div>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped text-dark bg-info progress-bar-animated"
+                         role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="4"
+                         style="width: {{ s_p }}%">{{ s_p }}%</div>
+            </div>
         </div>
-    </div>
-    <p>{{ student_progress }} из {{ count_lessons }} уроков</p>
+        <p>{{ student_progress }} из {{ count_lessons }} уроков</p>
+    {% endif %}
+
      {% if modules.count > 0 %}
         <ol class="list1b">
             {% for item in modules %}
                 <li>
-                    <div class="d-flex justify-content-between h-30">
-
+                   <div class="d-flex justify-content-between h-30">
                         <strong class="text-gray-dark ">{{ item.title }}</strong>
                         <div>
                             {% if user.id == course.author_id %}
@@ -43,6 +45,13 @@
                             {% endif %}
                         </div>
                     </div>
+
+                     {% if user.id == course.author_id %}
+                        <p>Добавить</p>
+                        <a href="{{item.id}}/lesson_create/"> Урок </a> |
+                        <a href="{% url 'module:create_task' id=course.id m_id=item.id %}" > Задание </a>
+                     {% endif %}
+
                     {% if item.lesson_set.count == 0 %}
                         <p>В этом модуле пока ничего нет :(</p>
                     {% else %}
@@ -107,13 +116,6 @@
                             </div>
                         </details>
                     {% endif %}
-
-                    {% if user.id == course.author_id %}
-                    <p>Добавить</p>
-                    <a href="{{item.id}}/lesson_create/"> Урок </a> |
-                    <a href="{% url 'module:create_task' id=course.id m_id=item.id %}" > Задание </a>
-                    {% endif %}
-
                 </li>
             {% endfor %}
         </ol>

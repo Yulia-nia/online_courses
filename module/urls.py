@@ -49,7 +49,7 @@ urlpatterns = [
     path('content/', views.content_course, name='content_course'),
     path('popup/', views.popup_form, name='popup_form'),
     # progress student
-    path('progress_list/', views.student_progress_list, name='student_progress_list'),
+    path('progress_list/<int:s_id>/', views.student_progress_list, name='student_progress_list'),
     path('edit_module/<int:m_id>/', views.edit_module, name='edit_module'),
     path('', views.list_module, name='list'),
     path('summernote/', include('django_summernote.urls')),

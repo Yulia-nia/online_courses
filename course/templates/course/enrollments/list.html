@@ -12,17 +12,18 @@
 
         <form method="post">
             {% csrf_token %}
+            {% bootstrap_field form.time_create class="custom-control-input" %}
             {% bootstrap_field form.time_end class="custom-control-input" %}
             {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
         </form>
 
 
-
-    {{ enrollments.time_end }}
+    <p>{{ enrollments.time_create }} - {{ enrollments.time_end }}</p>
     <hr>
     {% if enrollments.students.count == 0 %}
         <p>Никто еще не поступил</p>
     {% else %}
+        <p>Количество сутдентов: {{ enrollments.students.count }}</p>
         {% for item in enrollments.students.all %}
             <p> {{ item.email }} </p>
         {% endfor %}

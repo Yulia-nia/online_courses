@@ -2,7 +2,8 @@ import datetime
 
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.checks import messages
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
 from django.utils import timezone
@@ -13,13 +14,14 @@ from django.urls import reverse, reverse_lazy
 from rest_framework.response import Response
 from django.views import View
 from chat.models import Chat, Message
-from course.forms import CourseForm, SettingsForm, NotificationForm, CoursEnrollmentForm, CommentForm
+from course.forms import CourseForm, SettingsForm, CoursEnrollmentForm, CommentForm, NotificationFormCreate
 from course.models import Course, Settings, Notifications, РassingРrogress, CoursEnrollment, Comment, RatingScore
 from course.serializer import CourseSerializer
 from module.forms import AnnouncementForm
-from module.models import Announcement, Lesson, Mark, Module, Task
+from module.models import Announcement, Lesson, Mark, Module, Task, StudentAnswer
 from users.models import User, BookmarkCourse
 from django.views.generic import TemplateView, ListView, DeleteView
+import pandas as pd
 
 
 @method_decorator(login_required, name='dispatch')
@@ -234,14 +236,84 @@ def create_announcement(request, id):
 
 def check_list(request, id):
     course = Course.objects.get(id=id)
+    # 1
     desc = course.description.__len__()
     desc_true = True if desc > 100 else False
+    # 2
+    enrollment = CoursEnrollment.objects.all().filter(course_id=id)
+    is_enrollment = False
+    enrollment_course = None
+    if enrollment.count() != 0:
+        is_enrollment =True
+        enrollment_course = course.coursenrollment
+    # 3 хотябы один
+    announcement = Announcement.objects.all().filter(course_id=id).count()
+    is_announcement = True if announcement > 0 else False
+    # 4 хотябы 2
+    modules = Module.objects.all().filter(course_id=id)
+    is_module = True if modules.count() > 1 else False
+    # 5 хотябы 10 уроков
+    lessons = Lesson.objects.all().filter(module__course_id=id)
+    is_lesson = True if lessons.count() > 9 else False
+    # 6 хотябы 5 открытых уроков
+    lessons_open = Lesson.objects.all().filter(module__course_id=id, is_published=True)
+    is_lesson_open = True if lessons_open.count() > 4 else False
+    # 7 хотябы 5 заданий
+    tasks = Task.objects.all().filter(module__course_id=id)
+    is_task = True if tasks.count() > 4 else False
+    # ----
+    # 8 нет пустых модулей
+    is_null_modules = True  # нет пустых
+    null_modules = []
+    for i in modules:
+        if i.lesson_set.count() == 0 and i.task_set.count() == 0:
+            is_null_modules = False # есть пустой
+            null_modules.append(i)
+    # 9 нет уроков без блоков
+    is_null_lesson = True # нет пустых
+    null_lesson = []
+    for i in lessons:
+        if i.block_set.count() == 0:
+            is_null_lesson = False
+            null_lesson.append(i)
+    # 10 все задания содержат файлы
+    is_task_file = True # нет файлов
+    tasks_file = []
+    for i in tasks:
+        if i.file == None:
+            is_task_file = False #есть пустой
+            tasks_file.append(i)
+    count = 0
 
-
+    is_list = [desc_true, is_enrollment, is_announcement, is_module, is_lesson, is_lesson_open, is_task,
+               is_null_lesson, is_null_modules, is_task_file]
+    for item in is_list:
+        if item:
+            count += 1
+    progress = count * 10
 
     return render(request, "course/check_list.html", {"item_id": id,
                                                       'settings': desc,
                                                       'desc_is': desc_true,
+                                                      'enrollment_course': enrollment_course,
+                                                      'is_enrollment': is_enrollment,
+                                                      'announcement': announcement,
+                                                      'is_announcement': is_announcement,
+                                                      'modules': modules,
+                                                      'is_module': is_module,
+                                                      'lessons': lessons,
+                                                      'is_lesson': is_lesson,
+                                                      'lessons_open': lessons_open,
+                                                      'is_lesson_open': is_lesson_open,
+                                                      'tasks': tasks,
+                                                      'is_task': is_task,
+                                                      'null_modules': null_modules,
+                                                      'is_null_modules': is_null_modules,
+                                                      'null_lesson': null_lesson,
+                                                      'is_null_lesson': is_null_lesson,
+                                                      'tasks_file': tasks_file,
+                                                      'is_task_file': is_task_file,
+                                                      'progress': progress,
                                                       "course": course})
 
 
@@ -249,23 +321,166 @@ def get_student_progress(c_id, s_id):
     return РassingРrogress.objects.all().filter(course_id=c_id, student_id=s_id, is_pass=1).count()
 
 
-def students_list(request, id):
-    course = Course.objects.get(id=id)
+def get_student_answers(c_id, s_id):
+    return StudentAnswer.objects.all().filter(student_id=s_id, task__module__course_id=c_id,
+                                              mark__isnull=False).count()
 
-    lesson = Lesson.objects.all().filter(module__course_id=id)
-    students = []
-    progress = []
-    for i in course.coursenrollment.students.all():
-        students.append(i)
-        progress.append(get_student_progress(course.id, i.id))
 
-    count_lessons = lesson.count()
-    return render(request, "course/students_list.html", {"item_id": id,
-                                                         "count_lessons": count_lessons,
-                                                         "list_item": zip(students, progress),
-                                                         "course": course,
-                                                            "form": NotificationForm(),
-                                                         })
+def all_for_day(course, time_1):
+    pass_lessons = РassingРrogress.objects.all().filter(course_id=course.id, is_pass=True)
+    count_lesson = 0
+    count_task = 0
+    answers = StudentAnswer.objects.all().filter(task__module__course=course)
+    for item in pass_lessons:
+        if item.time_update.date() == time_1:
+            count_lesson += 1
+    for item in answers:
+        if item.time_create.date() == time_1:
+            count_task += 1
+    return count_lesson + count_task
+
+
+def lessons_for_day(course, time_1):
+    pass_lessons = РassingРrogress.objects.all().filter(course_id=course.id, is_pass=True)
+    count_lesson = 0
+    for item in pass_lessons:
+        if item.time_update.date() == time_1:
+            count_lesson += 1
+    return count_lesson
+
+
+def task_for_day(course, time_1):
+    count_task = 0
+    answers = StudentAnswer.objects.all().filter(task__module__course=course)
+    for item in answers:
+        if item.time_create.date() == time_1:
+            count_task += 1
+    return count_task
+
+
+def get_statist(course):
+    d_pie = pd.date_range(end=datetime.date.today(), periods=7)
+    date_pie = [str(i.date()) for i in d_pie]
+    data_pie_all = []
+    data_pie_task = []
+    data_pie_lesson = []
+    for item in d_pie:
+        data_pie_all.append(all_for_day(course, item.date()))
+        data_pie_task.append((task_for_day(course, item.date())))
+        data_pie_lesson.append((lessons_for_day(course, item.date())))
+    return date_pie, data_pie_all, data_pie_task, data_pie_lesson
+
+
+class StudentList(View):
+
+    def get(self, request, id):
+        course = Course.objects.get(id=id)
+        lesson = Lesson.objects.all().filter(module__course_id=id)
+        tasks = Task.objects.all().filter(module__course_id=id)
+        students = []
+        progress = []
+        answers = []
+        for i in course.coursenrollment.students.all().order_by('-id'):
+            students.append(i)
+            progress.append(get_student_progress(course.id, i.id))
+            answers.append(get_student_answers(course.id, i.id))
+        count_lessons = lesson.count()
+
+        date_pie, data_pie_all, data_pie_task, data_pie_lesson = get_statist(course)
+
+        # for item in range(1, len(d_p)):
+        #     data_pie.append(task_lessons_for_day(course, d_p[item - 1], d_p[item]))
+
+        # student_answers = StudentAnswer.objects.all().filter(student_id=user.id, task__module__course_id=course.id)
+
+        return render(request, "course/students_list.html", {"item_id": id,
+                                                             "count_lessons": count_lessons,
+                                                             'count_task': tasks.count(),
+                                                             "list_item": zip(students, progress, answers),
+                                                             "course": course,
+                                                             'date_pie':date_pie,
+                                                             'data_pie_all': data_pie_all,
+                                                             'data_pie_task': data_pie_task,
+                                                             'data_pie_lesson': data_pie_lesson,
+
+                                                             "form": NotificationFormCreate(),
+                                                             })
+    def post(self, request, id):
+        course = Course.objects.get(id=id)
+        lesson = Lesson.objects.all().filter(module__course_id=id)
+        students = []
+        progress = []
+        for i in course.coursenrollment.students.all().order_by('-id'):
+            students.append(i)
+            progress.append(get_student_progress(course.id, i.id))
+        count_lessons = lesson.count()
+        if request.method == 'POST':
+            form = NotificationFormCreate(request.POST)
+            course = get_object_or_404(Course, id=id)
+            if form.is_valid():
+                form = form.save(commit=False)
+                if request.POST.get("student_id", None):
+                    form.student_id = int(request.POST.get("student_id"))
+                form.course = course
+                form.save()
+            return render(request, "course/students_list.html", {"course": Course.objects.get(id=id),
+                                                                         "item_id": id,
+                                                                         "count_lessons": count_lessons,
+                                                                         'form': form,
+                                                                         "list_item": zip(students, progress),
+                                                                         })
+
+        #
+        # if request.method == "POST":
+        #     notification = Notifications()
+        #     notification.content = request.POST.get("content")
+        #     notification.course_id = id
+        #     notification.student_id = s_id
+        #     notification.save()
+        #     return HttpResponseRedirect(reverse('students_list', args=(id,)))
+        # else:
+        #     return render(request, "course/notifications/create_notification.html",
+        #                   {"course": Course.objects.get(id=id),
+        #                    "student": User.objects.get(id=s_id),
+        #                    "form": NotificationForm(),
+        #                    })
+
+
+#
+# def students_list(request, id):
+#     course = Course.objects.get(id=id)
+#
+#     lesson = Lesson.objects.all().filter(module__course_id=id)
+#     students = []
+#     progress = []
+#     for i in course.coursenrollment.students.all().order_by('-id'):
+#         students.append(i)
+#         progress.append(get_student_progress(course.id, i.id))
+#
+#     count_lessons = lesson.count()
+#     return render(request, "course/students_list.html", {"item_id": id,
+#                                                          "count_lessons": count_lessons,
+#                                                          "list_item": zip(students, progress),
+#                                                          "course": course,
+#                                                          "form": NotificationForm(),
+#                                                          })
+
+#
+#
+# def create_notification(request, id, s_id):
+#     if request.method == "POST":
+#         notification = Notifications()
+#         notification.content = request.POST.get("content")
+#         notification.course_id = id
+#         notification.student_id = s_id
+#         notification.save()
+#         return HttpResponseRedirect(reverse('students_list', args=(id,)))
+#     else:
+#         return render(request, "course/notifications/create_notification.html",
+#                   {"course": Course.objects.get(id=id),
+#                    "student": User.objects.get(id=s_id),
+#                    "form": NotificationForm(),
+#                    })
 
 
 class CourseAPIView(generics.ListAPIView):
@@ -321,24 +536,8 @@ def notifications_list_course(request, id):
 
     return render(request, "course/notifications/notifications_list.html", {"course": course,
                                                          "students": students,
-                                                         "form": NotificationForm(),
                                                          "notifications": notifications,
                                                         "s_notifications": s_notifications,})
-
-
-def create_notification(request, id, s_id):
-    if request.method == "POST":
-        notification = Notifications()
-        notification.content = request.POST.get("content")
-        notification.course_id = id
-        notification.student_id = s_id
-        notification.save()
-        return HttpResponseRedirect(reverse('students_list', args=(id,)))
-    else:
-        return render(request, "course/notifications/create_notification.html",
-                  {"course": Course.objects.get(id=id),
-                   "form": NotificationForm(),
-                   })
 
 
 def grades_list(request, id):
@@ -411,8 +610,10 @@ class EnrollmentView(View):
         enrollment_edit = CoursEnrollment.objects.all().filter(course_id=id)
         if enrollment_edit.count() == 1:
             enrollment_edit = enrollment_edit.first()
-            form = CoursEnrollmentForm(request.POST or None, initial={'time_end': enrollment_edit.time_end})
+            form = CoursEnrollmentForm(request.POST or None, initial={'time_end': enrollment_edit.time_end,
+                                                                      'time_create': enrollment_edit.time_create})
             if form.is_valid():
+                enrollment_edit.time_create = form['time_create'].value()
                 enrollment_edit.time_end = form['time_end'].value()
                 enrollment_edit.course_id = id
                 enrollment_edit.save()
@@ -420,6 +621,7 @@ class EnrollmentView(View):
             enrollment = CoursEnrollment()
             form = CoursEnrollmentForm(request.POST)
             if form.is_valid():
+                enrollment_edit.time_create = form.cleaned_data['time_create']
                 enrollment.time_end = form.cleaned_data['time_end']
                 enrollment.course_id = id
                 enrollment.save()
@@ -442,7 +644,6 @@ class CommentView(View):
         context.update(csrf(request))
         user = auth.get_user(request)
         commnets = course.comment_set.all().order_by('-id')
-        # Будем добавлять форму только в том случае, если пользователь авторизован
         if user.is_authenticated:
             form = self.comment_form
             return render(request, "course/comment/list_comments.html", {"course": course,
@@ -452,7 +653,6 @@ class CommentView(View):
         return render(request, "course/comment/list_comments.html", {"course": course,
                                                                      'commnets': Course.objects.get(id=id).comment_set.all().filter(parent_id=None),
                                                                      'form': self.comment_form,
-
                                                                      })
 
     def post(self, request, id):

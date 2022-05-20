@@ -34,8 +34,18 @@
                     {% for block in blocks %}
                         {% if block.id == blocks.all.first.id %}
                             <div class="tab-pane fade show active" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
-                                {{ block.title }}
-                                {{ block.create }}
+                                <p>{{ block.title }}</p>
+                                <p>{{ block.create }}</p>
+
+                                {% for url in block.urllink_set.all %}
+                                    <p>{{ url.title }}</p>
+                                    <p>{{ url.url }}</p>
+                                {% endfor %}
+
+                                {% for file in block.file_set.all %}
+                                    <p>{{ file.title }}</p>
+                                    <p>{{ file.file }}</p>
+                                {% endfor %}
                             </div>
                         {% else %}
                             <div class="tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">

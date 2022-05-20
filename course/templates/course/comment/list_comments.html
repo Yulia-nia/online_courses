@@ -45,52 +45,7 @@
         }
     </style>
 
-
-
     <h2>Комментарии для курса «{{ course.title }}»</h2>
-{#    {% for comment in comments %}#}
-{#        <a name="comment-{{ comment.id }}"></a>#}
-{#        <div class="row" id="{{ comment.id }}">#}
-{#            <div class="col-md-2 col-md-offset-2">#}
-{#                <div class="panel panel-default">#}
-{#                    <div class="panel-heading">#}
-{#                        <strong>{{ comment.author.username }}</strong>&nbsp;&nbsp;#}
-{#                        {{ comment.pub_date }}#}
-{#                        <a href="#comment-{{ comment.id }}">#</a>#}
-{#                    </div>#}
-{#                    <div class="panel-body">#}
-{#                        <div>{{ comment.content|safe }}</div>#}
-{#                        {% if form %}#}
-{#                            <a class="btn btn-default btn-xs pull-right"#}
-{#                                        onclick="return show_comments_form({{ comment.id }})">#}
-{#                            {% bootstrap_icon "share-alt" %}&nbsp;&nbsp;#}
-{#                                Ответить</a>#}
-{#                        {% endif %}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endfor %}#}
-{#    {% if user.is_authenticated %}#}
-{#        <h3 id="write_comment"><a onclick="return show_comments_form('write_comment')">Написать комментарий</a></h3>#}
-{#        <form id="comment_form"#}
-{#              action="{% url 'add_comment' course.id %}" #}
-{#              method="POST">#}
-{#            {% csrf_token %}#}
-{#            {% bootstrap_form form %}#}
-{#            {% bootstrap_button "Комментировать" type="submit" class="btn btn-primary" %}#}
-{#        </form>#}
-{#    {% else %}#}
-{#        <div class="panel panel-warning">#}
-{#            <div class="panel-heading">#}
-{#                <h3 class="panel-title">Комментарии</h3>#}
-{#            </div>#}
-{#            <div class="panel-body">#}
-{#                Только авторизованные пользователи могут оставлять комментарии.<br />#}
-{#            </div>#}
-{#        </div>#}
-{#    {% endif %}#}
-
     <div class="row">
             <div class="single-form-left">
                 <!-- contact form grid -->
@@ -98,6 +53,7 @@
                     <h3 class="editContent">
                         <span class="sub-tittle editContent">{{ course.comment_set.count }} </span>
                         оставить комментарий</h3>
+
                     <form method="post" class="mt-4" id="formReview">
                         {% csrf_token %}
                         <input type="hidden" name="parent" id="contactparent" value="">
@@ -113,6 +69,7 @@
                             Отправить
                         </button>
                     </form>
+
                 </div>
                 <!--  //contact form grid ends here -->
             </div>
@@ -136,7 +93,7 @@
                             {% for com in comment.comment_set.all %}
                                 <div class="media mt-5 editContent">
                                     <div class="media-body container_comment bg-light">
-                                        <img src="{{ com.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+{#                                        <img src="{{ com.author.image_pic.url|default:"static/img/blog_1.ipg" }}" alt="Avatar" style="width:80px; height: 80%">#}
                                         <p>
                                             <h6 class="mt-0 editContent"><strong>
                                                 {{ comment.author.email }}</strong>
@@ -151,7 +108,7 @@
                                         {% for item in com.comment_set.all %}
                                             <div class="media mt-5 editContent">
                                                 <div class="media-body container_comment bg-light">
-                                                    <img src="{{ item.author.image_pic.url }}" alt="Avatar" style="width:80px; height: 80%">
+{#                                                    <img src="{{ item.author.image_pic.url|default:"static/img/blog_1.ipg" }}" alt="Avatar" style="width:80px; height: 80%">#}
                                                     <p>
                                                         <h6 class="mt-0 editContent"><strong>
                                                             {{ item.author.email }}</strong>

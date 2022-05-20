@@ -15,6 +15,7 @@
         <div class="bd-example">
             <table class="table table-striped">
                 <tbody>
+{#                1#}
                     <tr>
                         <td>
                             <div>
@@ -34,44 +35,237 @@
                             </div>
                         </td>
                     </tr>
-
+{#                    2#}
                     <tr>
                         <td>
                             <div>
-                                <p><strong></strong></p>
+                                <p><strong>Набор на курс
+                                    {% if is_enrollment %}
+                                        (сейчас создан {{ enrollment_course.time_create }} - {{ enrollment_course.time_end }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Должен быть для поступления на курс
+                                </p>
                             </div>
                         </td>
                         <td>
                             <div>
-                                {% if desc_is %}
+                                {% if is_enrollment %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
                                 {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+{#                    3#}
+                    <tr>
+                        <td>
+                            <div>
+                                <p><strong> Объявления
+                                    {% if is_announcement %}
+                                        (сейчас {{ announcement }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Хотя бы одно объявление
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_announcement %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
                                 {% endif %}
                             </div>
                         </td>
                     </tr>
 
-                    <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
+
+{#                    4#}
+                        <tr>
+                        <td>
+                            <div>
+                                <p><strong> Модули
+                                    {% if is_module %}
+                                        (сейчас {{ modules.count }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Хотябы два модуля
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_module %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
 
+{#                    5#}
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
+                        <td>
+                            <div>
+                                <p><strong> Уроки
+                                    {% if is_lesson %}
+                                        (сейчас создан {{ lessons.count }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Хотябы 10 уроков
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_lesson %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
-
+{#                    6#}
                     <tr>
-                        <td>Mark</td>
-                        <td>Otto</td>
+                        <td>
+                            <div>
+                                <p><strong> Открытые уроки
+                                    {% if is_lesson_open %}
+                                        (сейчас {{ lessons_open.count }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Хотябы 5 открытых уроков
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_lesson_open %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+{#                    7#}
+                    <tr>
+                        <td>
+                            <div>
+                                <p><strong> Задания
+                                    {% if is_task %}
+                                        (сейчас создан {{ tasks.count }})
+                                    {% else %}
+                                        (сейчас не создан)
+                                    {% endif %}
+                                    </strong><br>
+                                    Хотябы 5 заданий
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_task %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+{#                    8#}
+                    <tr>
+                        <td>
+                            <div>
+                                <p><strong> Нет пустых модулей
+                                    {% if not is_null_modules %}
+                                        (кол-во пустых модулей {{ null_modules.count }})
+                                    {% else %}
+                                        (пустых модулей нет)
+                                    {% endif %}
+                                    </strong><br>
+                                    ...
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_null_modules %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+{#                    9#}
+                    <tr>
+                        <td>
+                            <div>
+                                <p><strong> нет уроков без блоков
+                                    {% if not is_null_lesson %}
+                                        (уроки без блоков {{ null_lesson.count }})
+                                    {% else %}
+                                        (все уроки содержат блоки)
+                                    {% endif %}
+                                    </strong><br>
+                                    ...
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_null_lesson %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+{#                    10#}
+                    <tr>
+                        <td>
+                            <div>
+                                <p><strong> Нет файлов в заданиях
+                                    {% if not is_task_file %}
+                                        (кол-во заданий без файлов {{ tasks_file.count }})
+                                    {% else %}
+                                        (все задания содержат файлы)
+                                    {% endif %}
+                                    </strong><br>
+                                    все задания должны содержать файлы
+                                </p>
+                            </div>
+                        </td>
+                        <td>
+                            <div>
+                                {% if is_task_file %}
+                                    <i class="bi bi-check-lg text-success m-lg-5"></i>
+                                {% else %}
+                                    <i class="bi bi-x-lg text-danger"></i>
+                                {% endif %}
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
             </table>
+        <p>Курс готов на {{ progress }}%</p>
         </div>
     </div>
-
-
-
-     <div class="container py-3">
-         <p>check_list</p>
-     </div>
 {% endblock %}

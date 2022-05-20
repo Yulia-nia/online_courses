@@ -123,7 +123,7 @@
                             </li>
 
                             <li class="mb-1">
-                                <a href="{% url 'module:student_progress_list' course.id %}" class="link-dark rounded">Успеваемость</a>
+                                <a href="{% url 'module:student_progress_list' id=course.id s_id=user.id %}" class="link-dark rounded">Успеваемость</a>
                             </li>
 
                          </ul>

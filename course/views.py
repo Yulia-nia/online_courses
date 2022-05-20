@@ -371,6 +371,27 @@ def get_statist(course):
     return date_pie, data_pie_all, data_pie_task, data_pie_lesson
 
 
+def get_students_done(course, task_count, lesson_count):
+    students = course.coursenrollment.students.all()
+    students_pass = []
+    students_done = []
+    for i in students:
+        c = 0
+        answer = StudentAnswer.objects.all().filter(task__module__course=course, mark__isnull=False,
+                                                    student_id=i.id)
+        if task_count == answer.count():
+            c += 1
+        pass_lessons = РassingРrogress.objects.all().filter(is_pass=True, course_id=course.id,
+                                                            student_id=i.id)
+        if lesson_count == pass_lessons.count():
+            c += 1
+        if c == 2:
+            students_done.append(i)
+        else:
+            students_pass.append(i)
+    return students_pass, students_done
+
+
 class StudentList(View):
 
     def get(self, request, id):
@@ -388,6 +409,17 @@ class StudentList(View):
 
         date_pie, data_pie_all, data_pie_task, data_pie_lesson = get_statist(course)
 
+        labels = []
+        data = []
+        students_pass_course, students_done_course = get_students_done(course, tasks.count(), count_lessons)
+        labels.append('В процессе')
+        data.append(len(students_pass_course))
+        labels.append('Завершили курс')
+        data.append(len(students_done_course))
+
+
+
+
         # for item in range(1, len(d_p)):
         #     data_pie.append(task_lessons_for_day(course, d_p[item - 1], d_p[item]))
 
@@ -401,6 +433,10 @@ class StudentList(View):
                                                              'date_pie':date_pie,
                                                              'data_pie_all': data_pie_all,
                                                              'data_pie_task': data_pie_task,
+                                                             'labels': labels,
+                                                             'data': data,
+                                                             'data_done': data[0],
+                                                             'data_pass': data[1],
                                                              'data_pie_lesson': data_pie_lesson,
 
                                                              "form": NotificationFormCreate(),

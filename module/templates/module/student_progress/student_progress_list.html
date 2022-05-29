@@ -5,7 +5,111 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
+<style>
+ .flex {
+     -webkit-box-flex: 1;
+     -ms-flex: 1 1 auto;
+     flex: 1 1 auto
+ }
 
+ @media (max-width:991.98px) {
+     .padding {
+         padding: 1.5rem
+     }
+ }
+
+ @media (max-width:767.98px) {
+     .padding {
+         padding: 1rem
+     }
+ }
+
+ .padding {
+     padding: 5rem
+ }
+
+ .card {
+     box-shadow: none;
+     -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+     -ms-box-shadow: none
+ }
+
+ .pl-3,
+ .px-3 {
+     padding-left: 1rem !important
+ }
+
+ .card {
+     position: relative;
+     display: flex;
+     flex-direction: column;
+     min-width: 0;
+     word-wrap: break-word;
+     background-color: #fff;
+     background-clip: border-box;
+     border: 1px solid #d2d2dc;
+     border-radius: 0
+ }
+
+ .card .card-title {
+    color: #000000;
+    margin-bottom: 0.625rem;
+    text-transform: capitalize;
+    font-size: 1.075rem;
+    font-weight: 500;
+}
+
+.card .card-description {
+    margin-bottom: .875rem;
+    font-weight: 400;
+    color: #76838f;
+}
+
+p {
+    font-size: 0.875rem;
+    margin-bottom: .5rem;
+    line-height: 1.5rem;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.table, .jsgrid .jsgrid-table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    background-color: transparent;
+}
+
+.table thead th, .jsgrid .jsgrid-table thead th {
+    border-top: 0;
+    border-bottom-width: 1px;
+    font-weight: 500;
+    font-size: .875rem;
+    text-transform: uppercase;
+}
+
+.table td, .jsgrid .jsgrid-table td {
+    font-size: 0.875rem;
+    padding: .875rem 0.9375rem;
+}
+
+.badge {
+    border-radius: 0;
+    font-size: 12px;
+    line-height: 1;
+    padding: .375rem .5625rem;
+    font-weight: normal;
+}
+
+
+</style>
     <section class="container py-3">
         <div class="bd-example">
             <nav>
@@ -16,43 +120,121 @@
                     <button class="nav-link" id="nav-progress-tab" data-bs-toggle="tab"
                             data-bs-target="#nav-progress" type="button" role="tab" aria-controls="nav-progress"
                             aria-selected="false">Прогресс прохожения</button>
-                    <button class="nav-link" id="nav-task-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-task" type="button" role="tab" aria-controls="nav-task"
-                            aria-selected="false">Отправленные задания</button>
+{#                    <button class="nav-link" id="nav-task-tab" data-bs-toggle="tab"#}
+{#                            data-bs-target="#nav-task" type="button" role="tab" aria-controls="nav-task"#}
+{#                            aria-selected="false">Отправленные задания</button>#}
               </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
 
-                    {% for task, mar in list_items %}
-                        <p>{{ task.title }} | {% if mar == 0 %} - {% else %} {{ mar }} {% endif %}</p>
-                    {% endfor %}
-                    <p>Итог: {{ res }}</p>
+                    <div class="page-content page-container" id="page-content">
+                        <div class="padding">
+                            <div class="row container d-flex justify-content-center">
+
+                            <div class="col-lg-12 grid-margin stretch-card">
+                          <div class="card">
+                            <div class="card-body">
+                              <h4 class="card-title">Оценки за курс {{ course.title }}</h4>
+                              <p class="card-description">
+                                студент: {{ user.username }}
+                              </p>
+                              <div class="table-responsive">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                        <th>Задание</th>
+                                        <th>Дата отправки</th>
+                                        <th>Дата выставления оценки</th>
+                                        <th>Оценка</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                  {% for task, mar, mark in list_items %}
+                                    <tr>
+                                      <td>{{ task.title }}</td>
+                                      <td>{{ mark.answer.time_update }}</td>
+                                      <td>{{ mark.time_create }}</td>
+                                        <td>{% if mar == 0 %} -
+                                          {% else %} {{ mar }}
+                                          {% endif %}</td>
+                                      <td>
+                                          {% if mar == 0 %}
+                                              <label class="badge bg-warning">Не проверено</label>
+                                          {% else %}
+                                              <label class="badge bg-success">Оценено</label>
+                                          {% endif %}
+                                      </td>
+                                    </tr>
+                                  {% endfor %}
+
+                                  <tr>
+                                      <td>
+                                          Итоговая оценка за курс:
+                                      </td>
+                                      <td>
+                                          {{ res }}
+                                      </td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                          </div>
+                        </div>
 
                 </div>
                 <div class="tab-pane fade" id="nav-progress" role="tabpanel" aria-labelledby="nav-progress-tab">
 
-                    {% for p in progress %}
-                        <p>{{ p.lesson.title }} |
-                        {% if p.is_pass %}
-                            Пройден
-                            | {{ p.time_update }}
-                        {% else %}
-                            Не пройден
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="tab-pane fade" id="nav-task" role="tabpanel" aria-labelledby="nav-task-tab">
+                    <div class="page-content page-container" id="page-content">
+                        <div class="padding">
+                            <div class="row container d-flex justify-content-center">
 
-                    {% for answer in student_answers %}
-                        <p>{{ answer.time_create }} | {{ answer.task.title }} |
-                            {% if answer.mark.mark %}
-                                {{ answer.mark.mark }}
-                            {% else %}
-                                Не оценено
-                            {% endif %}
-                        </p>
-                    {% endfor %}
+                            <div class="col-lg-12 grid-margin stretch-card">
+                          <div class="card">
+                            <div class="card-body">
+                              <h4 class="card-title">Прогресс прохождения курса {{ course.title }}</h4>
+                              <p class="card-description">
+                                студент: {{ user.username }}
+                              </p>
+                              <div class="table-responsive">
+                                <table class="table">
+                                  <thead>
+                                    <tr>
+                                        <th>Название урока</th>
+                                        <th>Дата добавления урока</th>
+                                        <th>Дата изменения статуса</th>
+                                        <th>Статус</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                   {% for p, l in progress %}
+                                    <tr>
+                                      <td>{{ l.title }}</td>
+                                        <td>{{ l.create }}</td>
+                                      <td>{{ p.time_update }}</td>
+                                        <td>
+                                          {% if not p.is_pass %}
+                                              <label class="badge bg-warning">Не пройден</label>
+                                          {% else %}
+                                              <label class="badge bg-success">Пройден</label>
+                                          {% endif %}
+                                      </td>
+                                    </tr>
+                                  {% endfor %}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        </div>
+                          </div>
+                        </div>
                 </div>
             </div>
         </div>

@@ -215,7 +215,7 @@ def edit_course(request, id):
 
 def announcement_list(request, id):
     form_announcement = AnnouncementForm()
-    announcements = Announcement.objects.all().filter(course_id=id)
+    announcements = Announcement.objects.all().filter(course_id=id).order_by('-id')
     count_list = zip(announcements, range(1, announcements.count()+1))
     course = Course.objects.get(id=id)
     return render(request, "course/announcements/announcement_list.html", {"form_announcement": form_announcement,
@@ -401,7 +401,7 @@ class StudentList(View):
         students = []
         progress = []
         answers = []
-        for i in course.coursenrollment.students.all().order_by('-id'):
+        for i in course.coursenrollment.students.all():
             students.append(i)
             progress.append(get_student_progress(course.id, i.id))
             answers.append(get_student_answers(course.id, i.id))
@@ -416,9 +416,6 @@ class StudentList(View):
         data.append(len(students_pass_course))
         labels.append('Завершили курс')
         data.append(len(students_done_course))
-
-
-
 
         # for item in range(1, len(d_p)):
         #     data_pie.append(task_lessons_for_day(course, d_p[item - 1], d_p[item]))
@@ -435,8 +432,9 @@ class StudentList(View):
                                                              'data_pie_task': data_pie_task,
                                                              'labels': labels,
                                                              'data': data,
-                                                             'data_done': data[0],
-                                                             'data_pass': data[1],
+                                                             'data_done': data[1],
+                                                             'data_pass': data[0],
+                                                             'students_done_course': students_done_course,
                                                              'data_pie_lesson': data_pie_lesson,
 
                                                              "form": NotificationFormCreate(),
@@ -446,9 +444,11 @@ class StudentList(View):
         lesson = Lesson.objects.all().filter(module__course_id=id)
         students = []
         progress = []
+        answers = []
         for i in course.coursenrollment.students.all().order_by('-id'):
             students.append(i)
             progress.append(get_student_progress(course.id, i.id))
+            answers.append(get_student_answers(course.id, i.id))
         count_lessons = lesson.count()
         if request.method == 'POST':
             form = NotificationFormCreate(request.POST)
@@ -459,12 +459,13 @@ class StudentList(View):
                     form.student_id = int(request.POST.get("student_id"))
                 form.course = course
                 form.save()
-            return render(request, "course/students_list.html", {"course": Course.objects.get(id=id),
-                                                                         "item_id": id,
-                                                                         "count_lessons": count_lessons,
-                                                                         'form': form,
-                                                                         "list_item": zip(students, progress),
-                                                                         })
+            return HttpResponseRedirect(reverse('students_list', args=(id,)))
+            # return render(request, "course/students_list.html", {"course": Course.objects.get(id=id),
+            #                                                              "item_id": id,
+            #                                                              "count_lessons": count_lessons,
+            #                                                              'form': form,
+            #                                                              "list_item": zip(students, progress, answers),
+            #                                                              })
 
         #
         # if request.method == "POST":
@@ -557,6 +558,28 @@ def dialog(request, c_id):
                                                                         "chat_id": chat.id,
                                                                         "instructor": course.author})
 
+def all_noti_day(course, time_1):
+    count_nottif = 0
+    noti = []
+    answers = Notifications.objects.all().filter(course_id=course.id)
+    for item in answers:
+        if item.time_create.date() == time_1:
+            count_nottif += 1
+            noti.append(item)
+    return count_nottif, noti
+
+
+def get_statist_notif(course):
+    d_pie = pd.date_range(end=datetime.date.today(), periods=10)
+    date_pie = [str(i.date()) for i in d_pie]
+    data_pie_all = []
+    arr_noti = []
+    for item in d_pie:
+        int_count, arr = all_noti_day(course, item.date())
+        data_pie_all.append(int_count)
+        arr_noti.append(arr)
+    return date_pie, data_pie_all, arr_noti
+
 
 def notifications_list_course(request, id):
     course = Course.objects.get(id=id)
@@ -570,9 +593,17 @@ def notifications_list_course(request, id):
     user = auth.get_user(request)
     s_notifications = Notifications.objects.all().filter(course_id=id, student_id=user.id)
 
+    date_pie, data_pie_all, arr_noti = get_statist_notif(course)
+    z = zip(date_pie, arr_noti)
+
     return render(request, "course/notifications/notifications_list.html", {"course": course,
                                                          "students": students,
                                                          "notifications": notifications,
+                                                                      'labels':date_pie,
+                                                                       'data': data_pie_all,
+                                                                            'z': z,
+                                                                            'arr_noti': arr_noti,
+
                                                         "s_notifications": s_notifications,})
 
 
@@ -609,9 +640,10 @@ def edit_announcements(request, id):
         ann.content = form['content'].value()
         ann.course_id = ann.course_id
         ann.save()
+        return HttpResponseRedirect(reverse('announcement_list', args=(ann.course_id,)))
     return render(request, "course/announcements/edit_announcement.html", {'course': ann.course,
                                                      "form": form,
-                                                     "task": ann})
+                                                     "ann": ann})
 
 
 def delete_announcements(request, id):

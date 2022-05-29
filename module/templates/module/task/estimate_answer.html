@@ -5,21 +5,47 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-
-    {{ task.title }}
-     {{ task.description }}
-     {{ task.time_create }}
-     {{ task.time_deadline }}
-    {{ task.file }}
+    <section class="container py-3">
 
 
-    {% if answer.mark %}
-        <p>{{ answer.mark.mark }}</p>
-    {% else %}
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ form }}
-            <button button_type="submit" class="btn btn-primary">Оценить</button>
-        </form>
-    {% endif %}
+    <div class="p-2">
+        <h4>Информация по заданию</h4>
+        <p><strong>Название задания:</strong> {{ task.title }}</p>
+        <p><strong>Описание:</strong> {{ task.description }}</p>
+        <p><strong>Дата создания:</strong> {{ task.time_create }}</p>
+        <p><strong>Дата закрытия задания:</strong> {{ task.time_deadline }}</p>
+        <p><strong>Файл задания:</strong> <a href="{{ task.file.url }}" class="btn btn-outline-primary">Скачать файл</a> </p>
+    </div>
+    <hr>
+    <div class="p-2">
+        <h4>Информация по ответу на задание</h4>
+        <p><strong>Кто отправил: </strong>{{ answer.student.username }}</p>
+        <p><strong>Описание: </strong>{{ answer.description }}</p>
+        <p><strong>Дата отправки: </strong>{{ answer.time_create }}</p>
+        <p><strong>Файл ответа: </strong> <a href="{{ answer.file.url }}" class="btn btn-outline-primary">Скачать файл</a> </p>
+    </div>
+
+        <hr>
+        {% if answer.mark %}
+            <p><strong>Оценка за ответ: </strong>{{ answer.mark.mark }}</p>
+            <p><strong>Дата выставления: </strong>{{ answer.mark.time_create }}</p>
+        {% else %}
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-3">
+                        {% bootstrap_field form.mark  class="custom-control-input" %}
+
+                    </div>
+                     <div class="col-3">
+                         {% bootstrap_button "Оценить" button_type="submit" button_class="btn-primary btn btn-xs w-100 mx-0" %}
+
+                     </div>
+
+                </div>
+
+
+            </form>
+        {% endif %}
+    </section>
 {% endblock %}

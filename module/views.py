@@ -37,12 +37,15 @@ def list_module(request, id):
     #pass_prog = РassingРrogress.objects.get(course_id=id, student_id=request.user.id)
     modules = Module.objects.filter(course_id=id)
     lessons = Lesson.objects.all().filter(module__course_id=id)
+    lessons_true = Lesson.objects.all().filter(module__course_id=id, is_published=True)
     student_progress = РassingРrogress.objects.all().filter(course_id=id, student_id=request.user.id ,is_pass=1).count()
-    count_lessons = lessons.count()
+    count_lessons = lessons_true.count()
+
     if student_progress == 0:
         s_p = 0
     else:
         s_p = student_progress * 100 // count_lessons
+
     return render(request, "module/module_list.html", {"form": form, "modules": modules,
                                                        # "form_announcement": form_announcement,
                                                        # "announcements": announcements,
@@ -51,6 +54,7 @@ def list_module(request, id):
                                                        "student_progress":student_progress,
                                                        "course": course,
                                                        "s_p": s_p,
+                                                       'lessons_true': lessons_true,
                                                        "lessons": lessons,
                                                        "item_id": id})
 
@@ -166,16 +170,9 @@ def list_blocks(request, l_id, id):
 def text_block_settings(request, l_id, id):
     course = Course.objects.get(id=id)
     user = request.user
-    # Create the formset, specifying the form and formset we want to use.
     FileFormSet = formset_factory(FileForm, formset=BaseFileFormSet, extra=3)
     LinkFormSet = formset_factory(UrlLinkForm, formset=BaseLinkFormSet, extra=3)
-    # Get our existing link data for this user.  This is used as initial data.
     lesson_ = Lesson.objects.get(id=l_id)
-    # block = Block.objects.create(lesson_id=l_id)
-    # files = File.objects.filter(block_id=block.id).order_by('id')
-    # urls = UrlLink.objects.filter(block_id=block.id).order_by('id')
-    # files_data = [{'title': f.title, 'file': f.file, } for f in files]
-    # urls_data = [{'title_u': u.title, 'url': u.url, } for u in files]
     block = Block(lesson_id=l_id)
     files_data = []
     urls_data = []
@@ -183,13 +180,10 @@ def text_block_settings(request, l_id, id):
         block_form = BlockForm(request.POST)
         file_formset = FileFormSet(request.POST or None, request.FILES or None)
         url_formset = LinkFormSet(request.POST or None)
-
         if block_form.is_valid() and file_formset.is_valid() and url_formset.is_valid():
-            # Save user info
             block.title = block_form.cleaned_data.get('title')
             block.text_content = block_form.cleaned_data.get('text_content')
             block.save()
-            # Now save the data for each form in the formset
             new_files = []
             for file_form in file_formset:
                 title = file_form.cleaned_data.get('title')
@@ -204,14 +198,10 @@ def text_block_settings(request, l_id, id):
                     new_links.append(UrlLink(block_id=block.id, title=title, url=url))
             try:
                 with transaction.atomic():
-                    # Replace the old with the new
-                    # Text.objects.filter(block_id=block.id).delete()
                     File.objects.bulk_create(new_files)
                     UrlLink.objects.bulk_create(new_links)
-                    # And notify our users that it worked
                     messages.success(request, 'You have updated your profile.')
-                    # return redirect(reverse('module:list_blocks', args=(id, lesson_.id,)))
-            except IntegrityError:  # If the transaction failed
+            except IntegrityError:
                 messages.error(request, 'There was an error saving your profile.')
     else:
         block_form = BlockForm()
@@ -262,28 +252,6 @@ def text_block_settings(request, l_id, id):
     #                               course=Course.objects.get(id=id)
     #                               )
     #     )
-
-
-#
-# class TextAddView(TemplateView):
-#     template_name = "module/lesson/block/add_text.html"
-#
-#     def get(self, request, id, block_id):
-#         formset = TextFormSet(queryset=Text.objects.none())
-#         return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
-#
-#     # Define method to handle POST request
-#     def post(self, request, id, block_id):
-#         formset = TextFormSet(data=self.request.POST)
-#         # Check if submitted forms are valid
-#         if formset.is_valid():
-#             #formset.block = Block.objects.get(id=block_id)
-#             formset.save()
-#             return redirect(reverse_lazy("module:block_create"))
-#
-#         return self.render_to_response({'bird_formset': formset, 'course': Course.objects.get(id=id)})
-#
-
 
 
 def list_ans_from_task(request, id):
@@ -585,17 +553,22 @@ def student_progress_list(request, id, s_id):
     mar = [i.mark for i in marks]
     if marks.count() != tasks.count():
         mar.append(0)
-    z = zip(tasks, mar)
+    z = zip(tasks, mar, marks)
     r = [i for i in mar if i >= 1]
-    res = sum(r)/len(r)
+    if len(r) == 0:
+        res = 0
+    else:
+        res = sum(r) / len(r)
 
     student_answers = StudentAnswer.objects.all().filter(student_id=user.id, task__module__course_id=course.id)
 
-    progress = РassingРrogress.objects.all().filter(course_id=id, student_id=user.id)
-
+    lessons = Lesson.objects.all().filter(module__course_id=course.id)
+    prog = РassingРrogress.objects.all().filter(course_id=id, student_id=user.id)
+    progress = zip(prog, lessons)
     return render(request, "module/student_progress/student_progress_list.html",
                   {'course': course,
                    'list_items': z,
+                   'user': user,
                    'student_answers': student_answers,
                    'tasks': tasks,
                    'progress': progress,

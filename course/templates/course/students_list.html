@@ -7,6 +7,9 @@
 {#    <script data-require="jquery@*" data-semver="2.1.1" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>#}
 {#    <script data-require="chart.js@0.2.0" data-semver="0.2.0" src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/0.2.0/Chart.js"></script>#}
 {#    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.0/jquery.js"></script>#}
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.0.2/tablesort.min.js">
+
+        </script>
 
     <script
     type="text/javascript"
@@ -55,11 +58,13 @@
     </STYLE>
 
 
-    <div class="container py-3">
-        <p>Список студентов</p>
+    <div class="container p-3 py-3">
+        <h5 class="box-title">Список студентов</h5>
 
-        <table class="table">
-            <tr class="table-active bg-info">
+        <table class="table table-hover" id="table-id">
+            <thead
+{#                    class="table-active"#}
+            >
                 <th> Имя пользователя </th>
 {#                <th> ФИО </th>#}
                 <th> e-mail </th>
@@ -68,12 +73,17 @@
                 <th> Проверенные задания </th>
                 <th> Оценка </th>
                 <th> Уведомление </th>
-            </tr>
+            </thead>
 {#            <form method="post" action="{% url 'create_notification' %}">#}
 {#                {% csrf_token %}#}
                     {% for student, progres, answer in list_item %}
                     <tr>
-                        <td> <a href="{% url 'module:student_progress_list' s_id=student.id id=course.id %}" >{{ student.username }} </a></td>
+                        <td>
+                            {% if student in students_done_course %}
+                                <a class="text-success text-decoration-none" href="{% url 'module:student_progress_list' s_id=student.id id=course.id %}" >{{ student.username }} </a></td>
+                            {% else %}
+                               <a class="text-danger text-decoration-none" href="{% url 'module:student_progress_list' s_id=student.id id=course.id %}" >{{ student.username }} </a></td>
+                            {% endif %}
                         <td> {{ student.email }} </td>
                         <td> {{ student.last_login }} </td>
                         <td> {{ progres }} / {{ count_lessons }} </td>
@@ -81,7 +91,7 @@
                         <td> {{ student.ratingscore.mark }} </td>
                         <td>
                             <button id="myBtn"
-                                    class="btn btn-sm position-center btn-light w-30 mx-0" onclick="openForm('{{ student.username }}', '{{ student.id }}')">
+                                    class="btn btn-sm position-center btn-outline-secondary btn-light w-30 mx-0" onclick="openForm('{{ student.username }}', '{{ student.id }}')">
                                 Отправить</button>
 
                         </td>
@@ -89,32 +99,67 @@
                     {% endfor %}
         </table>
 
+        <section class="p-3">
+            <div class="row">
+                <div class="col-9">
+                    <div style="width:100%">
+                        <h5 class="box-title">Действия слушателей за последнюю неделю</h5>
+                        <div>
+                            <canvas id="canvas" height="250" width="1050"></canvas>
+                        </div>
+                          <input type='checkbox' value='0'/> Весь прогресс
+                          <br><input type='checkbox'value='1'/> Отправленные задания
+                          <br><input type='checkbox' value='2'/> Пройденные уроки
 
-        <div style="width:100%">
-            <h5>Действия слушателей</h5>
-			<div>
-				<canvas id="canvas" height="250" width="1050"></canvas>
-			</div>
-              Весь прогресс <input type='checkbox' value='0'/>
-			  Отправленные задания <input type='checkbox'value='1'/>
-			  Пройденные уроки <input type='checkbox' value='2'/>
+                    </div>
 
-		</div>
-
-        <div class="box box-danger">
-          <div class="box-header with-border">
-            <h3 class="box-title">Donut Chart</h3>
-            <div class="box-tools pull-right">
-              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+                <div class="col-3">
+                     <div class="box box-danger">
+                          <div class="box-header with-border">
+                            <h5 class="box-title">Завершенность курса</h5>
+                            <div class="box-tools pull-right">
+                              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                            </div>
+                          </div>
+                          <div class="box-body">
+                            <canvas id="pieChart" style="width: 100%; height: auto;"></canvas>
+                            <div id="js-legend" class="chart-legend"></div>
+                          </div>
+                          <!-- /.box-body -->
+                        </div>
+                </div>
             </div>
-          </div>
-          <div class="box-body">
-            <canvas id="pieChart" style="width: 100%; height: auto;"></canvas>
-            <div id="js-legend" class="chart-legend"></div>
-          </div>
-          <!-- /.box-body -->
-        </div>
+
+
+        </section>
+
+{#        <div style="width:100%">#}
+{#            <h5>Действия слушателей за последнюю неделю</h5>#}
+{#			<div>#}
+{#				<canvas id="canvas" height="250" width="1050"></canvas>#}
+{#			</div>#}
+{#              Весь прогресс <input type='checkbox' value='0'/>#}
+{#			  Отправленные задания <input type='checkbox'value='1'/>#}
+{#			  Пройденные уроки <input type='checkbox' value='2'/>#}
+{##}
+{#		</div>#}
+{##}
+{#        <div class="box box-danger">#}
+{#          <div class="box-header with-border">#}
+{#            <h3 class="box-title">Завершенность курса</h3>#}
+{#            <div class="box-tools pull-right">#}
+{#              <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>#}
+{#              <button class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>#}
+{#            </div>#}
+{#          </div>#}
+{#          <div class="box-body">#}
+{#            <canvas id="pieChart" style="width: 100%; height: auto;"></canvas>#}
+{#            <div id="js-legend" class="chart-legend"></div>#}
+{#          </div>#}
+{#          <!-- /.box-body -->#}
+{#        </div>#}
 
 
         <div class="form-popup1" id="myForm">
@@ -122,7 +167,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content rounded-6 shadow">
                         <div class="modal-header border-bottom-0">
-                            <h5 class="modal-title">Создание уведомления для {{ student.username }}</h5>
+                            <h5 class="modal-title">Создание уведомления</h5>
                             <button type="button" class="btn-close" onclick="closeForm()" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body py-0">
@@ -149,6 +194,9 @@
      </div>
 
     <script>
+
+
+
 
     var randomScalingFactor = function(){
         return Math.round(Math.random()*256)
@@ -237,6 +285,10 @@
         function closeForm() {
           document.getElementById("myForm").style.display = "none";
         }
+
+
+        new Tablesort(document.getElementById('table-id'));
+
     </script>
 
 
@@ -246,15 +298,15 @@
       var pieChart = new Chart(pieChartCanvas);
       var PieData = [{
         value: {{ data_done|safe }},
-        color: "#f56954",
-        highlight: "#f56954",
+        color: "#93f17c",
+        highlight: "#82e75c",
         label: "Завершили курс",
         labelColor: 'white',
         labelFontSize: '16'
       }, {
         value: {{ data_pass|safe }},
-        color: "#00a65a",
-        highlight: "#00a65a",
+        color: "#e76959",
+        highlight: "#dd3131",
         label: 'В процессе',
         labelColor: 'white',
         labelFontSize: '16'

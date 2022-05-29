@@ -1,14 +1,14 @@
 {% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
 {% load static %}
-{% load django_bootstrap5 %}
-{% bootstrap_css %}
 
 
 {% block content %}
-
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
- <STYLE>
+
+    <STYLE>
         /* Всплывающая форма-скрыта по умолчанию */
         .form-popup {
             display: none;
@@ -18,7 +18,16 @@
             border: 3px solid #f1f1f1;
         }
  </STYLE>
+
+
+{% if user.id == course.author_id %}
  <section class="container py-3">
+
+        {% if user.id == course.author_id %}
+            <div class="text-center">
+                <button class="btn position-center btn-outline-primary w-30 mx-0" onclick="openForm()">Добавить новый модуль</button>
+            </div>
+        {% endif %}
 
      {% if user.id != course.author_id %}
         <p>Прогресс прохождения курса</p>
@@ -33,97 +42,101 @@
     {% endif %}
 
      {% if modules.count > 0 %}
-        <ol class="list1b">
-            {% for item in modules %}
-                <li>
-                   <div class="d-flex justify-content-between h-30">
-                        <strong class="text-gray-dark ">{{ item.title }}</strong>
+        {% for item in modules %}
+         <div class="my-3 p-3 bg-body rounded shadow-sm">
+{#            <h6 class="border-bottom pb-2 mb-0">{{ item.title }}</h6>#}
+             <div class="border-bottom d-flex justify-content-between h-30">
+                        <h6 class="text-gray-dark ">Название модуля: {{ item.title }}</h6>
                         <div>
                             {% if user.id == course.author_id %}
-                            <a href="edit_module/{{ item.id }}/" title="Редактировать модуль" class="btn"><i class="fa fa-edit"></i></a>
-                            <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn"><i class="fa fa-trash"></i></a>
+                            <a href="edit_module/{{ item.id }}/" title="Редактировать модуль" class="btn text-warning"><i class="fa fa-edit"></i></a>
+                            <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                            {% endif %}
+                        </div>
+
+    </div>
+    <div class="py-2 border-bottom">
+
+      <p class="pb-3 mb-0 text-center">
+        <strong class="d-block text-dark">Уроки ({{ item.lesson_set.count }})</strong>
+
+      </p>
+            <div class="px-3 p-3">
+               {% for lesson in item.lesson_set.all %}
+
+                    <div class="d-flex w-100 p-2 justify-content-between">
+                          <div>
+                                <h6 class="mb-0">{{ lesson.title }}</h6>
+                                <p class="mb-0 opacity-75">{{ lesson.create }}</p>
+                              {% if lesson.is_published %}
+                                  <p>Опуликован</p>
+                              {% else %}
+                                  <p>Черновик</p>
+                              {% endif %}
+
+                          </div>
+
+                        <div >
+                            {% if user.id == course.author_id %}
+                                <div class="" style="padding: 1px">
+                                    <a href="{% url 'module:edit_lesson_settings' id=item_id l_id=lesson.id %}" class="btn text-warning" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
+                                    <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                                </div>
+                            {% else %}
+                                <a href="view_lesson/{{ lesson.id }}/" class="btn btn-outline-primary">Просмотреть урок</a>
+                            {% endif %}
+                        </div>
+
+                    </div>
+               {% endfor %}
+            </div>
+    </div>
+
+
+
+             <div class="py-2 border-bottom">
+      <p class="pb-3 mb-0 text-center">
+        <strong class="d-block text-dark">Задания ({{ item.task_set.count }})</strong>
+      </p>
+           <div class="px-3 p-3">
+               {% for task in item.task_set.all %}
+
+                    <div class="d-flex w-100 p-2 justify-content-between">
+                      <div>
+                        <h6 class="mb-0">{{ task.title }}</h6>
+                        <p class="mb-0 opacity-75">Выполнить задание необходимо до {{ task.time_deadline }}</p>
+                      </div>
+                        <div>
+                            {% if user.id == course.author_id %}
+                                    <a href="edit_task/{{ task.id }}/" title="Редактировать задание" class="btn text-warning"><i class="fa fa-edit"></i></a>
+                                    <a href="delete_task/{{ task.id }}/" title="Удалить задание" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                            {% else %}
+                                <a href="view_task/{{ task.id }}/" class="btn btn-outline-primary">просмотреть задание</a>
                             {% endif %}
                         </div>
                     </div>
+               {% endfor %}
+            </div>
+    </div>
 
-                     {% if user.id == course.author_id %}
-                        <p>Добавить</p>
-                        <a href="{{item.id}}/lesson_create/"> Урок </a> |
-                        <a href="{% url 'module:create_task' id=course.id m_id=item.id %}" > Задание </a>
-                     {% endif %}
 
-                    {% if item.lesson_set.count == 0 %}
-                        <p>В этом модуле пока ничего нет :(</p>
-                    {% else %}
-                        <details open>
-                            <summary><h5>Содержимое модуля <small> (Кол-во уроков {{ item.lesson_set.count }})</small></h5> </summary>
-                            <div class="container p-3">
-                                <ul class="list4b">
-                                    {% for lesson in item.lesson_set.all %}
-                                        <ol>
-                                            <div class="d-flex top-0 h-30">
-                                                <div class="" style="padding: 8px">
-                                                     <p>{{ lesson.title }} </p>
-                                                </div>
-                                                {% if user.id == course.author_id %}
-                                                <div class="" style="padding: 1px">
-                                                    <a href="{% url 'module:edit_lesson_settings' id=item_id l_id=lesson.id %}" title="Редактировать урок" class="btn"><i class="fa fa-edit"></i></a>
-                                                </div>
-                                                {% else %}
-                                                    <a href="view_lesson/{{ lesson.id }}/">Просмотреть урок</a>
-                                                {% endif %}
 
-                                            </div>
+    <small class="d-block text-end mt-3">
+        {% if user.id == course.author_id %}
+            <a href="{{item.id}}/lesson_create/" class="btn btn-outline-primary">Добавить урок </a>
+            <a href="{% url 'module:create_task' id=course.id m_id=item.id %}" class="btn btn-outline-primary"> Добавить задание </a>
+        {% endif %}
+    </small>
 
-                                        </ol>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </details>
-                    {% endif %}
+             </div>
+         </div>
 
-                    {% if item.task_set.count == 0 %}
-                        <p>В этом модуле пока нет заданий :(</p>
-                    {% else %}
-                        <details open>
-                            <summary><h5>Содержимое модуля <small> (Кол-во заданий {{ item.task_set.count }})</small></h5> </summary>
-                            <div class="container p-3">
-                                <ul class="list4b">
-                                    {% for task in item.task_set.all %}
-                                        <ol>
-                                            <div class="d-flex top-0 h-30">
-                                                <div class="" style="padding: 8px">
-                                                     <p>{{ task.title }} </p>
-                                                    <p>{{ task.time_deadline }} </p>
-                                                </div>
-                                                {% if user.id == course.author_id %}
-                                                    <div class="" style="padding: 1px">
-                                                        <a href="edit_task/{{ task.id }}/" title="Редактировать задание" class="btn"><i class="fa fa-edit"></i></a>
-                                                    </div>
-                                                    <div class="" style="padding: 1px">
-                                                        <a href="delete_task/{{ task.id }}/" title="Удалить задание" class="btn"><i class="fa fa-trash"></i></a>
-                                                    </div>
+        {% endfor %}
+ {% endif %}
 
-                                                {% else %}
-                                                    <a href="view_task/{{ task.id }}/">просмотреть задание</a>
-                                                {% endif %}
 
-                                            </div>
 
-                                        </ol>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </details>
-                    {% endif %}
-                </li>
-            {% endfor %}
-        </ol>
-     {% endif %}
 
-    {% if user.id == course.author_id %}
-     <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">+ модуль</button>
-    {% endif %}
 
     {#  FORM ADD MODULE #}
     <div class="form-popup" id="myForm">
@@ -152,6 +165,104 @@
         </div>
     </div>
     </section>
+
+
+    {% else %}
+
+    <section class="container py-3">
+        <p>Прогресс прохождения курса</p>
+        <div>
+            <div class="progress">
+                <div class="progress-bar progress-bar-striped text-dark bg-info progress-bar-animated"
+                         role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="4"
+                         style="width: {{ s_p }}%">{{ s_p }}%</div>
+            </div>
+        </div>
+        <p>{{ student_progress }} из {{ count_lessons }} уроков</p>
+
+
+     {% if modules.count > 0 %}
+        {% for item in modules %}
+         <div class="my-3 p-3 bg-body rounded shadow-sm">
+             <div class="border-bottom d-flex justify-content-between h-30">
+                        <h6 class="text-gray-dark ">Название модуля: {{ item.title }}</h6>
+                        <div>
+                            {% if user.id == course.author_id %}
+                            <a href="edit_module/{{ item.id }}/" title="Редактировать модуль" class="btn text-warning"><i class="fa fa-edit"></i></a>
+                            <a href="delete_module/{{ item.id }}/" title="Удалить модуль" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                            {% endif %}
+                        </div>
+
+    </div>
+    <div class="py-2 border-bottom">
+
+      <p class="pb-3 mb-0 text-center">
+        <strong class="d-block text-dark">Уроки </strong>
+      </p>
+            <div class="px-3 p-3">
+               {% for lesson in item.lesson_set.all %}
+                    {% if lesson.is_published %}
+                    <div class="d-flex w-100 p-2 justify-content-between">
+                          <div>
+                                <h6 class="mb-0">{{ lesson.title }}</h6>
+                                <p class="mb-0 opacity-75">{{ lesson.create }}</p>
+                          </div>
+                        <div >
+                            <a href="view_lesson/{{ lesson.id }}/" class="btn btn-outline-primary">Просмотреть урок</a>
+                        </div>
+                    {% endif %}
+
+                    </div>
+               {% endfor %}
+            </div>
+    </div>
+
+
+
+             <div class="py-2 border-bottom">
+      <p class="pb-3 mb-0 text-center">
+        <strong class="d-block text-dark">Задания ({{ item.task_set.count }})</strong>
+      </p>
+           <div class="px-3 p-3">
+               {% for task in item.task_set.all %}
+
+                    <div class="d-flex w-100 p-2 justify-content-between">
+                      <div>
+                        <h6 class="mb-0">{{ task.title }}</h6>
+                        <p class="mb-0 opacity-75">Выполнить задание необходимо до {{ task.time_deadline }}</p>
+                      </div>
+                        <div>
+                            {% if user.id == course.author_id %}
+                                    <a href="edit_task/{{ task.id }}/" title="Редактировать задание" class="btn text-warning"><i class="fa fa-edit"></i></a>
+                                    <a href="delete_task/{{ task.id }}/" title="Удалить задание" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                            {% else %}
+                                <a href="view_task/{{ task.id }}/" class="btn btn-outline-primary">просмотреть задание</a>
+                            {% endif %}
+                        </div>
+                    </div>
+               {% endfor %}
+            </div>
+    </div>
+
+
+             </div>
+         </div>
+
+        {% endfor %}
+ {% endif %}
+
+
+    </section>
+    {% endif %}
+
+
+
+
+
+
+
+    <script src="https://pagead2.googlesyndication.com/pagead/managed/js/adsense/m202205170101/show_ads_impl_fy2019.js?bust=31067678" id="google_shimpl"></script><script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
     <script>
         function openForm() {

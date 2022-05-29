@@ -45,9 +45,9 @@
             {% if is_enrollements %}
                 {% if is_student_in_enrollement %}
                     <p>Вы записаны на курс</p>
-                    <a href="{% url 'delete_student_in_enrollment' course.id %}">Отменить запись</a>
+                    <a href="{% url 'delete_student_in_enrollment' course.id %}" class="btn btn-primary">Отменить запись</a>
                     {% else %}
-                        <a href="{% url 'add_student_in_enrollment' course.id %}">Поступить на курс</a>
+                        <a href="{% url 'add_student_in_enrollment' course.id %}" class=" btn btn-outline-primary">Поступить на курс</a>
                 {% endif %}
             {% else %}
                 <a href="#">Запись на курс окночена</a>

@@ -4,40 +4,189 @@
 
 
 {% block content %}
+
+    <style>
+        .collapsible-link::before {
+          content: '';
+          width: 14px;
+          height: 2px;
+          background: #333;
+          position: absolute;
+          top: calc(50% - 1px);
+          right: 1rem;
+          display: block;
+          transition: all 0.3s;
+        }
+
+        /* Vertical line */
+        .collapsible-link::after {
+          content: '';
+          width: 2px;
+          height: 14px;
+          background: #333;
+          position: absolute;
+          top: calc(50% - 7px);
+          right: calc(1rem + 6px);
+          display: block;
+          transition: all 0.3s;
+        }
+
+        .collapsible-link[aria-expanded='true']::after {
+          transform: rotate(90deg) translateX(-1px);
+        }
+
+        .collapsible-link[aria-expanded='true']::before {
+          transform: rotate(180deg);
+        }
+
+    </style>
+
+
     <div class="container py-3">
+
+        {% if user.id == course.author_id %}
+            <div id="container" style="width: 75%; height: 30%;">
+                <canvas id="population-chart"
+                        data-url="{% url 'notifications_list' course.id %}">
+                </canvas>
+            </div>
+        {% endif %}
+
+
 
         {% if user.id == course.author.id %}
             {% if notifications.count > 0 %}
-                <p>Уведомления, которые были отправлены</p>
 
+                <div class="container py-5 text-center">
+                <h5>Уведомления, которые были отправлены.</h5>
 
-                {% for item in notifications %}
-                    <div>
-                        <p>{{ item.content }}</p>
-                        <p>{{ item.student.email }}</p>
-                        <p>{{ item.time_create }}</p>
-                        <p>{{ item.course.title }}</p>
-                    </div>
-                    <hr>
+                {% for day, x in z %}
+                    {% if x %}
+                        <p class="text-success py-3">Дата {{ day }}</p>
+                    {% endif %}
+
+                        <div class="container">
+                            <div class="row">
+
+                            {% for y in x %}
+                                <div class="col-lg-4 p-3">
+                                    <div class="card card-margin">
+                                        <div class="card-body pt-0">
+                                            <div class="widget-49">
+                                                <div class="widget-49-title-wrapper">
+                                                    <div class="widget-49-meeting-info">
+                                                        <span class="widget-49-meeting-time">{{ y.time_create }}</span>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="md-0">
+
+                                                <p>Текст уведомления: {{ y.content }}.</p>
+                                                <p>Студент: {{ y.student.username }} ({{ y.student.email }}).</p>
+                                                </div>
+{#                                                <ol class="widget-49-meeting-points">#}
+{#                                                    <li class="widget-49-meeting-item"><span>Текст уведомления: {{ y.content }}</span></li>#}
+{#                                                    <li class="widget-49-meeting-item"><span>Студент: {{ y.student.username }}</span></li>#}
+{#                                                </ol>#}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                    {% endfor %}
                 {% endfor %}
+
             {% else %}
 
                 <p>тут пока нет уведомлений</p>
-
+                </div>
             {% endif %}
         {% else %}
 
-            {% for item in s_notifications %}
-                <div>
-                    <p>{{ item.content }}</p>
-                    <p>{{ item.student.email }}</p>
-                    <p>{{ item.time_create }}</p>
-                    <p>{{ item.course.title }}</p>
-                </div>
-                <hr>
+             <div class="container py-5 text-center">
+                <h5>Уведомления, которые были отправлены Вам, по курсу {{ course.title }}.</h5>
+              <div class="container">
+                    <div class="row">
+
+                            {% for y in s_notifications %}
+                                <div class="col-lg-4 p-3">
+                                    <div class="card card-margin">
+                                        <div class="card-body pt-0">
+                                            <div class="widget-49">
+                                                <div class="widget-49-title-wrapper">
+                                                    <div class="widget-49-meeting-info">
+                                                        <span class="widget-49-meeting-time">{{ y.time_create }}</span>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                <div class="md-0">
+
+                                                <p>Текст уведомления: {{ y.content }}.</p>
+
+                                                </div>
+{#                                                <ol class="widget-49-meeting-points">#}
+{#                                                    <li class="widget-49-meeting-item"><span>Текст уведомления: {{ y.content }}</span></li>#}
+{#                                                    <li class="widget-49-meeting-item"><span>Студент: {{ y.student.username }}</span></li>#}
+{#                                                </ol>#}
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
             {% endfor %}
 
         {% endif %}
     </div>
+
+
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    $(function () {
+
+      var $populationChart = $("#population-chart");
+      $.ajax({
+        url: $populationChart.data("url"),
+        success: function (data) {
+
+          var ctx = $populationChart[0].getContext("2d");
+
+          new Chart(ctx, {
+            type: 'bar',
+            data: {
+              labels: {{ labels |safe }},
+              datasets: [{
+                label: 'Количество отправленных уведомлений',
+                backgroundColor: "#66e3d0",
+                data: {{ data | safe }}
+              }]
+            },
+            options: {
+              responsive: true,
+              legend: {
+                position: 'top',
+              },
+              title: {
+                display: true,
+                text: 'Статистика отправленных уведомлений'
+              }
+            }
+          });
+
+        }
+      });
+
+    });
+
+  </script>
+
+
 {% endblock %}
 

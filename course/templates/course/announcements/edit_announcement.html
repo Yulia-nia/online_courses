@@ -4,10 +4,14 @@
 
 
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form }}
-{#        {% bootstrap_field form.description  class="custom-control-input" %}#}
-        <button button_type="submit" class="btn btn-primary">Сохранить</button>
-    </form>
+    <section class="container p-3">
+         <h5 class="leade font-italic mb-3">Редактировать объявление</h5>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form }}
+    {#        {% bootstrap_field form.description  class="custom-control-input" %}#}
+            <button button_type="submit" class="btn btn-primary text-center">Сохранить</button>
+        </form>
+    </section>
 {% endblock %}

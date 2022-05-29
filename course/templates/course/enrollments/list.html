@@ -9,24 +9,50 @@
 
 {% block content %}
 
-
+        <section class="container p-3">
         <form method="post">
             {% csrf_token %}
-            {% bootstrap_field form.time_create class="custom-control-input" %}
-            {% bootstrap_field form.time_end class="custom-control-input" %}
-            {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+            <div class="row">
+                <div class="col-6">
+                    {% bootstrap_field form.time_create class="custom-control-input" %}
+                </div>
+                <div class="col-6">
+                    {% bootstrap_field form.time_end class="custom-control-input" %}
+                </div>
+            </div>
+            <div class="row center-block">
+                <div class="col-6 text-center">
+            {% bootstrap_button "Сохранить изменения" button_type="submit" button_class="btn-primary btn btn-md w-100 mx-0" %}
+                </div>
+            </div>
         </form>
 
-
-    <p>{{ enrollments.time_create }} - {{ enrollments.time_end }}</p>
+    <p> <br> </p>
+    <p> </p>
+        <p>Текущий набор открыт с {{ enrollments.time_create }} по {{ enrollments.time_end }}.</p>
     <hr>
-    {% if enrollments.students.count == 0 %}
+    {% if not enrollments.students %}
         <p>Никто еще не поступил</p>
     {% else %}
-        <p>Количество сутдентов: {{ enrollments.students.count }}</p>
-        {% for item in enrollments.students.all %}
-            <p> {{ item.email }} </p>
-        {% endfor %}
-    {% endif %}
+        <div class="text-center p-2">
+            <h6>Количество сутдентов, которые поступили на курс: {{ enrollments.students.count }}</h6>
+        </div>
 
+        <table class="table table-hover" id="table-id">
+            <thead>
+                <th> Имя пользователя </th>
+                <th> E-mail </th>
+                <th> Дата последнего входа </th>
+            </thead>
+                    {% for item in enrollments.students.all %}
+                    <tr>
+                        <td> {{ item.username }} </td>
+                        <td> {{ item.email }} </td>
+                        <td> {{ item.last_login }} </td>
+                    </tr>
+                    {% endfor %}
+        </table>
+
+    {% endif %}
+    </section>
 {% endblock %}

@@ -5,20 +5,27 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-
-    <p>Выберите задние для проверки</p>
+    <section class="container py-3">
+    <h5>Выберите задание для проверки</h5>
     {% for item in list_module %}
-
-        <p>{{ item.title }}</p>
-
-        {% for task in item.task_set.all %}
-
-            <p>{{ task.title }}</p>
-            <a href="{{ task.id}}/task/">Просмотр всех ответов по этому заданию</a>
-
-        {% endfor %}
-
         <hr>
+        <h6>{{ item.title }}</h6>
+
+        <div class="row">
+        {% for task in item.task_set.all %}
+            <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">{{ task.title }}</h5>
+                  <p class="card-text">{{ task.description }}</p>
+                  <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>
+                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>
+                </div>
+            </div>
+            </div>
+        {% endfor %}
+        </div>
     {% endfor %}
+    </section>
 
 {% endblock %}

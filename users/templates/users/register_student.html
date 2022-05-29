@@ -1,10 +1,190 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Register Student</h2>
-<form method="post">
-    {% csrf_token %}
-    {{form}}
-    <input type="submit" value="Register">
-</form>
-<a href="{% url 'login' %}">Back to login</a>
+
+     <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js"/>
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"/>
+    <link rel="stylesheet"  href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"/>
+<style>
+@import url('/static/img/big_logo.png');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif
+}
+
+.container {
+    margin: 50px auto;
+}
+
+.body {
+    position: relative;
+    width: 920px;
+    height: 570px;
+    margin: 20px auto;
+    border: 1px solid #dddd;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.box-1 img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.box-2 {
+    padding: 10px;
+}
+
+.box-1,
+.box-2 {
+    width: 50%;
+}
+
+.h-1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.text-muted {
+    font-size: 14px;
+}
+
+.container .box {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid transparent;
+    text-decoration: none;
+    color: #615f5fdd;
+}
+
+.box:active,
+.box:visited {
+    border: 2px solid #f5d05f;
+}
+
+.box:hover {
+    border: 2px solid #f5d05f;
+}
+
+.btn.btn-primary {
+    background-color: transparent;
+    color: #ffc438;
+    border: 0px;
+    padding: 0;
+    font-size: 14px;
+}
+
+.btn.btn-primary .fas.fa-chevron-right {
+    font-size: 12px;
+}
+
+.footer .p-color {
+    color: #f5d05f;
+}
+
+.footer.text-muted {
+    font-size: 10px;
+}
+
+.fas.fa-times {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    height: 20px;
+    width: 20px;
+    background-color: #f3cff379;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fas.fa-times:hover {
+    color: #f5d05f;
+}
+
+@media (max-width:767px) {
+    body {
+        padding: 10px;
+    }
+
+    .body {
+        width: 100%;
+        height: 100%;
+    }
+
+    .box-1 {
+        width: 100%;
+    }
+
+    .box-2 {
+        width: 100%;
+        height: 500px;
+    }
+}
+</style>
+
+    <div class="container">
+        <div class="body d-md-flex align-items-center justify-content-between">
+            <div class="box-1 mt-md-0 mt-5">
+                <img src="/static/img/big_logo.png"
+                    class="" alt="">
+            </div>
+            <div class=" box-2 d-flex flex-column h-100">
+                <div class="mt-5">
+                    <h3 class="text-center"> Создать аккаунт слушателя </h3>
+                    <div class="d-flex flex-column py-4">
+{#                        <p class="mb-1 px-4 py-3 text-lg-center text-secondary" > Продолжить как...</p>#}
+{##}
+{#                        <div class="align-items-center">#}
+{#                            <div class="row p-2">#}
+{##}
+{#                                <div class="col-6 text-start ">#}
+{#                                    <a href="{% url 'register_instructor' %}" class="btn-warning btn btn-md w-100 mx-0">#}
+{#                                        <p class="mb-0">Преподаватель</p>#}
+{#                                    </a>#}
+{#                                </div>#}
+{#                                <div class="col-6 text-start">#}
+{#                                    <a href="{% url 'register_student' %}" class="btn-secondary btn btn-md w-100 mx-0">#}
+{#                                        <span class=""></span>#}
+{#                                        <p class="mb-0">Слушатель</p>#}
+{#                                    </a>#}
+{#                                </div>#}
+{##}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="py-1 px-2 mt-3">#}
+{#                            <p class="mb-0 text-md text-secondary">У вас уже есть аккаунт?</p>#}
+{#                            <a href="{% url 'login' %}" class="btn btn-primary">Войти<span class="fas fa-chevron-right ms-1"></span></a>#}
+{#                        </div>#}
+{#                    </div>#}
+                </div>
+{#                <div class="mt-auto">#}
+{#                    <p class="px-2 footer text-sm-start text-secondary mb-0 mt-md-0 ">By register you agree with our#}
+{#                        <span class="p-color me-1">terms and conditions</span>and#}
+{#                        <span class="p-color ms-1">privacy policy</span>#}
+{#                    </p>#}
+
+                    <form method="post">
+                        {% csrf_token %}
+                        {{form}}
+                        <input type="submit" value="Register">
+                    </form>
+                    <a href="{% url 'login' %}">Back to login</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 {% endblock %}

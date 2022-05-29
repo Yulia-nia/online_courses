@@ -20,26 +20,61 @@
             </nav>
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
-
+                     <table class="table table-hover" id="table-id">
+                    <thead>
+                        <th> Имя пользователя </th>
+                        <th> e-mail </th>
+                        <th> Дата отправки задания </th>
+{#                        <th> Дата проверки преподавателем </th>#}
+{#                        <th> Оценка </th>#}
+                    </thead>
                     {% for item in unverified_answers %}
+                    <tr>
+                        <td> {{ item.student.username }} </td>
+                        <td> {{ item.student.email }} </td>
+                        <td> {{ item.time_create }} </td>
+{#                        <td> {{ item.mark.time_create }} </td>#}
+{#                        <td> {{ item.mark.mark }} </td>#}
 
-                        <p>{{ item.student.email }}</p>
-                        <p>{{ item.time_create }}</p>
-                        <p>{{ item.mark.mark }}</p>
-                        <a href="../../../estimate/{{ item.id }}/">Проверить и оценить</a>
-                        <hr>
+                        <td>
+                            <a id="myBtn" href="../../../estimate/{{ item.id }}/"
+                                    class="btn btn-sm position-center btn-outline-secondary btn-light w-30 mx-0"
+                                    >
+                                Проверить и оценить</a>
+
+                        </td>
+                    </tr>
                     {% endfor %}
-
+                </table>
                 </div>
                 <div class="tab-pane fade" id="nav-progress" role="tabpanel" aria-labelledby="nav-progress-tab">
 
+                    <table class="table table-hover" id="table-id">
+                    <thead>
+                        <th> Имя пользователя </th>
+                        <th> e-mail </th>
+                        <th> Дата отправки задания </th>
+                        <th> Дата проверки преподавателем </th>
+                        <th> Оценка </th>
+                    </thead>
                     {% for item in verified_answers %}
-                        <p>{{ item.student.email }}</p>
-                        <p>{{ item.time_create }}</p>
-                        <p>{{ item.mark.mark }}</p>
-                        <a href="{% url 'module:estimate' id=course.id a_id=item.id %}">Проверить и оценить</a>
-                        <hr>
+                    <tr>
+                        <td> {{ item.student.username }} </td>
+                        <td> {{ item.student.email }} </td>
+                        <td> {{ item.time_create }} </td>
+                        <td> {{ item.mark.time_create }} </td>
+                        <td> {{ item.mark.mark }} </td>
+
+                        <td>
+                            <a id="myBtn" href="{% url 'module:estimate' id=course.id a_id=item.id %}"
+                                    class="btn btn-sm position-center btn-outline-secondary btn-light w-30 mx-0"
+                                    >
+                                Детали</a>
+
+                        </td>
+                    </tr>
                     {% endfor %}
+        </table>
                 </div>
             </div>
         </div>

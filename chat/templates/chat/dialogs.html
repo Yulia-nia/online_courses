@@ -22,7 +22,7 @@
                     {% if companion == last_message.author.username and not last_message.is_readed %}
                     unreaded{% endif %}" href="{{ chat.id }}">
 
-                        <img class="avatar-messages" src="{{ companion.userprofile.get_avatar }}">
+{#                        <img class="avatar-messages" src="{{ companion.userprofile.image_pic.url }}" width="150" height="150">#}
 
 {#                        <img class="avatar-messages" src="{% static 'img/blog_1.jpg' %}">#}
                         <div class="reply-body">
@@ -40,7 +40,7 @@
                                 <p>
                                      <strong class="list-group-item-heading">{{ user.username }}</strong>
                                 </p>
-                                    <img class="avatar-rounded-sm" src="{{ last_message.author.image_pic.url }}">
+                                    <img class="avatar-rounded-sm" width="150" height="150" src="{{ last_message.author.image_pic.url }}">
                                     <div class="attached-reply-body {% if not last_message.is_readed %}unreaded
                                         {% endif %}">
                                         {{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>

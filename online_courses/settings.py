@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django_summernote',
     'course_test',
     'mathfilters',
+    'bootstrap_datepicker_plus',
 ]
 
 SUMMERNOTE_THEME = 'bs5'

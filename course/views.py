@@ -1,5 +1,6 @@
 import datetime
 
+from bootstrap_datepicker_plus.widgets import DateTimePickerInput
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.checks import messages
@@ -148,7 +149,7 @@ def settings_edit(request, id):
             setting.what_you_get = form.cleaned_data["what_you_get"]
             setting.level = form.cleaned_data["level"]
 
-            setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
+            # setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
             setting.course_id = id
             setting.save()
         return render(request, "course/main_settings.html", {"form": form,
@@ -188,7 +189,7 @@ def settings_edit(request, id):
             setting.what_you_get = form["what_you_get"].value()
             setting.level = form["level"].value()
 
-            setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
+            # setting.is_published, setting.is_active = get_set_with_value(setting.active_level)
             setting.course_id = id
             setting.save()
         return render(request, "course/main_settings.html", {"form": form,
@@ -681,12 +682,15 @@ class EnrollmentView(View):
             form = CoursEnrollmentForm(request.POST or None, initial={'time_end': enrollment_edit.time_end,
                                                                       'time_create': enrollment_edit.time_create})
             if form.is_valid():
+                #enrollment_edit.time_create = DateTimePickerInput()
                 enrollment_edit.time_create = form['time_create'].value()
                 enrollment_edit.time_end = form['time_end'].value()
                 enrollment_edit.course_id = id
                 enrollment_edit.save()
         else:
             enrollment = CoursEnrollment()
+
+
             form = CoursEnrollmentForm(request.POST)
             if form.is_valid():
                 enrollment_edit.time_create = form.cleaned_data['time_create']

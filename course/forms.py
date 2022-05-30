@@ -1,7 +1,8 @@
 from django import forms
 from django_summernote.widgets import SummernoteWidget, SummernoteInplaceWidget
 
-from course.models import Comment, Notifications
+from course.models import Comment, Notifications, CoursEnrollment
+from bootstrap_datepicker_plus.widgets import DatePickerInput, TimePickerInput, DateTimePickerInput, MonthPickerInput, YearPickerInput
 
 
 class CourseForm(forms.Form):
@@ -26,6 +27,7 @@ class NotificationFormCreate1(forms.Form):
         label="",
         widget=forms.Textarea(attrs={'rows': 3})
     )
+
 
 class NotificationFormCreate(forms.ModelForm):
     class Meta:
@@ -76,6 +78,8 @@ class SettingsForm(forms.Form):
 class CoursEnrollmentForm(forms.Form):
     time_create = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата начала набора')
     time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата окончания набора')
+
+#forms.DateField(widget=DateTimePickerInput(),)
 
 
 class CommentForm1(forms.Form):

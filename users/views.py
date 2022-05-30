@@ -20,7 +20,19 @@ def profile(request):
     courses = []
     for i in BookmarkCourse.objects.all().filter(user=user):
         courses.append(Course.objects.get(id=i.obj_id))
-    return render(request, "users/profile.html", {'user': user, "courses": courses})
+
+    courses_instructor = Course.objects.all().filter(author_id=user.id)
+
+    c_s = Course.objects.all().filter(coursenrollment__students=user)
+    # c_s = []
+    # for i in courses_student:
+    #     for s in i.coursenrollment.students.all():
+    #         if s.id == user.id:
+    #             c_s.append(i)
+
+    return render(request, "users/profile.html", {'user': user, "courses": courses,
+                                                  "c_s": c_s,
+                                                  'courses_instructor': courses_instructor})
 
 
 def register(request):
@@ -83,4 +95,4 @@ def edit_data(request):
         user.bio = form["bio"].value()
         user.image_pic = form['avatar'].value()
         user.save()
-    return render(request, "users/edit_data.html", {'form': form})
+    return render(request, "users/edit_data.html", {'form': form, 'user': user})

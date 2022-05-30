@@ -5,11 +5,51 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-    <section class="container py-3">
-    <h5>Выберите задание для проверки</h5>
+
+    <style>
+    .hr,
+hr:before,
+hr:after {
+    content: "";
+    background: #BFE2FF;
+    display: block;
+    height: 14px;
+    width: 14px;
+    border-radius: 50%;
+    position: absolute;
+    animation: anim-hr 6s linear infinite;
+    border: 0;
+    overflow: visible;
+}
+hr:before {
+    left: -32px;
+}
+hr:after {
+    left: 32px;
+}
+hr {
+    position: relative;
+    margin: 30px auto;
+}
+@keyframes anim-hr {
+    0% {
+        background: #BFE2FF;
+    }
+    50% {
+        background: #337AB7;
+    }
+    100% {
+        background: #BFE2FF;
+    }
+}
+
+    </style>
+
+    <section class="container py-4">
+    <h5 class="text-center">Выберите задание для проверки</h5>
     {% for item in list_module %}
         <hr>
-        <h6>{{ item.title }}</h6>
+        <h6><strong>Название модуля:</strong> {{ item.title }}</h6>
 
         <div class="row">
         {% for task in item.task_set.all %}
@@ -17,7 +57,7 @@
             <div class="card">
                 <div class="card-body">
                   <h5 class="card-title">{{ task.title }}</h5>
-                  <p class="card-text">{{ task.description }}</p>
+                  <p class="card-text">{{ task.description | truncatewords:10 }}</p>
                   <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>
                      <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>
                 </div>

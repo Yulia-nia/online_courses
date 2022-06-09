@@ -12,7 +12,9 @@ from course.models import Course
 class DialogsView(View):
     def get(self, request, c_id):
         chats = Chat.objects.filter(members__in=[request.user.id], course_id=c_id)
-        return render(request, 'chat/dialogs.html', {'user_profile': request.user, 'chats': chats})
+        course = Course.objects.get(id=c_id)
+        return render(request, 'chat/dialogs.html', {'user_profile': request.user, 'chats': chats,
+                                                     'course': course})
 
 
 class MessagesView(View):

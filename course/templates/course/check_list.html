@@ -1,27 +1,50 @@
 {% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}
-
+{% load mathfilters %}
 
 
 {% block content %}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
 
+    <style>
 
+        .hh {
+            color: #123f81;
+             line-height: 20px;
+            font-size: 17px
+        }
 
+        .ddd{
+             line-height: 20px;
+            font-size: 15px
+        }
 
+        .rrr{
+             line-height: 20px;
+            font-size: 15px
+        }
 
+        .mmm {
+            background-color: rgba(9, 159, 255, 0.1);
+        }
+
+        .mmm2 {
+            background-color: rgba(9, 159, 255, 0.05);
+        }
+    </style>
     <div class="container py-3">
-        <p>Готовность курса</p>
-        <div class="bd-example">
-            <table class="table table-striped">
+        <div class="bd-example py-3">
+            <table class="table p-5">
                 <tbody>
 {#                1#}
-                    <tr>
+                    <tr class="mmm ">
                         <td>
-                            <div>
-                                <p><strong>Краткое описание длиннее 100 символов (сейчас {{ settings }} символов).</strong><br>
-                                    Попробуйте ёмко выразить, о чём ваш курс. Это описание учащиеся увидят в поиске и на промостранице сразу после названия курса.</p>
+                            <div class="py-1 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>1. Краткое описание курса</strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Краткое описание курса должно быть длинее 100 символов.</p>
+                                <p class="p-0 m-0 rrr"><strong><br>Cейчас - {{ settings }} символов.</strong></p>
                             </div>
                         </td>
                         <td>
@@ -30,24 +53,27 @@
                                     <h5><i class="bi bi-check-lg text-success m-lg-5"></i></h5>
                                 {% else %}
                                     <h5><i class="bi bi-x-lg text-danger m-lg-5"></i></h5>
-
                                 {% endif %}
-
                             </div>
                         </td>
                     </tr>
 {#                    2#}
-                    <tr>
+                    <tr class="mmm2">
                         <td>
-                            <div>
-                                <p><strong>Набор на курс
+                            <div class="p-0 m-0">
+
+                                <p class="p-0 m-0 lg hh"><strong>2. Набор на курс</strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Необходимо выбрать даты начала набора и окончания.
+                                    Открыть для поступления на курс.
+                                </p>
+                                <p class="p-0 m-0 rrr"><strong>
                                     {% if is_enrollment %}
-                                        (сейчас создан {{ enrollment_course.time_create }} - {{ enrollment_course.time_end }})
+                                        <br>Сейчас создан набор на курс {{ enrollment_course.time_create }} - {{ enrollment_course.time_end }}.
                                     {% else %}
-                                        (сейчас не создан)
+                                        Сейчас не создан набор на курс.
                                     {% endif %}
-                                    </strong><br>
-                                    Должен быть для поступления на курс
+                                   </strong>
                                 </p>
                             </div>
                         </td>
@@ -62,18 +88,17 @@
                         </td>
                     </tr>
 {#                    3#}
-                    <tr>
+                    <tr class="mmm">
                         <td>
-                            <div>
-                                <p><strong> Объявления
-                                    {% if is_announcement %}
-                                        (сейчас {{ announcement }})
+                            <div class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>3. Объявления</strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Должно быть хотя бы одно объявления в курсе.</p>
+                                <p class="p-0 m-0 rrr"><strong><br>{% if is_announcement %}
+                                        Сейчас объявлений - {{ announcement }}.
                                     {% else %}
-                                        (сейчас не создан)
-                                    {% endif %}
-                                    </strong><br>
-                                    Хотя бы одно объявление
-                                </p>
+                                        Сейчас нет объявлений.
+                                    {% endif %}</strong></p>
                             </div>
                         </td>
                         <td>
@@ -86,25 +111,22 @@
                             </div>
                         </td>
                     </tr>
-
-
 {#                    4#}
-                        <tr>
+                    <tr class="mmm2">
                         <td>
-                            <div>
-                                <p><strong> Модули
-                                    {% if is_module %}
-                                        (сейчас {{ modules.count }})
+                            <div  class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>4. Модули курса</strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Должно быть добавлено хотя бы два модуля.</p>
+                                <p class="p-0 m-0 rrr"><strong><br>{% if is_module %}
+                                        Сейчас количество созданных модулей - {{ modules.count }}.
                                     {% else %}
-                                        (сейчас не создан)
-                                    {% endif %}
-                                    </strong><br>
-                                    Хотябы два модуля
-                                </p>
+                                        Сейчас нет модулей в данном курсе.
+                                    {% endif %}</strong></p>
                             </div>
                         </td>
                         <td>
-                            <div>
+                            <div  class="p-0 m-0">
                                 {% if is_module %}
                                     <h5><i class="bi bi-check-lg text-success m-lg-5"></i></h5>
                                 {% else %}
@@ -115,17 +137,23 @@
                     </tr>
 
 {#                    5#}
-                    <tr>
+                    <tr class="mmm">
                         <td>
-                            <div>
-                                <p><strong> Уроки
+                            <div  class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    5. Уроки курса
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Должно быть добавлено хотя бы 10 уроков.
+                                </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
                                     {% if is_lesson %}
-                                        (сейчас создан {{ lessons.count }})
+                                        Сейчас добавлено уроков - {{ lessons.count }}.
                                     {% else %}
-                                        (сейчас не создан)
+                                        Сейчас добавлено уроков - {{ lessons.count }}.<br>
+                                        </strong>Необходимо добавить еще
+                                        {{ "10"|sub:lessons.count }}.
                                     {% endif %}
-                                    </strong><br>
-                                    Хотябы 10 уроков
                                 </p>
                             </div>
                         </td>
@@ -140,17 +168,23 @@
                         </td>
                     </tr>
 {#                    6#}
-                    <tr>
+                    <tr class="mmm2">
                         <td>
-                            <div>
-                                <p><strong> Открытые уроки
-                                    {% if is_lesson_open %}
-                                        (сейчас {{ lessons_open.count }})
+                            <div  class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    6. Открытые уроки
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Необходимо открыть 5 уроков в курсе для слушателей.
+                                </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
+                                     {% if is_lesson_open %}
+                                        Сейчас открытых уроков - {{ lessons_open.count }}.
                                     {% else %}
-                                        (сейчас не создан)
+                                        Сейчас открытых уроков - {{ lessons_open.count }}.<br>
+                                       </strong>  Необходимо добавить еще
+                                        {{ "5"|sub:lessons_open.count }}.
                                     {% endif %}
-                                    </strong><br>
-                                    Хотябы 5 открытых уроков
                                 </p>
                             </div>
                         </td>
@@ -165,18 +199,25 @@
                         </td>
                     </tr>
 {#                    7#}
-                    <tr>
+                    <tr class="mmm">
                         <td>
-                            <div>
-                                <p><strong> Задания
-                                    {% if is_task %}
-                                        (сейчас создан {{ tasks.count }})
-                                    {% else %}
-                                        (сейчас не создан)
-                                    {% endif %}
-                                    </strong><br>
-                                    Хотябы 5 заданий
+                            <div class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    7. Задания курса
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                     Должно быть добавлено хотя бы 5 заданий.
                                 </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
+                                    {% if is_task %}
+                                        Сейчас добавлено заданий - {{ tasks.count }}.
+                                    {% else %}
+                                        Сейчас добавлено заданий - {{ tasks.count }}.
+                                        </strong><br>
+                                        Необходимо добавить еще
+                                        {{ "5"|sub:tasks.count }}.
+                                    {% endif %}
+                               </p>
                             </div>
                         </td>
                         <td>
@@ -190,18 +231,22 @@
                         </td>
                     </tr>
 {#                    8#}
-                    <tr>
+                    <tr class="mmm2">
                         <td>
-                            <div>
-                                <p><strong> Нет пустых модулей
-                                    {% if not is_null_modules %}
-                                        (кол-во пустых модулей {{ null_modules.count }})
-                                    {% else %}
-                                        (пустых модулей нет)
-                                    {% endif %}
-                                    </strong><br>
-                                    ...
+                            <div class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    8. Нет пустых модулей
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Все модули должны содержать уроки и задния.
                                 </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
+                                     {% if not is_null_modules %}
+                                        Сейчас есть пустые модули.
+                                    {% else %}
+                                        Все модули содержат уроки и задания.
+                                    {% endif %}
+                                </strong></p>
                             </div>
                         </td>
                         <td>
@@ -215,18 +260,22 @@
                         </td>
                     </tr>
 {#                    9#}
-                    <tr>
+                    <tr class="mmm">
                         <td>
-                            <div>
-                                <p><strong> нет уроков без блоков
-                                    {% if not is_null_lesson %}
-                                        (уроки без блоков {{ null_lesson.count }})
-                                    {% else %}
-                                        (все уроки содержат блоки)
-                                    {% endif %}
-                                    </strong><br>
-                                    ...
+                            <div class="p-0 m-0">
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    9. Нет уроков без блоков
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Все уроки в кусе должны содержать блоки.
                                 </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
+                                    {% if not is_null_lesson %}
+                                        Сейчас количество уроков без блоков - {{ null_lesson }}.
+                                    {% else %}
+                                        Все уроки содержат блоки.
+                                    {% endif %}
+                                </strong></p>
                             </div>
                         </td>
                         <td>
@@ -240,18 +289,23 @@
                         </td>
                     </tr>
 {#                    10#}
-                    <tr>
+                    <tr class="mmm2">
                         <td>
-                            <div>
-                                <p><strong> Нет файлов в заданиях
-                                    {% if not is_task_file %}
-                                        (кол-во заданий без файлов {{ tasks_file.count }})
-                                    {% else %}
-                                        (все задания содержат файлы)
-                                    {% endif %}
-                                    </strong><br>
-                                    все задания должны содержать файлы
+                            <div class="p-0 m-0">
+
+                                <p class="p-0 m-0 lg hh"><strong>
+                                    10. Нет файлов в заданиях
+                                </strong></p>
+                                <p class="text-secondary p-0 m-0 ddd">
+                                    Все добавленные задания должны содержать файлы.
                                 </p>
+                                <p class="p-0 m-0 rrr"><strong><br>
+                                    {% if not is_task_file %}
+                                        Сейчас количество заданий без файлов - {{ tasks_file }}.
+                                    {% else %}
+                                        Все задания содержат файлы.
+                                    {% endif %}
+                                </strong></p>
                             </div>
                         </td>
                         <td>
@@ -266,7 +320,7 @@
                     </tr>
                 </tbody>
             </table>
-        <p>Курс готов на {{ progress }}%</p>
+        <h5 class="text-dark">Курс готов на {{ progress }}%</h5>
         </div>
     </div>
 {% endblock %}

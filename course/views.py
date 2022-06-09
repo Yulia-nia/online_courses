@@ -310,9 +310,9 @@ def check_list(request, id):
                                                       'is_task': is_task,
                                                       'null_modules': null_modules,
                                                       'is_null_modules': is_null_modules,
-                                                      'null_lesson': null_lesson,
+                                                      'null_lesson': len(null_lesson),
                                                       'is_null_lesson': is_null_lesson,
-                                                      'tasks_file': tasks_file,
+                                                      'tasks_file': len(tasks_file),
                                                       'is_task_file': is_task_file,
                                                       'progress': progress,
                                                       "course": course})

@@ -45,6 +45,50 @@ hr {
 
     </style>
 
+
+    <div class="container ">
+        <div class="row">
+            <div class="col-sm-9 border-right">
+                <div class="d-flex flex-column p-3">
+
+                    {% for item in list_module %}
+                        <hr>
+                        <h6 class="text-right"><strong>Название модуля:</strong> {{ item.title }}</h6>
+
+                        <div class="row align-items-center text-center py-1">
+                        {% for task in item.task_set.all %}
+                            <div class="col-4">
+                            <div class="card">
+                                <div class="card-body">
+                                  <h5 class="card-title">{{ task.title }}</h5>
+                                  <p class="card-text">{{ task.description | truncatewords:10 }}</p>
+                                  <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>
+                                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>
+                                </div>
+                            </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="col-sm-3 border-right">
+                <div class="d-flex flex-column p-3">
+                    <h6><strong>Модули: </strong></h6>
+                    <ul>
+                    {% for item in list_module %}
+                        <li>{{ item.title }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
     <section class="container py-4">
     <h5 class="text-center">Выберите задание для проверки</h5>
     {% for item in list_module %}

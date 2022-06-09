@@ -25,19 +25,6 @@ a:focus {
     color: inherit;
 }
 
-
-{#.container-fluid,#}
-{#.container {#}
-{#    max-width: 1200px;#}
-{# }#}
-
-{#.card-container {#}
-{#    padding: 10px 0px;#}
-{#    -webkit-perspective: 1000;#}
-{#    perspective: 1000;#}
-{# }#}
-
-
 .profile-card-4 {
     max-width: 450px;
     background-color: #FFF;
@@ -116,18 +103,22 @@ a:focus {
 
     </STYLE>
 
-
-
 {% if courses.count > 0 %}
 {#    <div class="section wb">#}
-        <div class="container">
-            <div class="row">
+        <div class="container px-lg-5">
+            <div class="py-4 px-3">
+                 <button id="myBtn" class="btn btn-md position-center btn-outline-primary w-30 mx-0">+ Новый курс</button>
+
+            </div>
+
+
+            <div class="row px-3">
 
 
 
 
                 {% for course in courses %}
-                    <div class="col-md-4">
+                    <div class="col-md-4 ">
                         <hr>
                         <div class="profile-card-4 text-center">
                             {% if course.settings.image %}
@@ -169,6 +160,16 @@ a:focus {
             </div>
         </div>
 {#    </div>#}
+    {% else %}
+
+
+     <div class="container px-lg-5">
+     <div class="py-4 px-3">
+                 <button id="myBtn" class="btn btn-md position-center btn-outline-primary w-30 mx-0">+ Новый 1 курс</button>
+
+            </div>
+     </div>
+
     {% endif %}
 
 {##}
@@ -263,7 +264,6 @@ a:focus {
 
         </div>
 
-<button id="myBtn" class="btn btn-lg position-center btn-light w-30 mx-0">Создать курс</button>
 
 {#    <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">Создать курс</button>#}
 

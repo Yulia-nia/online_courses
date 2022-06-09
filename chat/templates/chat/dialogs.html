@@ -6,15 +6,47 @@
 
 {% block content %}
 
-<div class="panel" >
+
+    <style>
+         .notice {
+    padding: 15px;
+    background-color: #fafafa;
+    border-left: 6px solid #7f7f84;
+    margin-bottom: 10px;
+    -webkit-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+       -moz-box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+            box-shadow: 0 5px 8px -6px rgba(0,0,0,.2);
+    }
+    .notice-sm {
+        padding: 10px;
+        font-size: 80%;
+    }
+    .notice-lg {
+        padding: 35px;
+        font-size: large;
+    }
+    .notice-success {
+        border-color: #ffe936;
+    }
+    .notice-success>strong {
+        color: #ffe936;
+    }
+    </style>
+
+
+
+    <div class="container py-4">
+
         {% load tz %}
         {% if chats.count == 0 %}
             <div class="panel panel-body">Нет ни одного начатого диалога</div>
         {% endif %}
 
-            {% if chat.message_set.count != 0 %}
+        {% if chat.message_set.count != 0 %}
+            <div class="notice notice-success">
 
-                {% with last_message=chat.message_set.last %}
+
+                    {% with last_message=chat.message_set.last %}
 
                     {% get_companion user chat as companion %}
 
@@ -27,32 +59,136 @@
 {#                        <img class="avatar-messages" src="{% static 'img/blog_1.jpg' %}">#}
                         <div class="reply-body">
 
-                            <ul class="list-inline">
-                                <li class="drop-left-padding">
-                                    <strong class="list-group-item-heading">{{ companion.username }}</strong>
-                                </li>
-                                <li class="pull-right text-muted"><small>{{ last_message.pub_date|utc }}</small></li>
-                            </ul>
+                            <h6>Чат для курса: <strong>{{ course.title }}</strong></h6>
+                            <hr>
+
 
 
                             {% if companion != last_message.author %}
-                                <div>
-                                <p>
-                                     <strong class="list-group-item-heading">{{ user.username }}</strong>
-                                </p>
-                                    <img class="avatar-rounded-sm" width="150" height="150" src="{{ last_message.author.image_pic.url }}">
-                                    <div class="attached-reply-body {% if not last_message.is_readed %}unreaded
-                                        {% endif %}">
-                                        {{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>
+                                <h6>Последнее сообщение: </h6>
+                                <div class="card">
+                                    <div class="row text-dark">
+                                        <div class="col-2 text-center text-xl-center">
+                                            <ul class="list-inline">
+                                                <li class="drop-left-padding py-3">
+                                                    <strong class="list-group-item-heading">{{ user.username }}</strong>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="col-10 p-2">
+                                            <div>{{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>
+                                            <div>
+                                                 <p class="pull-right text-muted"><small>{{ last_message.pub_date|utc }}</small></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                            {% else %}
 
-                                <div>{{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>
+{#                                <div>#}
+{#                                <p>#}
+{#                                     <strong class="list-group-item-heading">{{ user.username }}</strong>#}
+{#                                </p>#}
+{#                                    <img class="avatar-rounded-sm" width="150" height="150" src="{{ last_message.author.image_pic.url }}">#}
+{#                                    #}
+{#                                    <div class="attached-reply-body {% if not last_message.is_readed %}unreaded#}
+{#                                        {% endif %}">#}
+{##}
+{#                                        {{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>#}
+{#                                </div>#}
+
+                            {% else %}
+                                <h6>Последнее сообщение: </h6>
+                                <div class="card">
+                                    <div class="row text-dark">
+                                        <div class="col-2 text-center text-xl-center">
+                                            <ul class="list-inline">
+                                                <li class="drop-left-padding py-3">
+                                                    <strong class="list-group-item-heading">{{ companion.username }}</strong>
+                                                </li>
+                                            </ul>
+                                        </div>
+
+                                        <div class="col-10 p-2">
+                                            <div>{{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>
+                                            <div>
+                                                 <p class="pull-right text-muted"><small>{{ last_message.pub_date|utc }}</small></p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+{##}
+{#                            <ul class="list-inline">#}
+{#                                <li class="drop-left-padding">#}
+{#                                    <strong class="list-group-item-heading">{{ companion.username }}</strong>#}
+{#                                </li>#}
+{#                                <li class="pull-right text-muted"><small>{{ last_message.pub_date|utc }}</small></li>#}
+{#                            </ul>#}
+{#                                <div>{{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>#}
                             {% endif %}
                         </div>
                     </a>
                 {% endwith %}
-            {% endif %}
+
+            </div>
+        {% endif %}
     </div>
+
+
+
+
+
+{##}
+{#<div class="panel" >#}
+{#        {% load tz %}#}
+{#        {% if chats.count == 0 %}#}
+{#            <div class="panel panel-body">Нет ни одного начатого диалога</div>#}
+{#        {% endif %}#}
+{##}
+{#            {% if chat.message_set.count != 0 %}#}
+{##}
+{#                {% with last_message=chat.message_set.last %}#}
+{##}
+{#                    {% get_companion user chat as companion %}#}
+{##}
+{#                    <a class="list-group-item#}
+{#                    {% if companion == last_message.author.username and not last_message.is_readed %}#}
+{#                    unreaded{% endif %}" href="{{ chat.id }}">#}
+{##}
+{#                        <img class="avatar-messages" src="{{ companion.userprofile.image_pic.url }}" width="150" height="150">#}
+{##}
+{#                        <img class="avatar-messages" src="{% static 'img/blog_1.jpg' %}">#}
+{#                        <div class="reply-body">#}
+{##}
+{#                            <ul class="list-inline">#}
+{#                                <li class="drop-left-padding">#}
+{#                                    <strong class="list-group-item-heading">{{ companion.username }}</strong>#}
+{#                                </li>#}
+{#                                <li class="pull-right text-muted"><small>{{ last_message.pub_date|utc }}</small></li>#}
+{#                            </ul>#}
+{##}
+{##}
+{#                            {% if companion != last_message.author %}#}
+{#                                <div>#}
+{#                                <p>#}
+{#                                     <strong class="list-group-item-heading">{{ user.username }}</strong>#}
+{#                                </p>#}
+{#                                    <img class="avatar-rounded-sm" width="150" height="150" src="{{ last_message.author.image_pic.url }}">#}
+{#                                    <div class="attached-reply-body {% if not last_message.is_readed %}unreaded#}
+{#                                        {% endif %}">#}
+{#                                        {{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>#}
+{#                                </div>#}
+{##}
+{#                            {% else %}#}
+{##}
+{#                                <div>{{ last_message.message|truncatechars_html:"200"|safe|striptags }}</div>#}
+{#                            {% endif %}#}
+{#                        </div>#}
+{#                    </a>#}
+{#                {% endwith %}#}
+{#            {% endif %}#}
+{#    </div>#}
 {% endblock %}

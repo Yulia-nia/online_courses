@@ -9,17 +9,24 @@
 
 {% block content %}
 
+    <style>
+    .lbl {
+       border-left-color: #004fcf; border-left-style: solid;
+                              background-color: #cff4fc;
+                              border-left-width: 7px;
+                              padding-left: 10px;
+    }
+
+    </style>
+
      <div class="container">
         <div class="py-3 text-center">
             <form method="post">
                {% csrf_token %}
                 <div>
-                    <h4 class="text-start">Название курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                         style="border-left-color: #0d6efd; border-left-style: solid;
-                              background-color: #cff4fc;
-                              border-left-width: 7px;
-                              padding-left: 10px;" >
+                    <h5 class="text-lg-start">Название курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                          >
                         <div class="text-sm-start">
                             <h5 class="h6 text-black-50 ">
                                       Укажите название вашей обучающей программы или курса.
@@ -32,12 +39,9 @@
                 </div>
 
                <div>
-                    <h4 class="text-start">Подзаголовок курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                         style="border-left-color: #0d6efd; border-left-style: solid;
-                              background-color: #cff4fc;
-                              border-left-width: 7px;
-                              padding-left: 10px;" >
+                    <h5 class="text-lg-start">Подзаголовок курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                          >
                         <div class="text-sm-start">
                             <h5 class="h6 text-black-50 ">
                                 Постарайтесь уместить в одной фразе подзаголовка цель вашего курса. Избегайте длинных фраз.
@@ -50,10 +54,17 @@
                     </div>
                 </div>
 
-{#                <p>Курс был создан {{ course.time_create }}</p>#}
+                <div class="row">
+                    <div class="col-4">
 
                {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
-            </form>
+
+                    </div>
+
+                </div>
+
+{#                <p>Курс был создан {{ course.time_create }}</p>#}
+  </form>
         </div>
      </div>
 {% endblock %}

@@ -36,6 +36,8 @@ urlpatterns = [
     path('<int:id>/delete_student_in_enrollment/', views.delete_student_in_enrollment, name='delete_student_in_enrollment'),
     path('<int:id>/announcement_list/create_announcement/', views.create_announcement, name='create_announcement'),
     path('edit_announcements/<int:id>/', views.edit_announcements, name='announcements_edit'),
+    path('create_announcement/', views.create_announcement, name='create_announcement'),
+
     path('delete_announcements/<int:id>/', views.delete_announcements, name='announcements_delete'),
     path('<int:id>/comments_list/', views.CommentView.as_view(), name='comments_list'),
     path('api/v1/courselist/', CourseAPIView.as_view()),

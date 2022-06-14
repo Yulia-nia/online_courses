@@ -9,14 +9,14 @@ from tinymce.widgets import TinyMCE
 
 class AnnouncementForm(forms.Form):
     content = forms.CharField(required=False, label='',
-                                  widget=SummernoteWidget(attrs={'rows': 3,
+                                  widget=SummernoteWidget(attrs={'rows': 2,
                                                                  'summernote': {'width': '100%'}}))
 
 
 
 class ModuleForm(forms.Form):
     title = forms.CharField(max_length=200, min_length=4,
-                            label="Название", help_text="Введите название")
+                            label="Название модуля",)
 
 
 class LessonEditForm(forms.Form):

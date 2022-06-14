@@ -73,7 +73,7 @@
                           <span class="fs-5 fw-semibold">Назад</span>
                         </a>
                          <ul class="list-unstyled ps-0">
-                             {% for module in modules %}
+                             {% for module, lessons in modules.items %}
 
                                  <li class="mb-1">
                                         <button class="btn btn-toggle align-items-center rounded collapsed"
@@ -81,7 +81,7 @@
                                          {{ module.title }}
                                         </button>
                                         <div class="collapse show" id="some{{ module.id }}">
-                                            {% for lesson in module.lesson_set.all %}
+                                            {% for lesson in lessons %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                                     <li><a href="{% url 'module:view_lesson' id=course.id l_id=lesson.id %}" class="link-dark rounded">
                                                         {{ lesson.title }}</a></li>

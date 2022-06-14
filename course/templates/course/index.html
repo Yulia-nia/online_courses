@@ -9,7 +9,6 @@
 {% block content1 %}
 
     <STYLE>
-        /* Всплывающая форма-скрыта по умолчанию */
         .form-popup {
             display: none;
             position: fixed;
@@ -17,8 +16,6 @@
             right: 15px;
             border: 3px solid #f1f1f1;
         }
-
-
 a,
 a:hover,
 a:focus {
@@ -104,19 +101,13 @@ a:focus {
     </STYLE>
 
 {% if courses.count > 0 %}
-{#    <div class="section wb">#}
+
         <div class="container px-lg-5">
             <div class="py-4 px-3">
                  <button id="myBtn" class="btn btn-md position-center btn-outline-primary w-30 mx-0">+ Новый курс</button>
-
             </div>
 
-
             <div class="row px-3">
-
-
-
-
                 {% for course in courses %}
                     <div class="col-md-4 ">
                         <hr>
@@ -146,10 +137,11 @@ a:focus {
                                             <a href="edit_course/{{course.id}}" class="btn btn-outline-primary">Просмотр</a>
                                     </div>
                                     <div class="col-4">
-
-                                            <a href="{% url 'delete' course.id %}" onclick="return confirm('Are you sure?');"
+{#                                         <a class="dropdown-item" href="#" onclick="course_delete('{{ course.id }}')">Удалить </a>#}
+{##}
+                                            <a href="{% url 'delete' course.id %}"
+                                               onclick="return confirm('Вы уверены что хотите удалить курс?');"
                                    class="btn btn-outline-danger">Удалить</a>
-
                                         </div>
                                 </div>
                             </div>
@@ -165,77 +157,13 @@ a:focus {
 
      <div class="container px-lg-5">
      <div class="py-4 px-3">
-                 <button id="myBtn" class="btn btn-md position-center btn-outline-primary w-30 mx-0">+ Новый 1 курс</button>
+                 <button id="myBtn" class="btn btn-md position-center btn-outline-primary w-30 mx-0">+ Новый курс</button>
 
             </div>
      </div>
 
     {% endif %}
 
-{##}
-{##}
-{#                <div class="col-lg-4 col-md-6 col-12">#}
-{##}
-{##}
-{#                        <div class="blog-item">#}
-{##}
-{#                        <div class="image-blog">#}
-{#                            {% if course.settings.image %}#}
-{#                            <img src="{{ course.settings.image.url }}"  alt="" class="img-fluid">#}
-{#                            {% else %}#}
-{#							<img src="{% static 'img/blog_1.jpg' %}"  alt="" class="img-fluid">#}
-{#                            {% endif %}#}
-{#						</div>#}
-{##}
-{#                        <div class="meta-info-blog">#}
-{#                            <span> {{ course.settings.learning_format }} </span>#}
-{#                        </div>#}
-{##}
-{#						<div class="blog-title">#}
-{#							<h2>{{ course.title }}</h2>#}
-{#						</div>#}
-{##}
-{#						<div class="blog-desc">#}
-{#							<p> {{ course.description }} </p>#}
-{#						</div>#}
-{##}
-{#                        <table>#}
-{#                            <tr style="width: 100%;">#}
-{#                                <td style="width: 40%;">#}
-{#                                    <div class="blog-button">#}
-{#                                        <a href="edit_course/{{course.id}}" class="button7">Управление</a>#}
-{#						            </div>#}
-{#                                </td>#}
-{#                                <td style="width: 60%;">#}
-{#                                    <div class="blog-button">#}
-{#                                        <a href="edit_course/{{course.id}}" class="button7">Просмотр</a>#}
-{#						            </div>#}
-{#                                </td>#}
-{#                            </tr>#}
-{#                        </table>#}
-{##}
-{#                            <div class="blog-button">#}
-{#                                <a href="{% url 'delete' course.id %}" onclick="return confirm('Are you sure?');"#}
-{#                                   class="button7">Удалить</a>#}
-{#						    </div>#}
-{#					    </div>#}
-{#                    <p> </p>#}
-{#                </div><!-- end col -->#}
-{#                   {% endfor %}#}
-{#            </div>#}
-{#        </div>#}
-{#    </div>#}
-{#{% endif %}#}
-
-
-{#        <div id="myModal" class="modal">#}
-
-{#          <!-- Modal content -->#}
-{#          <div class="modal-content">#}
-{#        #}
-{#            <span class="close">&times;</span>#}
-{#            <p>Some text in the Modal..</p>#}
-{#        #}
              <div class="form-popup" id="myModal">
          <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
             <div class="modal-dialog" role="document">
@@ -265,7 +193,16 @@ a:focus {
         </div>
 
 
-{#    <button class="btn btn-lg position-center btn-light w-30 mx-0" onclick="openForm()">Создать курс</button>#}
+<script type="text/javascript">
+    function course_delete() {
+       if (confirm('Do you want to submit?')) {
+           yourformelement.submit();
+       } else {
+           return false;
+       }
+    }
+
+</script>
 
 
 
@@ -299,7 +236,11 @@ a:focus {
         function closeForm() {
           document.getElementById("myModal").style.display = "none";
         }
+
         </script>
+
+
+
 {% endblock %}
 
 

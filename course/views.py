@@ -5,7 +5,7 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core.checks import messages
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseNotFound, Http404, HttpResponseRedirect, response, request
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -49,7 +49,8 @@ def delete_course(request, id):
     try:
         course = Course.objects.get(id=id)
         course.delete()
-        return HttpResponseRedirect("/")
+        return redirect("index")
+        # return HttpResponseRedirect("/")
     except Course.DoesNotExist:
         return HttpResponseNotFound("<h2>Course not found</h2>")
 
@@ -227,6 +228,19 @@ def announcement_list(request, id):
 
 
 def create_announcement(request, id):
+    course = Course.objects.get(id=id)
+    form = AnnouncementForm(request.POST or None)
+    if form.is_valid():
+        ann = Announcement()
+        ann.content = form.cleaned_data['content']
+        ann.course_id = id
+        ann.save()
+        return HttpResponseRedirect(reverse('announcement_list', args=(id,)))
+    return render(request, "course/announcements/create_announcement.html", {'course': course,
+                                                                           "form": form,
+                                                                           })
+
+
     if request.method == "POST":
         announcement = Announcement()
         announcement.content = request.POST.get("content")

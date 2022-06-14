@@ -16,17 +16,69 @@
 </head>
 <body>
 {% block content1 %}
-    <main class="container-fluid g-0">
+
+    <style>
+
+.scrollbar-dusty-grass::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #F5F5F5;
+    border-radius: 10px;
+}
+
+.scrollbar-dusty-grass::-webkit-scrollbar {
+    width: 12px;
+    background-color: #F5F5F5;
+}
+
+.scrollbar-dusty-grass::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-image: -webkit-linear-gradient(330deg, #79bffc 0%, #ffe91e 100%);
+    background-image: linear-gradient(120deg, #79d3fc 0%, #fff758 100%);
+}
+
+.square::-webkit-scrollbar-track {
+    border-radius: 0 !important;
+}
+
+.square::-webkit-scrollbar-thumb {
+    border-radius: 0 !important;
+}
+
+.thin::-webkit-scrollbar {
+    width: 6px;
+}
+
+.example-1 {
+    {#position: sticky;#}
+    overflow-y: scroll;
+    height: 90vh;
+}
+    </style>
 
 
-        <div class="row g-0 h-100">
-            <div class="col-md-2 bg-dark " >
-                <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
-                    <a href="{% url 'index' %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-                      <svg class="bi me-2" width="30" height="24"></svg>
-                      <span class="fs-5 fw-semibold">НАЗВАНИЕ</span>
-                    </a>
+{#        <div class="container px-lg-5">#}
+    <main class="container-fluid px-lg-3 bg-light">
+        <div class="row g-0">
+            <div class="col-md-2" >
 
+                <div class="example-1 sticky-top bg-light square scrollbar-dusty-grass square thin">
+                <div class="card-body">
+
+
+                <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 w-100 bg-light">
+                    <div class="text-center">
+
+                        {% if course.settings.image %}
+                                <img src="{{ course.settings.image.url }}" style="height: 150px; width: 150px;" class="img img-responsive" alt="" >
+                            {% else %}
+							    <img src="{% static 'img/blog_1.jpg' %}" style="height: 150px; width: 150px;" class="img img-responsive" alt="">
+                            {% endif %}
+                    </div>
+                    <p class="text-sm-center">{{ course.title }}</p>
+                    <ul class="list-unstyled ps-0">
+                    <li class="border-top"></li>
+                    </ul>
                     {% if user.id == course.author_id %}
 
                         <ul class="list-unstyled ps-0">
@@ -130,10 +182,13 @@
 
                     {% endif %}
                 </div>
+
+                </div>
+                </div>
             </div>
 
 
-            <div class="col-md-10 gx-4">
+            <div class="col-lg-10 gx-4">
                     <div class="container">
                     {#{% include 'C:\Users\User\PycharmProjects\online_courses\templates\header.html' with item_id=item_id %}#}
 

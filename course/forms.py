@@ -76,8 +76,8 @@ class SettingsForm(forms.Form):
 
 
 class CoursEnrollmentForm(forms.Form):
-    time_create = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата начала набора')
-    time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата окончания набора')
+    time_create = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата начала набора:')
+    time_end = forms.DateTimeField(input_formats=['%Y-%m-%d %H:%M'], required=False, label='Дата окончания набора:')
 
 #forms.DateField(widget=DateTimePickerInput(),)
 

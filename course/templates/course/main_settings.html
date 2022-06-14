@@ -8,6 +8,18 @@
 
 
 {% block content %}
+
+
+    <style>
+    .lbl {
+       border-left-color: #004fcf; border-left-style: solid;
+                              background-color: #cff4fc;
+                              border-left-width: 7px;
+                              padding-left: 10px;
+    }
+
+    </style>
+
     <div class="container">
         <div class="py-3 text-center">
             <form method="post" enctype= multipart/form-data>
@@ -16,12 +28,9 @@
 
                         {# level #}
                 <div>
-                    <h4 class="text-start">Статус курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Статус курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                      >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Статус курса.<br>
@@ -34,12 +43,9 @@
 
                 {# learning format#}
                 <div>
-                    <h4 class="text-start">Формат обучения</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Формат обучения</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Укажите здесь, какие материалы вы размещаете.<br>
@@ -58,12 +64,9 @@
                     <div class="col-4 themed-grid-col">
                         {# level #}
                         <div>
-                    <h4 class="text-start">Уровень подготовки</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Уровень подготовки</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Выберите уровень подготовки.<br>
@@ -81,12 +84,9 @@
                     <div class="col-4 themed-grid-col">
                          {# language #}
                         <div>
-                    <h4 class="text-start">Язык курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Язык курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                       >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Язык курса.
@@ -101,12 +101,9 @@
                     <div class="col-4 themed-grid-col">
                          {# subject #}
                         <div>
-                        <h4 class="text-start">Предмет курса</h4>
-                        <div class="d-flex align-items-center p-3 rounded"
-                          style="border-left-color: #0d6efd; border-left-style: solid;
-                          background-color: #cff4fc;
-                          border-left-width: 7px;
-                          padding-left: 10px;" >
+                        <h5 class="text-lg-start">Предмет курса</h5>
+                        <div class="d-flex align-items-center p-3 rounded lbl"
+                          >
                             <div class="text-sm-start">
                               <h5 class="h6 text-black-50 ">
                                   Предмет курса.
@@ -122,12 +119,9 @@
 
                 {# about course #}
                 <div>
-                    <h4 class="text-start">О курсе</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">О курсе</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Перечислите все, что важно знать учащимся до поступления на курс.<br>
@@ -135,19 +129,16 @@
                           </h5>
                         </div>
                     </div>
-                    <div class="mt-3" style="height: 50%; background-color: #0dcaf0">
+                    <div class="mt-3" style="height: 50%;">
                         {% bootstrap_field form.about_course  class="custom-control-input" %}
                     </div>
                 </div>
 
                 {# image #}
                 <div>
-                    <h4 class="text-start">Изображение курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Изображение курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Изображение курса будет показано ученику на странице списка курсов,
@@ -174,12 +165,9 @@
 
                 {# necessary training #}
                 <div>
-                    <h4 class="text-start">Необходимая подготовка</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Необходимая подготовка</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                       >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Что нужно уметь знать и уметь до старта курса.<br>
@@ -194,12 +182,9 @@
 
                 {# how training #}
                 <div>
-                    <h4 class="text-start">Как проходит обучение</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Как проходит обучение</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Что и как нужно будет делать, что входит в данный курс.<br>
@@ -213,12 +198,9 @@
 
                 {# will learn #}
                 <div>
-                    <h4 class="text-start">Результаты обучения</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Результаты обучения</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                     >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Перечислите ожидаемые результаты обучения - что будут знать и уметь учащиеся после
@@ -236,12 +218,9 @@
 
                 {# what you get #}
                 <div>
-                    <h4 class="text-start">Почему имеено ваш курс</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                    <h5 class="text-lg-start">Почему имеено ваш курс</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                      >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Перечислите почему курс будет полезен. Что получит учащийся курса, после прохождения.<br>
@@ -256,13 +235,10 @@
                 </div>
 
                 {# is published #}
-                <div>
-                    <h4 class="text-start">Публикация курса</h4>
-                    <div class="d-flex align-items-center p-3 rounded"
-                      style="border-left-color: #0d6efd; border-left-style: solid;
-                      background-color: #cff4fc;
-                      border-left-width: 7px;
-                      padding-left: 10px;" >
+                <div class="text-sm-start">
+                    <h5 class="text-lg-start">Публикация курса</h5>
+                    <div class="d-flex align-items-center p-3 rounded lbl"
+                       >
                         <div class="text-sm-start">
                           <h5 class="h6 text-black-50 ">
                               Пока ваш курс находится в статусе "не опубликован", никто не сможет получить к нему доступ.
@@ -275,7 +251,16 @@
                 </div>
 
 
-                {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+                <div class="row">
+                    <div class="col-4">
+                        {% bootstrap_button "Сохранить" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+
+                    </div>
+
+                </div>
+
+
+
 
                 </div>
             </form>

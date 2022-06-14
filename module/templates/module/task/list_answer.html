@@ -43,30 +43,116 @@ hr {
     }
 }
 
+
+.card-margin {
+    margin-bottom: 1.875rem;
+}
+
+.card1 {
+    border: 0;
+    box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+    -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+}
+.card1 {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    height: 29vh;
+    word-wrap: break-word;
+    background-color: #ffffff;
+    background-clip: border-box;
+    border: 1px solid #e6e4e9;
+    border-radius: 8px;
+}
+
+.card1 .card-header.no-border {
+    border: 0;
+}
+.card1 .card-header {
+    background: none;
+    padding: 0 0.9375rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    min-height: 50px;
+}
+.card-header:first-child {
+    border-radius: calc(8px - 1px) calc(8px - 1px) 0 0;
+}
+
+
+
+.widget-49 .widget-49-meeting-points {
+  font-weight: 400;
+  font-size: 13px;
+  margin-top: .5rem;
+}
+
+.widget-49 .widget-49-meeting-points .widget-49-meeting-item {
+  display: list-item;
+  color: #727686;
+}
+
+.widget-49 .widget-49-meeting-points .widget-49-meeting-item span {
+  margin-left: .5rem;
+}
+
+.widget-49 .widget-49-meeting-action {
+  text-align: right;
+}
+
+.widget-49 .widget-49-meeting-action a {
+  text-transform: uppercase;
+}
+
     </style>
 
 
-    <div class="container ">
+    <div class="container py-3">
         <div class="row">
             <div class="col-sm-9 border-right">
                 <div class="d-flex flex-column p-3">
 
                     {% for item in list_module %}
-                        <hr>
-                        <h6 class="text-right"><strong>Название модуля:</strong> {{ item.title }}</h6>
+                        <h6 class="text-right" id="{{ item.id }}"><strong>Название модуля:</strong> {{ item.title }}</h6>
 
                         <div class="row align-items-center text-center py-1">
                         {% for task in item.task_set.all %}
-                            <div class="col-4">
-                            <div class="card">
-                                <div class="card-body">
-                                  <h5 class="card-title">{{ task.title }}</h5>
-                                  <p class="card-text">{{ task.description | truncatewords:10 }}</p>
-                                  <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>
-                                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>
+
+                        <div class="col-6">
+                             <div class="card1 card-margin">
+                                <div class="card-body pt-0">
+                                    <div class="widget-49 py-3">
+                                        <div class="">
+                                            <h6 class="widget-49-pro-title text-sm-center">{{ task.title }}</h6>
+                                        </div>
+                                        <div class="widget-49-meeting-points">
+                                            <p class="widget-49-meeting-time"><span>{{ task.description | truncatewords:9 }}</span></p>
+                                            <p class="widget-49-meeting-time"><span>Задание открыто до {{ task.time_deadline }}</span></p>
+                                        </div>
+                                        <div class="widget-49-meeting-action">
+                                            <a href="{{ task.id}}/task/" class="btn btn-sm btn-flash-border-primary">Просмотр всех ответов</a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            </div>
+                        </div>
+
+
+
+{#                            <div class="col-4">#}
+{#                            <div class="card">#}
+{#                                <div class="card-body">#}
+{#                                  <h5 class="card-title text-lg-center">{{ task.title }}</h5>#}
+{#                                  <p class="card-text text-sm-start">{{ task.description | truncatewords:9 }}</p>#}
+{#                                  <p class="card-text text-sm-start"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>#}
+{#                                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary text-sm-start">Просмотр всех ответов по этому заданию</a>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            </div>#}
                         {% endfor %}
                         </div>
                     {% endfor %}
@@ -74,14 +160,25 @@ hr {
                 </div>
             </div>
 
-            <div class="col-sm-3 border-right">
+
+
+
+            <div class="col-lg-3 border-right py-4">
                 <div class="d-flex flex-column p-3">
-                    <h6><strong>Модули: </strong></h6>
-                    <ul>
-                    {% for item in list_module %}
-                        <li>{{ item.title }}</li>
-                    {% endfor %}
-                    </ul>
+                    <div class="card">
+                        <div class="card-body g-0">
+                            <h5 class="card-title text-lg-center">Модули: </h5>
+                            {% for item in list_module %}
+                                <a href="#{{ item.id }}" class="btn btn-sm text-sm-start">{{ item.title }}</a><br>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+
+{#                    <h6><strong>Модули: </strong></h6>#}
+{#                    {% for item in list_module %}#}
+{#                        <a href="#{{ item.id }}">{{ item.title }}</a>#}
+{#                    {% endfor %}#}
                 </div>
             </div>
         </div>
@@ -89,27 +186,27 @@ hr {
 
 
 
-    <section class="container py-4">
-    <h5 class="text-center">Выберите задание для проверки</h5>
-    {% for item in list_module %}
-        <hr>
-        <h6><strong>Название модуля:</strong> {{ item.title }}</h6>
-
-        <div class="row">
-        {% for task in item.task_set.all %}
-            <div class="col-4">
-            <div class="card">
-                <div class="card-body">
-                  <h5 class="card-title">{{ task.title }}</h5>
-                  <p class="card-text">{{ task.description | truncatewords:10 }}</p>
-                  <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>
-                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>
-                </div>
-            </div>
-            </div>
-        {% endfor %}
-        </div>
-    {% endfor %}
-    </section>
+{#    <section class="container py-4">#}
+{#    <h5 class="text-center">Выберите задание для проверки</h5>#}
+{#    {% for item in list_module %}#}
+{#        <hr>#}
+{#        <h6><strong>Название модуля:</strong> {{ item.title }}</h6>#}
+{##}
+{#        <div class="row">#}
+{#        {% for task in item.task_set.all %}#}
+{#            <div class="col-4">#}
+{#            <div class="card">#}
+{#                <div class="card-body">#}
+{#                  <h5 class="card-title">{{ task.title }}</h5>#}
+{#                  <p class="card-text">{{ task.description | truncatewords:10 }}</p>#}
+{#                  <p class="card-text"><small class="text-muted">Задание открыто до {{ task.time_deadline }}</small></p>#}
+{#                     <a href="{{ task.id}}/task/" class="btn btn-outline-primary">Просмотр всех ответов по этому заданию</a>#}
+{#                </div>#}
+{#            </div>#}
+{#            </div>#}
+{#        {% endfor %}#}
+{#        </div>#}
+{#    {% endfor %}#}
+{#    </section>#}
 
 {% endblock %}

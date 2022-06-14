@@ -315,18 +315,77 @@ def view_lesson(request, id, l_id):
     try:
         lesson = Lesson.objects.get(id=l_id)
         module = Module.objects.get(id=lesson.module_id)
+
+
         modules = Module.objects.all().filter(course_id=id)
+        lessons = Lesson.objects.all().filter(is_published=True)
+        modd = {}
+
+        for module in modules:
+            less = []
+            for les in lessons:
+                if les.module_id == module.id:
+                    less.append(les)
+            modd[module] = less
+
+
         course = Course.objects.get(id=id)
         blocks = Block.objects.all().filter(lesson_id=lesson.id)
         progress_is = get_progress(course.id, lesson.id, request.user.id)
         return render(request, "module/lesson/view_lesson.html", {"lesson": lesson,
                                                            "module": module,
-                                                           "modules": modules,
+                                                           "modules": modd,
                                                            "course": course,
                                                             "blocks": blocks,
                                                            "progress_is": progress_is})
     except Lesson.DoesNotExist:
         return HttpResponseNotFound("<h2>Lesson not found</h2>")
+
+
+class EditModule(View):
+    model = Module
+
+    def get(self, request, m_id, id):
+        module = Module.objects.get(id=m_id)
+        course = Course.objects.get(id=id)
+        modules = course.module_set.all()
+        lessons = Lesson.objects.all().filter(module_id=m_id)
+        tasks = Task.objects.all().filter(module_id=m_id)
+        form = ModuleForm(initial=
+        {'title': module.title, })
+        return render(request, "module/edit_module.html", {
+            'module': module,
+                                                                    "modules": modules,
+                                                                    'course': course,
+                                                                    "lessons": lessons,
+                                                                    "tasks": tasks,
+                                                                    "module_id": m_id,
+                                                                    "form": form,
+                                                                    })
+
+    def post(self, request, m_id, id):
+        module = Module.objects.get(id=m_id)
+        form = ModuleForm(request.POST or None, initial=
+        {'title': module.title, })
+        if form.is_valid():
+            module.title = form['title'].value()
+            module.save()
+            return HttpResponseRedirect(reverse('module:edit_module', args=(m_id, id)))
+
+            # module = Module.objects.get(id=m_id)
+        # course = Course.objects.get(id=id)
+        # form = LessonCreateForm(request.POST or None)
+        # id_l = []
+        # if form.is_valid():
+        #     lesson = Lesson()
+        #     id_l.append(lesson.id)
+        #     lesson.title = form.cleaned_data['title']
+        #     lesson.description = form.cleaned_data["description"]
+        #     lesson.short_description = form.cleaned_data['short_description']
+        #     lesson.is_published = form.cleaned_data["is_published"]
+        #     lesson.module_id = m_id
+        #     lesson.save()
+        #     return HttpResponseRedirect(reverse('module:edit_lesson_settings', args=(course.id, lesson.id)))
 
 
 def edit_module(request, id, m_id):

@@ -44,11 +44,16 @@
                                                         {{ lesson.title }}</a></li>
                                                 </ul>
                                             {% endfor %}
+
+
+
                                             {% for task in module.task_set.all %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                                     <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
                                                 </ul>
                                             {% endfor %}
+
+
 
                                              {% if user.id == course.author_id %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -89,7 +94,7 @@
                                             {% endfor %}
                                             {% for task in module.task_set.all %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                    <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
+                                                    <li><a href="{% url 'module:view_task' id=course.id t_id=task.id %}" class="link-dark rounded"> {{ task.title }}</a></li>
                                                 </ul>
                                             {% endfor %}
 

@@ -54,6 +54,16 @@
                             <div class="tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
                                 {{ block.title }}
                                 {{ block.create }}
+
+                                {% for url in block.urllink_set.all %}
+                                    <p>{{ url.title }}</p>
+                                    <p>{{ url.url }}</p>
+                                {% endfor %}
+
+                                {% for file in block.file_set.all %}
+                                    <p>{{ file.title }}</p>
+                                    <p>{{ file.file }}</p>
+                                {% endfor %}
                             </div>
                         {% endif %}
                     {% endfor %}

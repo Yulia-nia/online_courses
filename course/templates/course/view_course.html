@@ -32,7 +32,7 @@
 
         <hr>
 
-        {% if course.settings.is_active %}
+        {% if not course.settings.is_active %}
             {% if not created %}
                 <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>
             {% else %}
@@ -54,17 +54,6 @@
             {% endif %}
         {% endif %}
 
-{#        {% if not created %}#}
-{#            <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>#}
-{#        {% else %}#}
-{#            <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>#}
-{#        {% endif %}#}
-{##}
-{#        <a href="http://vk.com/share.php?url=https://127.0.0.1:8000/courses/view_course/{{ course.get_absolute_url }}"#}
-{#       onclick="javascript:window.open(this.href, '', 'menubar=no,toolbar=no,resizable=yes,scrollbars=yes,height=300,width=600');return false;"#}
-{#       target="_blank" rel="nofollow">#}
-{#            <img src="{% static 'images/social/vk.png' %}">#}
-{#        </a>#}
     </div>
 </div>
 

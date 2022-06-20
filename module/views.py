@@ -315,8 +315,6 @@ def view_lesson(request, id, l_id):
     try:
         lesson = Lesson.objects.get(id=l_id)
         module = Module.objects.get(id=lesson.module_id)
-
-
         modules = Module.objects.all().filter(course_id=id)
         lessons = Lesson.objects.all().filter(is_published=True)
         modd = {}
@@ -328,14 +326,17 @@ def view_lesson(request, id, l_id):
                     less.append(les)
             modd[module] = less
 
-
         course = Course.objects.get(id=id)
         blocks = Block.objects.all().filter(lesson_id=lesson.id)
+
+        count_block_arr = [i for i in range(0, blocks.count())]
+
         progress_is = get_progress(course.id, lesson.id, request.user.id)
         return render(request, "module/lesson/view_lesson.html", {"lesson": lesson,
                                                            "module": module,
                                                            "modules": modd,
                                                            "course": course,
+                                                                  "count_block_arr": count_block_arr,
                                                             "blocks": blocks,
                                                            "progress_is": progress_is})
     except Lesson.DoesNotExist:
@@ -456,16 +457,31 @@ def progress(request, id):
 
 
 class TaskView(View):
-    def get(self, request, id):
+    def get(self, request, id, t_id):
         try:
-            task = Task.objects.get(id=id)
+
+            task = Task.objects.get(id=t_id)
             course = Course.objects.get(id=task.module.course_id)
             answer = StudentAnswer.objects.all().filter(student_id=request.user.id,
-                                                        task_id=id)
+                                                        task_id=t_id)
+            module = Module.objects.get(id=task.module_id)
+            modules = Module.objects.all().filter(course_id=id)
+            lessons = Lesson.objects.all().filter(is_published=True)
+            modd = {}
+            for module in modules:
+                less = []
+                for les in lessons:
+                    if les.module_id == module.id:
+                        less.append(les)
+                modd[module] = less
+
+
             return render(
             request,
             "module/task/view_task.html", {"course": course, "task": task,
                                            "answer": answer,
+                                           "module": module,
+                                           "modules": modd,
                                            'form': AnswerTaskForm()
                                            })
         except Task.DoesNotExist:
@@ -479,20 +495,33 @@ class TaskView(View):
                                            'form': AnswerTaskForm()
                                            })
 
-    def post(self, request, id):
-        task = Task.objects.get(id=id)
+    def post(self, request, id, t_id):
+        task = Task.objects.get(id=t_id)
         course = Course.objects.get(id=task.module.course_id)
+        module = Module.objects.get(id=task.module_id)
+        modules = Module.objects.all().filter(course_id=id)
+        lessons = Lesson.objects.all().filter(is_published=True)
+        modd = {}
+        for module in modules:
+            less = []
+            for les in lessons:
+                if les.module_id == module.id:
+                    less.append(les)
+            modd[module] = less
+
         form = AnswerTaskForm(request.POST or None, request.FILES or None)
         if form.is_valid():
             answer = StudentAnswer()
             answer.description = form.cleaned_data["description"]
             answer.file = form.cleaned_data['file']
-            answer.task_id = id
+            answer.task_id = t_id
             answer.student_id = request.user.id
             answer.save()
         return render(request, "module/task/view_task.html", {'course': course,
                                                               "form": AnswerTaskForm(),
-                                                              "modules": course.module_set.all(),
+                                                              "module": module,
+                                                              "modules": modd,
+                                                              # "modules": course.module_set.all(),
                                                               "task": task})
 
 
@@ -605,9 +634,10 @@ def popup_form(request, id):
 
 def student_progress_list(request, id, s_id):
     course = Course.objects.get(id=id)
-    user = User.objects.get(id=s_id)
+    user = request.user
+    user1 = User.objects.get(id=s_id)
     #user = auth.get_user(request)
-    marks = Mark.objects.all().filter(student_id=user.id, course_id=course.id)
+    marks = Mark.objects.all().filter(student_id=user1.id, course_id=course.id)
     tasks = Task.objects.all().filter(module__course_id=id)
     mar = [i.mark for i in marks]
     if marks.count() != tasks.count():
@@ -619,15 +649,16 @@ def student_progress_list(request, id, s_id):
     else:
         res = sum(r) / len(r)
 
-    student_answers = StudentAnswer.objects.all().filter(student_id=user.id, task__module__course_id=course.id)
+    student_answers = StudentAnswer.objects.all().filter(student_id=user1.id, task__module__course_id=course.id)
 
     lessons = Lesson.objects.all().filter(module__course_id=course.id)
-    prog = РassingРrogress.objects.all().filter(course_id=id, student_id=user.id)
+    prog = РassingРrogress.objects.all().filter(course_id=id, student_id=user1.id)
     progress = zip(prog, lessons)
     return render(request, "module/student_progress/student_progress_list.html",
                   {'course': course,
                    'list_items': z,
                    'user': user,
+                   'user1': user1,
                    'student_answers': student_answers,
                    'tasks': tasks,
                    'progress': progress,

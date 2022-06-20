@@ -66,12 +66,12 @@
 
                     <div class="d-flex w-100 p-2 justify-content-between">
                           <div>
-                                <h6 class="mb-0">{{ lesson.title }}</h6>
+                              <h6 class="mb-0"><strong>{{ lesson.title }}</strong></h6>
                                 <p class="mb-0 opacity-75">{{ lesson.create }}</p>
                               {% if lesson.is_published %}
-                                  <p>Опуликован</p>
+                                  <p class="text-success">Опуликован</p>
                               {% else %}
-                                  <p>Черновик</p>
+                                  <p class="text-danger">Черновик</p>
                               {% endif %}
 
                           </div>
@@ -140,7 +140,7 @@
 
     {#  FORM ADD MODULE #}
     <div class="form-popup" id="myForm">
-        <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .5;" tabindex="-1" role="dialog" id="modalSheet">
+        <div class="modal modal-sheet position-fixed d-block bg-body py-5" style="--bs-bg-opacity: .8;" tabindex="-1" role="dialog" id="modalSheet">
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-6 shadow">
                     <div class="modal-header border-bottom-0">

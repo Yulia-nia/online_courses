@@ -6,8 +6,8 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-    <div>
-        <div class="table-responsive">
+    <div class="container py-5">
+        <div class="table-responsive bd-example">
 {#        table-sm#}
             <table class="table table-bordered table-hover" >
                 <tbody>
@@ -17,7 +17,7 @@
                         </td>
                         {% for item in modules %}
                             {% for i in item.task_set.all %}
-                                <th>{{ i.title }} </th>
+                                <td>{{ i.title }} </td>
                             {% endfor %}
                         {% endfor %}
                         <td>
@@ -31,11 +31,11 @@
                         </td>
                         {% for m in student.mark_set.all %}
                             {% if m.mark < sr_mark %}
-                                <td class="bg-danger">
+                                <td class="bg-danger text-center">
                                     {{ m.mark }}
                                 </td>
                             {% else %}
-                                <td class="bg-success">
+                                <td class="bg-success text-center">
                                     {{ m.mark }}
                                 </td>
                             {% endif %}
@@ -43,8 +43,8 @@
                         {% if student.mark_set.all.count != count_all %}
                             <td colspan="{{ count_all|sub:student.mark_set.all.count }}"> </td>
                         {% endif %}
-                        <td>
-                            {{ student.ratingscore.mark }}
+                        <td class="text-center"> <strong>
+                            {{ student.ratingscore.mark }}</strong>
                         </td>
                     </tr>
                     {% endfor %}

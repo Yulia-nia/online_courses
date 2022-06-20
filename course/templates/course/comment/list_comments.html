@@ -280,7 +280,7 @@ body{margin-top:20px;}
                 <form method="post" class="mt-4" id="formReview">
                 	<h3 class="pull-left">Новый комментарий</h3>
                         {% csrf_token %}
-                	<button type="submit" class="mt-3 py-3btn btn-outline-primary pull-right">Отправить</button>
+                	<button type="submit" class="mt-3 py-3btn btn-outline-primary pull-right btn btn-outline-primary">Отправить</button>
                     <fieldset>
                         <div class="row">
                             <div class="col-sm-3 col-lg-2 hidden-xs">
@@ -329,13 +329,13 @@ body{margin-top:20px;}
                             <ul class="list-unstyled list-inline media-detail pull-right">
 
                                 <li class=""><a href="#formReview"
-                                                             onclick="addReview('{{ comment.author.username }}', '{{ com.id }}')"><p>Ответить</p></a></li>
+                                                             onclick="addReview('{{ comment.author.username }}', '{{ comment.id }}')"><p>Ответить</p></a></li>
                             </ul>
                         </div>
                     </div>
                     </section>
 
-                    <section class="px-2">
+                    <section class="px-3">
                         {% for comment in comment.comment_set.all %}
                             <section class="p-3">
                             <div class="media">
@@ -357,7 +357,7 @@ body{margin-top:20px;}
                                     <ul class="list-unstyled list-inline media-detail pull-right">
 
                                         <li class=""><a href="#formReview"
-                                                                     onclick="addReview('{{ comment.author.username }}', '{{ com.id }}')"><p>Ответить</p></a></li>
+                                                                     onclick="addReview('{{ comment.author.username }}', '{{ comment.id }}')"><p>Ответить</p></a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -384,7 +384,7 @@ body{margin-top:20px;}
                                     <ul class="list-unstyled list-inline media-detail pull-right">
 
                                         <li class=""><a href="#formReview"
-                                                                     onclick="addReview('{{ comment.author.username }}', '{{ com.id }}')"><p>Ответить</p></a></li>
+                                                                     onclick="addReview('{{ comment.author.username }}', '{{ comment.id }}')"><p>Ответить</p></a></li>
                                     </ul>
                                 </div>
                             </div>

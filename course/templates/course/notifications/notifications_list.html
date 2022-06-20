@@ -60,6 +60,98 @@
                 <div class="container py-5 text-center">
                 <h5>Уведомления, которые были отправлены.</h5>
 
+
+
+                <div class="accordion" id="accordionExample">
+
+                    {% for day, x in z %}
+                         {% if x %}
+
+                          <div class="accordion-item">
+                            <h4 class="accordion-header" id="headingOne">
+                              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                      data-bs-target="#collapseOne{{ day }}" aria-expanded="true" aria-controls="collapseOne">
+                                Дата: {{ day }}
+                              </button>
+                            </h4>
+
+
+                            <div id="collapseOne{{ day }}" class="accordion-collapse collapse" aria-labelledby="headingOne"
+                                 data-bs-parent="#accordionExample">
+                              <div class="accordion-body">
+                                  <div class="container">
+
+                                      <div class="row">
+                                        {% for y in x %}
+                                            <div class="col-lg-4 p-3">
+                                                <div class="card card-margin">
+                                                    <div class="card-body pt-0">
+                                                        <div class="widget-49">
+                                                            <div class="widget-49-title-wrapper">
+                                                                <div class="widget-49-meeting-info">
+                                                                    <span class="widget-49-meeting-time">{{ y.time_create }}</span>
+                                                                </div>
+                                                            </div>
+                                                            <hr>
+                                                            <div class="md-0">
+
+                                                            <p>Текст уведомления: {{ y.content }}.</p>
+                                                            <p>Студент: {{ y.student.username }} ({{ y.student.email }}).</p>
+                                                            </div>
+            {#                                                <ol class="widget-49-meeting-points">#}
+            {#                                                    <li class="widget-49-meeting-item"><span>Текст уведомления: {{ y.content }}</span></li>#}
+            {#                                                    <li class="widget-49-meeting-item"><span>Студент: {{ y.student.username }}</span></li>#}
+            {#                                                </ol>#}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                      </div>
+                                  </div>
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                {% endfor %}
+            </div>
+
+
+{#                  <div class="accordion-item">#}
+{#                    <h4 class="accordion-header" id="headingTwo">#}
+{#                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">#}
+{#                        Accordion Item #2#}
+{#                      </button>#}
+{#                    </h4>#}
+{#                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">#}
+{#                      <div class="accordion-body">#}
+{#                        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.#}
+{#                      </div>#}
+{#                    </div>#}
+{#                  </div>#}
+
+
+{#                  <div class="accordion-item">#}
+{#                    <h4 class="accordion-header" id="headingThree">#}
+{#                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">#}
+{#                        Accordion Item #3#}
+{#                      </button>#}
+{#                    </h4>#}
+{#                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">#}
+{#                      <div class="accordion-body">#}
+{#                        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.#}
+{#                      </div>#}
+{#                    </div>#}
+{#                  </div>#}
+                </div>
+
+
+
+
+
+
+
                 {% for day, x in z %}
                     {% if x %}
                         <p class="text-success py-3">Дата {{ day }}</p>
@@ -102,6 +194,8 @@
                 <p>тут пока нет уведомлений</p>
                 </div>
             {% endif %}
+
+
         {% else %}
 
              <div class="container py-5 text-center">
@@ -164,7 +258,7 @@
               labels: {{ labels |safe }},
               datasets: [{
                 label: 'Количество отправленных уведомлений',
-                backgroundColor: "#66e3d0",
+                backgroundColor: "#faf311",
                 data: {{ data | safe }}
               }]
             },
@@ -175,7 +269,7 @@
               },
               title: {
                 display: true,
-                text: 'Статистика отправленных уведомлений'
+                text: 'Статистика отправленных уведомлений',
               }
             }
           });

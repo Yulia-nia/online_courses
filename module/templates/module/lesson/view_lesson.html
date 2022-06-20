@@ -89,9 +89,13 @@
                   <p class="col-md-8 fs-4">{{ lesson.description | safe}}</p>
                   {% if user.id != course.author_id %}
                       {% if progress_is.is_pass %}
-                          <a class="btn btn-primary tox-tbtn--md bg-success" type="button" id="button_progress" href="{% url 'module:progress' lesson.id %}">Пройдено</a>
+                          <div class="">
+                              <a class="btn btn-primary tox-tbtn--md bg-success" type="button" id="button_progress" href="{% url 'module:progress' lesson.id %}">Пройдено</a>
+                          </div>
                       {% else %}
-                          <a class="btn btn-primary tox-tbtn--md" type="button" id="button_progress" href="{% url 'module:progress' lesson.id %}">Отметить как пройденное</a>
+                          <div class="">
+                            <a class="btn btn-primary tox-tbtn--md" type="button" id="button_progress" href="{% url 'module:progress' lesson.id %}">Отметить как пройденное</a>
+                          </div>
                       {% endif %}
                   {% endif %}
 {#                <button class="btn btn-primary tox-tbtn--md" type="button">Example button</button>#}
@@ -99,106 +103,283 @@
         </div>
 
 
-        <div class="p-5 bg-white rounded shadow mb-5">
-    <!-- Lined tabs-->
-            <ul id="myTab2" role="tablist" class="nav nav-tabs nav-pills with-arrow lined flex-column flex-sm-row text-center">
-                {% for block in blocks %}
-                    {% if block.id == blocks.all.first.id %}
-                        <li class="nav-item flex-sm-fill">
-                            <button class="nav-link active" id="nav{{ block.id }}tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"
-                                            aria-selected="true">{{ block.title }}</button>
-                        </li>
-                    {% else %}
-                        <li class="nav-item flex-sm-fill">
 
-                        <button class="nav-link" id="nav{{ block.id }}tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"
-                                            aria-selected="false">{{ block.title }}</button>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-
-            <div id="myTab2Content" class="tab-content">
-                {% for block in blocks %}
-                    {% if block.id == blocks.all.first.id %}
-
-                        <div class="container py-3 px-3 tab-pane fade show active" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
-                             <h5>{{ block.title }}</h5>
-                            <p class="leade font-italic mb-0">{{ block.text_content | safe }}</p>
-
-                             <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>
-                            {% for url in block.urllink_set.all %}
-                                    <div class="row">
-                                        <div class="p-2 col-md-6">
-                                            <div class="btn-group mb-2 mb-md-0 btn-block">
-                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>
-                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>
-
-{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
-                                            </div>
-                                        </div>
-                                    </div>
-                            {% endfor %}
-
-                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>
-                                {% for file in block.file_set.all %}
-                                    <div class="row">
-                                        <div class="p-2 col-md-6">
-                                            <div class="btn-group mb-2 mb-md-0 btn-block">
-{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
-                                                <button class="btn btn-outline-primary">{{ file.title }}</button>
-                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                          </div>
-                    {% else %}
-                        <div class="container py-3 px-3 tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
-
-                            <h5>{{ block.title }}</h5>
-                            <p class="leade font-italic mb-0">{{ block.text_content | safe }}</p>
-
-                             <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>
-                            {% for url in block.urllink_set.all %}
-                                    <div class="row">
-                                        <div class="p-2 col-md-6">
-                                            <div class="btn-group mb-2 mb-md-0 btn-block">
-                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>
-                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>
-
-{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
-                                            </div>
-                                        </div>
-                                    </div>
-                            {% endfor %}
-
-                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>
-                                {% for file in block.file_set.all %}
-                                    <div class="row">
-                                        <div class="p-2 col-md-6">
-                                            <div class="btn-group mb-2 mb-md-0 btn-block">
-{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
-                                                <button class="btn btn-outline-primary">{{ file.title }}</button>
-                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endfor %}
-                          </div>
-                    {% endif %}
-                {% endfor %}
-            </div>
-            <!-- End lined tabs -->
+        <div class="bd-example">
+        <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+          <div class="carousel-indicators">
+              {% for num in count_block_arr %}
+                  <button type="button" data-bs-target="#carouselExampleCaptions"
+                          data-bs-slide-to="{{ num }}"
+                          class="active" aria-current="true"
+                          aria-label="Slide {{ num }}"></button>
+              {% endfor %}
           </div>
+          <div class="carousel-inner">
+
+              {% for block in blocks %}
+
+                  {% if block.id == blocks.all.first.id %}
+
+                  <div class="carousel-item active">
+
+
+                      <svg class="w-100 bg-warning" width="800"
+                           height="400" xmlns="http://www.w3.org/2000/svg" role="img"
+                            preserveAspectRatio="xMidYMid slice"
+                           focusable="false">
+                          <rect width="100%" height="100%" fill="#E1E5FA"/></svg>
+
+
+                        <div class="carousel-caption d-none d-md-block">
+                             <div class="text-dark">
+                               <div class="card h-100">
+                                    <div class="card-body">
+
+                                    <h5 >{{ block.title }}</h5>
+                                     <p class="text-start">{{ block.text_content | safe }}</p>
+                                </div>
+                               </div>
+
+
+
+                            <div class="row py-2">
+                                <div class="col-6">
+                                     <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>
+                            {% for url in block.urllink_set.all %}
+                                    <div class="row">
+                                        <div class="p-2 col-md-12">
+                                            <div class="btn-group mb-2 mb-md-0 btn-block">
+                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>
+                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>
+
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                                </div>
+
+                                <div class="col-6">
+
+                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>
+                                {% for file in block.file_set.all %}
+                                    <div class="row">
+                                        <div class="p-2 col-md-12">
+                                            <div class="btn-group mb-2 mb-md-0 btn-block">
+{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
+                                                <button class="btn btn-outline-primary">{{ file.title }}</button>
+                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+
+                            </div>
+
+
+
+                             </div>
+                      </div>
+                  </div>
+
+                  {% else %}
+
+                      <div class="carousel-item">
+                        <svg class="w-100 bg-warning" width="800"
+                           height="400" xmlns="http://www.w3.org/2000/svg" role="img"
+                            preserveAspectRatio="xMidYMid slice"
+                           focusable="false">
+                          <rect width="100%" height="100%" fill="#E1E5FA"/></svg>
+
+
+                        <div class="carousel-caption d-none d-md-block">
+                             <div class="text-dark">
+                               <div class="card h-100">
+                                    <div class="card-body">
+
+                                    <h5 >{{ block.title }}</h5>
+                                     <p class="text-start">{{ block.text_content | safe }}</p>
+                                </div>
+                               </div>
+
+
+
+                            <div class="row py-2">
+                                <div class="col-6">
+                                     <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>
+                            {% for url in block.urllink_set.all %}
+                                    <div class="row">
+                                        <div class="p-2 col-md-12">
+                                            <div class="btn-group mb-2 mb-md-0 btn-block">
+                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>
+                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>
+
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+                                            </div>
+                                        </div>
+                                    </div>
+                            {% endfor %}
+                                </div>
+
+                                <div class="col-6">
+
+                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>
+                                {% for file in block.file_set.all %}
+                                    <div class="row">
+                                        <div class="p-2 col-md-12">
+                                            <div class="btn-group mb-2 mb-md-0 btn-block">
+{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
+                                                <button class="btn btn-outline-primary">{{ file.title }}</button>
+                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                                </div>
+
+                            </div>
+
+
+
+                             </div>
+                      </div>
+                      </div>
+
+                  {% endif %}
+              {% endfor %}
+          </div>
+
+
+
+
+
+
+
+          </div>
+          <button class="carousel-control-prev" style="width: 120px" type="button" data-bs-target="#carouselExampleCaptions"  data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions"  data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
 
+      </div>
 
 
 
 
+
+</main>
+
+
+
+{##}
+{##}
+{##}
+{#        <div class="p-5 bg-white rounded shadow mb-5">#}
+{#    <!-- Lined tabs-->#}
+{#            <ul id="myTab2" role="tablist" class="nav nav-tabs nav-pills with-arrow lined flex-column flex-sm-row text-center">#}
+{#                {% for block in blocks %}#}
+{#                    {% if block.id == blocks.all.first.id %}#}
+{#                        <li class="nav-item flex-sm-fill">#}
+{#                            <button class="nav-link active" id="nav{{ block.id }}tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"#}
+{#                                            aria-selected="true">{{ block.title }}</button>#}
+{#                        </li>#}
+{#                    {% else %}#}
+{#                        <li class="nav-item flex-sm-fill">#}
+{##}
+{#                        <button class="nav-link" id="nav{{ block.id }}tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"#}
+{#                                            aria-selected="false">{{ block.title }}</button>#}
+{#                        </li>#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
+{#            </ul>#}
+{##}
+{#            <div id="myTab2Content" class="tab-content">#}
+{#                {% for block in blocks %}#}
+{#                    {% if block.id == blocks.all.first.id %}#}
+{##}
+{#                        <div class="container py-3 px-3 tab-pane fade show active" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">#}
+{#                             <h5>{{ block.title }}</h5>#}
+{#                            <p class="leade font-italic mb-0">{{ block.text_content | safe }}</p>#}
+{##}
+{#                             <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>#}
+{#                            {% for url in block.urllink_set.all %}#}
+{#                                    <div class="row">#}
+{#                                        <div class="p-2 col-md-6">#}
+{#                                            <div class="btn-group mb-2 mb-md-0 btn-block">#}
+{#                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>#}
+{#                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>#}
+{##}
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                            {% endfor %}#}
+{##}
+{#                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>#}
+{#                                {% for file in block.file_set.all %}#}
+{#                                    <div class="row">#}
+{#                                        <div class="p-2 col-md-6">#}
+{#                                            <div class="btn-group mb-2 mb-md-0 btn-block">#}
+{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
+{#                                                <button class="btn btn-outline-primary">{{ file.title }}</button>#}
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                          </div>#}
+{#                    {% else %}#}
+{#                        <div class="container py-3 px-3 tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">#}
+{##}
+{#                            <h5>{{ block.title }}</h5>#}
+{#                            <p class="leade font-italic mb-0">{{ block.text_content | safe }}</p>#}
+{##}
+{#                             <p class="leade font-italic mb-0">Полезные ссылки: <br> </p>#}
+{#                            {% for url in block.urllink_set.all %}#}
+{#                                    <div class="row">#}
+{#                                        <div class="p-2 col-md-6">#}
+{#                                            <div class="btn-group mb-2 mb-md-0 btn-block">#}
+{#                                                <a href="{{ url.url }}" class="btn btn-primary">Открыть</a>#}
+{#                                                <button type="button" class="btn btn-outline-primary">{{ url.title }}</button>#}
+{##}
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                            {% endfor %}#}
+{##}
+{#                                <p class="leade font-italic mb-0">Дополнительные файлы: <br> </p>#}
+{#                                {% for file in block.file_set.all %}#}
+{#                                    <div class="row">#}
+{#                                        <div class="p-2 col-md-6">#}
+{#                                            <div class="btn-group mb-2 mb-md-0 btn-block">#}
+{#                                                <button type="button" class="btn btn-primary">Button 1</button>#}
+{#                                                <button class="btn btn-outline-primary">{{ file.title }}</button>#}
+{#                                                <a href="{{ file.file.url }}" type="button" class="btn btn-primary">Просмотреть</a>#}
+{#                                            </div>#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                {% endfor %}#}
+{#                          </div>#}
+{#                    {% endif %}#}
+{#                {% endfor %}#}
+{#            </div>#}
+{#            <!-- End lined tabs -->#}
+{#          </div>#}
+{#        </div>#}
+{##}
+{##}
+{##}
+{##}
+{##}
 {#    {% if user.id != course.author_id %}#}
 {#        {% if progress_is.is_pass %}#}
 {#            <a id="button_progress" href="{% url 'module:progress' lesson.id %}">Пройдено</a>#}
@@ -206,6 +387,6 @@
 {#            <a id="button_progress" href="{% url 'module:progress' lesson.id %}">Отметить как пройденное</a>#}
 {#        {% endif %}#}
 {#    {% endif %}#}
-
-    </main>
+{##}
+{#    </main>#}
 {% endblock %}

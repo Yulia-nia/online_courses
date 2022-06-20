@@ -24,16 +24,247 @@
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
 
-                    <p>{{ course.title }}</p>
-                    <p>{{ course.description }}</p>
-                    <p>{{ setting.about_course | safe }}</p>
-                    <img src="{{ setting.image.url }}">
+                     <div class="container">
+                        <div class="main-body">
+
+                             <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Название курса: {{ course.title }}</h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.learning_format }}</p>
+
+                                        <p>{{ course.description }}</p>
+                                    </div>
+                                </div>
+                             </div>
+
+                            <div class="row px-3">
+                                <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Требуемый уровень подготовки </h6>
+                                            <p class="text-sm text-secondary">Для продолжающих</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Язык курса </h6>
+                                            <p class="text-sm text-secondary">{{ course.settings.language }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Предмет курса </h6>
+                                            <p class="text-sm text-secondary">{{ course.settings.subject }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            О курсе </h6>
+                                        <p class="text-secondary">{{ course.settings.about_course | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
+
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Необходимая подготовка </h6>
+                                        <p class="">{{ course.settings.necessary_training | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
+
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Как проходит обучение </h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.how_training | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
+
+
+                             <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Почему имеено мы </h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.what_you_get | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                     </div>
+
 
                 </div>
+
+
                 <div class="tab-pane fade" id="nav-progress" role="tabpanel" aria-labelledby="nav-progress-tab">
-                    <p>{{ instructor.email }}</p>
-                    <p>{{ instructor.username }}</p>
-                    <p>{{ instructor.bio | safe }}</p>
+
+
+                    <div class="container">
+    <div class="main-body">
+
+          <div class="row gutters-sm">
+            <div class="col-md-4 mb-3">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex flex-column align-items-center text-center">
+                      {% if course.author.image_pic.url %}
+                          <img src="{{ course.author.image_pic.url }}"
+                         alt="Admin" class="rounded-circle" width="150" height="150">
+                      {% else %}
+                      {% endif %}
+
+                    <div class="mt-3">
+                      <h4>{{ course.author.username }}</h4>
+{#                      <p class="text-secondary mb-1">Full Stack Developer</p>#}
+{#                      <p class="text-muted font-size-sm">Bay Area, San Francisco, CA</p>#}
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+{#              <div class="card mt-3">#}
+{#                <div class="card-body text-dark">#}
+{#                      <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">#}
+{#                          </i>Ваши курсы</h6>#}
+{#                            {% for item in courses_instructor %}#}
+{#                                {{ item.title }}#}
+{#                            {% endfor %}#}
+{#                    </div>#}
+{#              </div>#}
+            </div>
+            <div class="col-md-8 py-3">
+                  <div class="row">
+                    <div class="col">
+                      <h6 class="mb-0">Имя пользователя</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ course.author.username }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col">
+                      <h6 class="mb-0">Email</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      {{ course.author.email }}
+                    </div>
+                  </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col">
+                      <h6 class="mb-0">Телефон</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                      + 375 (29) 111-22-33
+                    </div>
+                  </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Адрес</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          г. Минск
+                        </div>
+                      </div>
+                  <hr>
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h6 class="mb-0">GitHub</h6>
+                    </div>
+                    <div class="col-sm-9 text-secondary">
+                        <a class="text-secondary" href="https://github.com/Yulia-nia"> Yulia-nia</a>
+                    </div>
+                  </div>
+
+                <div class="row gutters-sm text-dark py-5">
+                <div class="col-sm-12 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                          О себе</h6>
+                            <p> Создаю профессиональные онлайн курсы с 2016 года.
+                                Профессионально обучаю работе с графическими редакторами Adobe.
+                                Преподаю веб дизайн и верстку.</p>
+                    </div>
+                  </div>
+                </div>
+
+                    <div class="col-sm-12 mb-3">
+                  <div class="card h-100">
+                    <div class="card-body">
+                      <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                          Созданные курсы</h6>
+                            {% for item in courses_instructor %}
+                                <div class="py-2">
+                                <a href="{% url 'info' item.id %}" class="text-secondary"> {{ item.title }} </a>
+
+                                </div>
+                            {% endfor %}
+                    </div>
+                  </div>
+                </div>
+                </div>
+
+
+
+
+{#              <div class="row gutters-sm text-dark py-5">#}
+{#                <div class="col-sm-6 mb-3">#}
+{#                  <div class="card h-100">#}
+{#                    <div class="card-body">#}
+{#                      <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>#}
+{#                          Избранное</h6>#}
+{#                        {% for item in courses %}#}
+{#                          <p>{{ item.title }}</p>#}
+{#                        {% endfor %}#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
+{#                <div class="col-sm-6 mb-3">#}
+{#                  <div class="card h-100">#}
+{#                    <div class="card-body">#}
+{#                      <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2">#}
+{#                          </i>Проходите</h6>#}
+{#                            {% for i in c_s %}#}
+{#                                {{ i.title }}#}
+{#                            {% endfor %}#}
+{#                    </div>#}
+{#                  </div>#}
+{#                </div>#}
+{#              </div>#}
+            </div>
+          </div>
+
+        </div>
+    </div>
+
+{##}
+{#                    <p>{{ instructor.email }}</p>#}
+{#                    <p>{{ instructor.username }}</p>#}
+{#                    <p>{{ instructor.bio | safe }}</p>#}
                 </div>
             </div>
         </div>

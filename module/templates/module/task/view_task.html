@@ -1,4 +1,10 @@
-{% extends "C:\Users\User\PycharmProjects\online_courses\course\templates\course\base.html" %}
+{% extends "module/content/base_nav.html" %}
+{% load static %}
+
+{% load crispy_forms_tags %}
+{% load django_bootstrap5 %}
+
+<link rel="stylesheet" href="{% static 'css/style_index.css'%}" type="text/css">
 {% load static %}
 {% load django_bootstrap5 %}
 {% bootstrap_css %}

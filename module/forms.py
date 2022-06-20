@@ -71,20 +71,20 @@ class MarkForm(forms.Form):
 
 
 class BlockForm(forms.Form):
-    title = forms.CharField(required=False, max_length=200, min_length=4)
+    title = forms.CharField(required=False, max_length=200, min_length=4, label='',)
     text_content = forms.CharField(required=False, label='',
                               widget=SummernoteWidget(attrs={'rows': 4,
-                                   'summernote': {'width': '50%'}}))
+                                   'summernote': {'width': '100%'}}))
 
 
 class FileForm(forms.Form):
-    title = forms.CharField(required=False, max_length=250, min_length=4)
+    title = forms.CharField(required=False, max_length=250, min_length=4, label='')
     file = forms.FileField(required=False, label='')
 
 
 class UrlLinkForm(forms.Form):
-    title_u = forms.CharField(required=False, max_length=250, min_length=4)
-    url = forms.URLField(widget=forms.URLInput(),required=False)
+    title_u = forms.CharField(required=False, max_length=250, min_length=4, label='')
+    url = forms.URLField(widget=forms.URLInput(),required=False, label='')
 
 
 class BaseLinkFormSet(BaseFormSet):

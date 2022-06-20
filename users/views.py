@@ -11,7 +11,7 @@ from users.models import User, BookmarkCourse
 
 
 def dashboard(request):
-    return render(request, "users/dashboard.html")
+    return render(request, "course/course_catalog.html")
 
 
 def profile(request):
@@ -64,7 +64,7 @@ def register_instructor(request):
             user = form.save()
             user.groups.add(Group.objects.get(name='Преподаватель'))
             login(request, user)
-        return redirect(reverse("dashboard"))
+        return redirect(reverse("index"))
 
 
 def register_student(request):
@@ -79,7 +79,7 @@ def register_student(request):
             user = form.save()
             user.groups.add(Group.objects.get(name='Ученик'))
             login(request, user)
-        return redirect(reverse("dashboard"))
+        return redirect(reverse("index"))
 
 
 def edit_data(request):

@@ -48,7 +48,7 @@ class Block(models.Model):
     text_content = models.TextField(null=True, blank=True)
     title = models.CharField(max_length=200, null=True)
     update = models.DateTimeField(auto_now=True)
-    level = models.IntegerField(null=False)
+    # level = models.IntegerField(null=False)
     create = models.DateTimeField(auto_now_add=True)
 
     class Meta:

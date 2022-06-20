@@ -106,8 +106,11 @@ def info_course(request, id):
     course = Course.objects.get(id=id)
     setting = Settings.objects.get_or_create(course_id=id)
     instructor = course.author
+    courses_instructor = Course.objects.all().filter(author_id=instructor.id)
+
     return render(request, "course/pass_course/info_course.html", {"course": course,
                                                                    "instructor": instructor,
+                                                                   'courses_instructor': courses_instructor,
                                                                    "setting": setting })
 
 
@@ -747,7 +750,7 @@ class CommentView(View):
             course = get_object_or_404(Course, id=id)
             if form.is_valid():
                 form = form.save(commit=False)
-                if request.POST.get("parent", None):
+                if request.POST.get("parent"):
                     form.parent_id = int(request.POST.get("parent"))
                 form.course = course
                 form.author = auth.get_user(request)

@@ -11,12 +11,19 @@
     <section class="container py-3">
         <div class="bd-example">
             <nav>
-                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-                    <a href="{% url 'module:edit_lesson_settings' id=course.id l_id=lesson.id %}" >Урок</a>
-                    <a href="{% url 'module:list_blocks' l_id=lesson.id id=course.id %}" >Блок</a>
+{#                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">#}
+                    <div class="row">
+                        <div class="col-3">
+                            <a class="btn btn-outline-primary w-100" href="{% url 'module:edit_lesson_settings' id=course.id l_id=lesson.id %}" >Урок</a>
+                        </div>
+                        <div class="col-3">
+                            <a class="btn btn-outline-primary w-100" href="{% url 'module:list_blocks' l_id=lesson.id id=course.id %}" >Блок</a>
+                        </div>
+
+{#                    </div>#}
               </div>
             </nav>
-                <div class="tab-content" id="nav-tabContent">
+                <div class="tab-content py-3" id="nav-tabContent">
 
                     {% block lesson_content %}
 

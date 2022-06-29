@@ -7,55 +7,187 @@
 
 
 {% block content1 %}
-<div class="container">
-    <div class="py-3 text-center">
 
-        <p>{{ course.title }}</p>
+      <section class="container py-">
+        <div class="bd-example">
 
-        <p>Инстуктор: {{ course.author.username }}</p>
+            <div class="tab-content" id="nav-tabContent">
 
-        <p>О курсе: {{ course.settings.about_course | safe }}</p>
+               <div class="row">
 
-        {% for module in course.module_set.values %}
-            <p>{{ module.title }}</p>
-        {%endfor %}
+                   <div class="col-9 py-3">
+
+                        <div class="tab-pane fade show active" id="nav-mark" role="tabpanel" aria-labelledby="nav-mark-tab">
+
+                     <div class="container">
+                        <div class="main-body">
+
+                             <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Название курса: {{ course.title }}</h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.learning_format }}</p>
+
+                                        <p>{{ course.description }}</p>
+                                    </div>
+                                </div>
+                             </div>
+
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Преподаватель курса: {{ course.author.username }}</h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.learning_format }}</p>
+
+                                        <p>{{ course.description }}</p>
+                                    </div>
+                                </div>
+                             </div>
 
 
-{#        <p></p>#}
 
-{#        <div data-id="{{ like_obj.id }}" data-type="article" data-action="bookmark" title="Избранное">#}
-{#            <span class="glyphicon glyphicon-star"></span>#}
-{#            <span data-count="bookmark">{{ like_obj.get_bookmark_count }}</span>#}
-{#        </div>#}
+                            <div class="row px-3">
+                                <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Требуемый уровень подготовки </h6>
+                                            <p class="text-sm text-secondary">Для продолжающих</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Язык курса </h6>
+                                            <p class="text-sm text-secondary">{{ course.settings.language }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-sm-4 mb-3">
+                                    <div class="card h-100">
+                                        <div class="card-body">
+                                            <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                                Предмет курса </h6>
+                                            <p class="text-sm text-secondary">{{ course.settings.subject }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-{#        <a href="{% url 'dialog' course.id %}">Чат с инструктором</a>#}
 
-        <hr>
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            О курсе </h6>
+                                        <p class="text-secondary">{{ course.settings.about_course | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
 
-        {% if not course.settings.is_active %}
-            {% if not created %}
-                <a class="button" href="{% url 'pass_course' course.id %}">Начать обучение</a>
-            {% else %}
-                <a class="button" href="{% url 'info' course.id %}">Продолжить обучение</a>
-            {% endif %}
-        {% else %}
-            <p>Курс начинается {{ course.settings.start_date }}</p>
-            <p>Поступить на курс возможно до {{ course.coursenrollment.time_end }}</p>
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Необходимая подготовка </h6>
+                                        <p class="">{{ course.settings.necessary_training | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
 
-            {% if is_enrollements %}
-                {% if is_student_in_enrollement %}
-                    <p>Вы записаны на курс</p>
-                    <a href="{% url 'delete_student_in_enrollment' course.id %}" class="btn btn-primary">Отменить запись</a>
-                    {% else %}
-                        <a href="{% url 'add_student_in_enrollment' course.id %}" class=" btn btn-outline-primary">Поступить на курс</a>
-                {% endif %}
-            {% else %}
-                <a href="#">Запись на курс окночена</a>
-            {% endif %}
-        {% endif %}
+                            <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Как проходит обучение </h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.how_training | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
 
-    </div>
-</div>
+
+                             <div class="col-sm-12 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="d-flex align-items-center mb-3"><i class="material-icons text-info mr-2"></i>
+                                            Почему имеено мы </h6>
+                                        <p class="text-sm text-secondary">{{ course.settings.what_you_get | safe }}</p>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                     </div>
+
+
+                </div>
+
+                   </div>
+
+                   <div class="col-3">
+
+
+                        <div class="text-center py-3">
+
+                            {% if course.settings.image %}
+                                    <img src="{{ course.settings.image.url }}" style="height: 300px; width: 300px;" class="img img-responsive" alt="" >
+                                {% else %}
+                                    <img src="{% static 'img/blog_1.jpg' %}" style="height: 150px; width: 150px;" class="img img-responsive" alt="">
+                                {% endif %}
+                        </div>
+
+                        <div class="py-3">
+                            <a class="btn btn-outline-warning w-100" href="{% url 'pass_course' course.id %}">Добавить в избранное</a>
+                        </div>
+
+
+                        {% if not course.settings.is_active %}
+                            {% if not created %}
+                                <a class="btn btn-outline-primary w-100" href="{% url 'pass_course' course.id %}">Начать обучение</a>
+                            {% else %}
+                                <a class="btn btn-outline-primary w-100" href="{% url 'info' course.id %}">Продолжить обучение</a>
+                            {% endif %}
+                        {% endif %}
+                            <p>Курс начинается {{ course.settings.start_date }}</p>
+                            <p>Поступить на курс возможно до {{ course.coursenrollment.time_end }}</p>
+
+                            {% if is_enrollements %}
+                                {% if is_student_in_enrollement %}
+                                    <p>Вы записаны на курс</p>
+                                    <a href="{% url 'delete_student_in_enrollment' course.id %}" class="btn btn-outline-primary w-100">Отменить запись</a>
+
+                                    <div class="py-2">
+                                        <a class="btn btn-primary w-100" href="{% url 'info' course.id %}">Продолжить обучение</a>
+                                    </div>
+                                    {% else %}
+                                        <a href="{% url 'add_student_in_enrollment' course.id %}" class=" btn btn-outline-primary w-100">Поступить на курс</a>
+                                {% endif %}
+                            {% else %}
+                                <a href="#">Запись на курс окночена</a>
+                            {% endif %}
+
+
+
+                   </div>
+
+               </div>
+
+
+
+
+
+            </div>
+        </div>
+
+    </section>
+
+
+
+
+
 
 {% endblock %}
 

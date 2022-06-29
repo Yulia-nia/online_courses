@@ -11,22 +11,72 @@
 
 <link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
 {% block content %}
-    {{ task.title }}
-     {{ task.description }}
-     {{ task.time_create }}
-     {{ task.time_deadline }}
-    {{ task.file }}
+
+     <section class="container py-3">
+
+
+    <div class="p-2">
+        <h4>Информация по заданию</h4>
+        <p><strong>Название задания:</strong> {{ task.title }}</p>
+        <p><strong>Описание:</strong> {{ task.description }}</p>
+        <p><strong>Дата создания:</strong> {{ task.time_create }}</p>
+        <p><strong>Дата закрытия задания:</strong> {{ task.time_deadline }}</p>
+        <p><strong>Файл задания:</strong> <a href="{{ task.file.url }}" class="btn btn-outline-primary">Скачать файл</a> </p>
+    </div>
     <hr>
-    <p>ваш ответ был</p>
-     {% for ans in answer %}
-         {{ ans.time_create }}
-    {% endfor %}
+
+    <div class="p-2">
+        <h4>Информация по вашему ответу на задание</h4>
+        {% if answer.student_id == user.id %}
+        <p><strong>Описание: </strong>{{ answer.description }}</p>
+        <p><strong>Дата отправки: </strong>{{ answer.time_create }}</p>
+        <p><strong>Файл ответа: </strong> <a href="{{ answer.file.url }}" class="btn btn-outline-primary">Скачать файл</a> </p>
+
+             {% if mark > 1 %}
+                <p><strong>Оценка за ответ: </strong>{{ answer.mark.mark }}</p>
+                <p><strong>Дата выставления: </strong>{{ answer.mark.time_create }}</p>
+            {% else %}
+                 <p><strong>Оценка за ответ: </strong>Преподаватель еще не проверил ваш ответ</p>
+            {% endif %}
+
+
+        {% else %}
+            <p>Вы еще не отправляли ответ на задание "{{ task.title }}".</p>
+        {% endif %}
+
+
+    </div>
+
+{#        <hr>#}
+{#        {% if answer.mark %}#}
+{#            <p><strong>Оценка за ответ: </strong>{{ answer.mark.mark }}</p>#}
+{#            <p><strong>Дата выставления: </strong>{{ answer.mark.time_create }}</p>#}
+{#        {% endif %}#}
+    </section>
+
+{#    <p>ваш ответ был</p>#}
+{#     {% for ans in answer %}#}
+{#         {{ ans.time_create }}#}
+{#    {% endfor %}#}
     <hr>
-    <p>Отправка д.з.</p>
+    <p>Отправка ответа на задание</p>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form }}
+
+        {% bootstrap_form form layout='gorizontal' %}
+
+        <div class="row">
+            <div class="col-3">
+               {% bootstrap_button "Отправить на проверку" button_type="submit" button_class="btn-primary btn btn-lg w-100 mx-0" %}
+            </div>
+        </div>
+
 {#        {% bootstrap_field form.description  class="custom-control-input" %}#}
-        <button button_type="submit" class="btn btn-primary">Отправить на проверку</button>
+{#        <button button_type="submit" class="btn btn-primary">Отправить на проверку</button>#}
     </form>
+
+    <div>
+    <p></p>
+    <p><br></p>
+    </div>
 {% endblock %}

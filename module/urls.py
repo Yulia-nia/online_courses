@@ -14,7 +14,7 @@ urlpatterns = [
 
     # task
     path('<int:m_id>/create_task/', views.create_task, name='create_task'),
-    path('edit_task/<int:id>/', views.edit_task, name='edit_task'),
+    path('edit_task/<int:t_id>/', views.edit_task, name='edit_task'),
     path('delete_task/<int:id>/', views.delete_task, name='delete_task'),
 
     path('view_task/<int:t_id>/', views.TaskView.as_view(), name='view_task'),
@@ -28,7 +28,7 @@ urlpatterns = [
     #path('<int:m_id>/lesson_create/', views.create_lesson, name='create_lesson'),
 
     path('edit_lesson_all/<int:l_id>/', views.edit_lesson, name='edit_lesson'),
-    path('<int:l_id>/edit_lesson/', views.edit_lesson_settings, name='edit_lesson_settings'),
+    path('edit_lesson/<int:l_id>/', views.edit_lesson_settings, name='edit_lesson_settings'),
 
     path('<int:l_id>/list_blocks/', views.list_blocks, name='list_blocks'),
 

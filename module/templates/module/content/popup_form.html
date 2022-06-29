@@ -26,34 +26,26 @@
             <div class="modal-dialog" role="document">
                 <div class="modal-content rounded-6 shadow">
                     <div class="modal-body p-5">
-                        <h2 class="fw-bold mb-0">Что добавить в модуль {{ module.title }}</h2>
+                        <h2 class="fw-bold mb-0">Что добавить в модуль "{{ module.title }}"?</h2>
                         <ul class="d-grid gap-4 my-5 list-unstyled">
                             <li class="d-flex gap-4">
-                                <svg class="bi text-muted flex-shrink-0" width="48" height="48"></svg>
+
                                 <div>
-                                    <h5 class="mb-0">
+                                    <h5 class="">
                                         <a href="{% url 'module:create_lesson' id=course.id m_id=module.id %}">Урок</a>
                                     </h5>
-                                    Not into lists? Try the new grid view.
+                                    Урок для слушателей. В каждом уроке содержаться дополнительные блоки (шаги).
                                 </div>
                             </li>
                             <li class="d-flex gap-4">
-                                <svg class="bi text-warning flex-shrink-0" width="48" height="48"><use xlink:href="#bookmark-star"/></svg>
                                 <div>
-                                    <h5 class="mb-0">
-{#                                                                                {% url 'module:create_task' id=course.id m_id=module.id %}#}
+                                    <h5 class="">
                                         <a href="{% url 'module:create_task' id=course.id m_id=module.id %}"> Задание </a>
                                     </h5>
-                                    Save items you love for easy access later.
+                                    Задание для слушателей. Необходимо будет добавить файл с пояснениями.
                                 </div>
                             </li>
-                            <li class="d-flex gap-4">
-                                <svg class="bi text-primary flex-shrink-0" width="48" height="48"><use xlink:href="#film"/></svg>
-                                <div style="color: #0b0e1b">
-                                    <h5 class="mb-0">Тест</h5>
-                                    Share videos wherever you go.
-                                </div>
-                            </li>
+
                         </ul>
                         <a
 {#                                type="button"#}

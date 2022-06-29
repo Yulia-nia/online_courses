@@ -4,132 +4,113 @@
 {% load django_bootstrap5 %}
 
 {% block lesson_content %}
+<link rel="stylesheet" href="{% static 'css/list_oi.css'%}" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
-    <a href="{% url 'module:block_create' l_id=lesson.id id=course.id %}">Добавить блок</a>
+    <div class="row">
+        <div class="col-3">
+            <a href="{% url 'module:block_create' l_id=lesson.id id=course.id %}" class="btn btn-primary w-100">Добавить блок</a>
 
+        </div>
 
+    </div>
 
+     <section class="container py-3">
+     <div class="container py-5 text-center">
 
+         <div class="py-2 border-bottom">
 
-        <section class="container py-3">
-            <div class="bd-example">
-                <nav>
-                    <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">
-{#                        <div class="row">#}
-                            {% for block in blocks %}
-{#                                <div class="col-md-2">#}
-                                    {% if block.id == blocks.all.first.id %}
-                                        <button class="nav-link active" id="nav{{ block.id }}tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"
-                                            aria-selected="true">{{ block.title }}</button>
-                                    {% else %}
-                                        <button class="nav-link" id="nav{{ block.id }}tab" data-bs-toggle="tab"
-                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"
-                                            aria-selected="false">{{ block.title }}</button>
+                                               <div class="px-3 p-3 text-start">
+                                                   {% for block in blocks %}
 
-                                    {% endif %}
-{#                                </div>#}
-                            {% endfor %}
-{#                        </div>#}
-                    </div>
-                </nav>
-                <div class="tab-content" id="nav-tabContent">
-                    {% for block in blocks %}
-                        {% if block.id == blocks.all.first.id %}
-                            <div class="tab-pane fade show active" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
-                                <p>{{ block.title }}</p>
-                                <p>{{ block.create }}</p>
+                                                        <div class="d-flex w-100 p-2 justify-content-between">
+                                                          <div>
+                                                              <h6 class="mb-0"><strong>{{ block.title }}</strong></h6>
+                                                              <h6 class="text-secondary py-1">
 
-                                {% for url in block.urllink_set.all %}
-                                    <p>{{ url.title }}</p>
-                                    <p>{{ url.url }}</p>
-                                {% endfor %}
+                                                                  {{ block.text_content |safe  }}
+                                                              </h6>
 
-                                {% for file in block.file_set.all %}
-                                    <p>{{ file.title }}</p>
-                                    <p>{{ file.file }}</p>
-                                {% endfor %}
-                            </div>
-                        {% else %}
-                            <div class="tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">
-                                {{ block.title }}
-                                {{ block.create }}
+                                                          </div>
+                                                            <div>
+                                                                {% if user.id == course.author_id %}
+                                                                        <a href="edit_task/{{ block.id }}/" title="Редактировать шаг" class="btn text-warning"><i class="fa fa-edit"></i></a>
+                                                                        <a href="delete_task/{{ block.id }}/" title="Удалить шаг" class="btn text-danger"><i class="fa fa-trash"></i></a>
+                                                                {% else %}
+                                                                    <a href="view_task/{{ block.id }}/" class="btn btn-outline-primary">Просмотреть блок</a>
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                   {% endfor %}
+                                                </div>
+                                        </div>
 
-                                {% for url in block.urllink_set.all %}
-                                    <p>{{ url.title }}</p>
-                                    <p>{{ url.url }}</p>
-                                {% endfor %}
-
-                                {% for file in block.file_set.all %}
-                                    <p>{{ file.title }}</p>
-                                    <p>{{ file.file }}</p>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-    </section>
+     </div>
+     </section>
 
 
-
-{##}
-{# <form method="post" enctype=multipart/form-data>#}
-{#     {% csrf_token %}#}
-{#     <div>#}
-{#         <h4 class="text-start">Название блока</h4>#}
-{#                    <div class="d-flex align-items-center p-3 rounded"#}
-{#                      style="border-left-color: #0d6efd; border-left-style: solid;#}
-{#                      background-color: #cff4fc;#}
-{#                      border-left-width: 7px;#}
-{#                      padding-left: 10px;" >#}
-{#                        <div class="text-sm-start">#}
-{#                          <h5 class="h6 text-black-50 ">#}
-{#                              Укажите здесь название блока.<br>#}
-{#                          </h5>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                    <div class="mt-3">#}
-{#                        {% bootstrap_field form.title class="custom-control-input"%}#}
-{#                    </div>#}
-{#                </div>#}
-{#     <button button_type="submit" class="btn btn-primary">Сохранить</button>#}
-{# </form>#}
 
 
 {#        <section class="container py-3">#}
-{#        <div class="bd-example">#}
+{#            <div class="bd-example">#}
+{#                <nav>#}
+{#                    <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">#}
+{#                        <div class="row">#}
+{#                            {% for block in blocks %}#}
+{#                                <div class="col-md-2">#}
+{#                                    {% if block.id == blocks.all.first.id %}#}
+{#                                        <button class="nav-link active" id="nav{{ block.id }}tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"#}
+{#                                            aria-selected="true">{{ block.title }}</button>#}
+{#                                    {% else %}#}
+{#                                        <button class="nav-link" id="nav{{ block.id }}tab" data-bs-toggle="tab"#}
+{#                                            data-bs-target="#nav{{ block.id }}" type="button" role="tab" aria-controls="nav{{ block.id }}"#}
+{#                                            aria-selected="false">{{ block.title }}</button>#}
 {##}
-{#           <nav>#}
+{#                                    {% endif %}#}
+{#                                </div>#}
+{#                            {% endfor %}#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </nav>#}
+{#                <div class="tab-content" id="nav-tabContent">#}
+{#                    {% for block in blocks %}#}
+{#                        {% if block.id == blocks.all.first.id %}#}
+{#                            <div class="tab-pane fade show active" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">#}
+{#                                <p>{{ block.title }}</p>#}
+{#                                <p>{{ block.create }}</p>#}
 {##}
-{#                <div class="nav nav-tabs mb-3" id="nav-tab" role="tablist">#}
+{#                                {% for url in block.urllink_set.all %}#}
+{#                                    <p>{{ url.title }}</p>#}
+{#                                    <p>{{ url.url }}</p>#}
+{#                                {% endfor %}#}
 {##}
-{#                    <div class="row mb-3">#}
-{#                        {% for block in blocks %}#}
-{#                            <div class="col-md-2 themed-grid-col">#}
-{##}
-{#                                 <a class="nav-link" id="nav-{{ block.id }}-tab" data-bs-toggle="tab"#}
-{#                                    data-bs-target="#nav-{{ block.id }}" type="button" role="tab" aria-controls="nav-{{ block.id }}"#}
-{#                                    aria-selected="true">{{ block.title }}</a>#}
+{#                                {% for file in block.file_set.all %}#}
+{#                                    <p>{{ file.title }}</p>#}
+{#                                    <p>{{ file.file }}</p>#}
+{#                                {% endfor %}#}
 {#                            </div>#}
-{#                        {% endfor %}#}
-{#                    </div>#}
-{#                </div>#}
-{#            </nav>#}
-{#            <div class="tab-content" id="nav-tabContent">#}
-{#            {% for block in blocks %}#}
-{#                <div class="tab-pane fade" id="nav-{{ block.id }}" role="tabpanel" aria-labelledby="nav-{{ block.id }}-tab">#}
-{#                    {{ block.title }}#}
-{#                    {{ block.create }}#}
+{#                        {% else %}#}
+{#                            <div class="tab-pane fade" id="nav{{ block.id }}" role="tabpanel" aria-labelledby="nav{{ block.id }}tab">#}
+{#                                {{ block.title }}#}
+{#                                {{ block.create }}#}
 {##}
-{#                    <div>#}
-{#                        <p>добавить</p>#}
-{#                        <a href="{% url 'module:add_text' block_id=block.id id=course.id%}">Текст</a> | <a href="#">Материал (файл)</a>#}
-{#                    </div>#}
+{#                                {% for url in block.urllink_set.all %}#}
+{#                                    <p>{{ url.title }}</p>#}
+{#                                    <p>{{ url.url }}</p>#}
+{#                                {% endfor %}#}
+{##}
+{#                                {% for file in block.file_set.all %}#}
+{#                                    <p>{{ file.title }}</p>#}
+{#                                    <p>{{ file.file }}</p>#}
+{#                                {% endfor %}#}
+{#                            </div>#}
+{#                        {% endif %}#}
+{#                    {% endfor %}#}
 {#                </div>#}
-{#                {% endfor %}#}
 {#            </div>#}
-{#             {% endfor %}#}
-{#        </div>#}
 {#    </section>#}
+{##}
+
+
 {% endblock %}

@@ -17,14 +17,56 @@
 </head>
 <body>
 {% block content1 %}
+ <style>
 
+.scrollbar-dusty-grass::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #F5F5F5;
+    border-radius: 10px;
+}
 
-    <main class="container-fluid g-0">
+.scrollbar-dusty-grass::-webkit-scrollbar {
+    width: 12px;
+    background-color: #F5F5F5;
+}
 
-        <div class="row g-0 h-100">
+.scrollbar-dusty-grass::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-image: -webkit-linear-gradient(330deg, #79bffc 0%, #ffe91e 100%);
+    background-image: linear-gradient(120deg, #79d3fc 0%, #fff758 100%);
+}
+
+.square::-webkit-scrollbar-track {
+    border-radius: 0 !important;
+}
+
+.square::-webkit-scrollbar-thumb {
+    border-radius: 0 !important;
+}
+
+.thin::-webkit-scrollbar {
+    width: 6px;
+}
+
+.example-1 {
+    {#position: sticky;#}
+    overflow-y: scroll;
+    height: 90vh;
+}
+    </style>
+{#container-fluid g-0#}
+    <main class="
+    container-fluid px-lg-3 bg-light">
+{#h-100#}
+        <div class="row g-0 ">
             {% if user.id == course.author.id %}
-                <div class="col-md-2 bg-dark " >
-                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
+                <div class="col-md-2 bg-light " >
+                      <div class="example-1 sticky-top bg-light square scrollbar-dusty-grass square thin">
+                <div class="card-body">
+
+
+                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 w-100 bg-light">
                         <a href="{% url 'module:list' course.id %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                           <svg class="bi me-2" width="30" height="24"></svg>
                           <span class="fs-5 fw-semibold">Назад</span>
@@ -37,7 +79,15 @@
                                              data-bs-toggle="collapse" data-bs-target="#some{{ module.id}}" aria-expanded="true">
                                          {{ module.title }}
                                         </button>
-                                        <div class="collapse show" id="some{{ module.id }}">
+
+
+                                     <div class="collapse show" id="some{{ module.id }}">
+                                      {% if user.id == course.author_id %}
+                                                 <a href="{% url 'module:popup_form' module.id %}" class="btn btn-sm btn-outline-primary"> + Добавить </a>
+
+
+                                        {% endif %}
+
                                             {% for lesson in module.lesson_set.all %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                                                     <li><a href="{% url 'module:edit_lesson_settings' id=course.id l_id=lesson.id %}" class="link-dark rounded">
@@ -49,30 +99,31 @@
 
                                             {% for task in module.task_set.all %}
                                                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                    <li><a href="#" class="link-dark rounded"> {{ task.title }}</a></li>
+                                                    <li><a href="{% url 'module:edit_task' id=course.id t_id=task.id %}" class="link-dark rounded"> {{ task.title }}</a></li>
                                                 </ul>
                                             {% endfor %}
 
 
 
-                                             {% if user.id == course.author_id %}
-                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                    <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a>
 
-                                                    </li>
-
-                                                </ul>
-
-                                            {% endif %}
                                         </div>
                                  </li>
                              {% endfor %}
                          </ul>
                     </div>
+
+                </div>
+                      </div>
                 </div>
             {% elif user.id != course.author.id %}
-                <div class="col-md-2 bg-dark " >
-                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 p-3  w-100 text-white bg-light">
+                <div class="col-md-2 bg-light  " >
+
+                <div class="example-1 sticky-top bg-light square scrollbar-dusty-grass square thin">
+                <div class="card-body">
+
+
+
+                    <div class="fixed-top sticky-top d-flex flex-column flex-shrink-0 w-100 bg-light">
                         <a href="{% url 'module:list' course.id %}" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
                           <svg class="bi me-2" width="30" height="24"></svg>
                           <span class="fs-5 fw-semibold">Назад</span>
@@ -99,8 +150,8 @@
                                             {% endfor %}
 
                                              {% if user.id == course.author_id %}
-                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                                                    <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded"> + Добавить </a></li>
+                                                <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small text-primary">
+                                                    <li><a href="{% url 'module:popup_form' module.id %}" class="link-dark rounded btn-outline-primary"> + Добавить </a></li>
                                                 </ul>
 
                                             {% endif %}
@@ -109,6 +160,8 @@
                              {% endfor %}
                          </ul>
                     </div>
+                </div>
+                </div>
                 </div>
 
 

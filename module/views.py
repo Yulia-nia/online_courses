@@ -274,7 +274,7 @@ def edit_lesson(request, l_id, id):
                                                         })
 
 
-def edit_lesson_settings(request, l_id, id, ):
+def edit_lesson_settings(request, id, l_id):
     try:
         lesson = Lesson.objects.get(id=l_id)
         module = Module.objects.get(id=lesson.module_id)
@@ -346,7 +346,7 @@ def view_lesson(request, id, l_id):
 class EditModule(View):
     model = Module
 
-    def get(self, request, m_id, id):
+    def get(self, request, id, m_id):
         module = Module.objects.get(id=m_id)
         course = Course.objects.get(id=id)
         modules = course.module_set.all()
@@ -463,7 +463,15 @@ class TaskView(View):
             task = Task.objects.get(id=t_id)
             course = Course.objects.get(id=task.module.course_id)
             answer = StudentAnswer.objects.all().filter(student_id=request.user.id,
-                                                        task_id=t_id)
+                                                        task_id=t_id).last()
+            if answer:
+                mar = Mark.objects.all().filter(answer_id=answer.id, student_id=request.user.id).last()
+                if mar:
+                    mark = mar.mark
+                else:
+                    mark = 1
+            else:
+                mark = 0
             module = Module.objects.get(id=task.module_id)
             modules = Module.objects.all().filter(course_id=id)
             lessons = Lesson.objects.all().filter(is_published=True)
@@ -481,6 +489,7 @@ class TaskView(View):
             "module/task/view_task.html", {"course": course, "task": task,
                                            "answer": answer,
                                            "module": module,
+                                           "mark": mark,
                                            "modules": modd,
                                            'form': AnswerTaskForm()
                                            })
@@ -582,8 +591,20 @@ class EstimateView(View):
                                                               })
 
 
-def edit_task(request, id):
-    task = Task.objects.get(id=id)
+def edit_task(request, id,  t_id):
+    task = Task.objects.get(id=t_id)
+
+    module = Module.objects.get(id=task.module_id)
+    modules = Module.objects.all().filter(course_id=id)
+    lessons = Lesson.objects.all().filter(is_published=True)
+    modd = {}
+    for module in modules:
+        less = []
+        for les in lessons:
+            if les.module_id == module.id:
+                less.append(les)
+        modd[module] = less
+
     #course = Course.objects.get(id=id)
     form = TaskForm(request.POST or None, request.FILES or None, initial=
                     {'title': task.title,
@@ -600,6 +621,8 @@ def edit_task(request, id):
     return render(request, "module/task/edit.html", {'course': task.module.course,
                                                      #"modules": course.module_set.all(),
                                                           "form": form,
+                                                     "module": module,
+                                                     "modules": modd,
                                                           "task": task})
 
 
